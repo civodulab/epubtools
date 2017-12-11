@@ -15,10 +15,14 @@ Outils destinés à améliorer le travail sur les EPUB.
 - `epub.titreTDM`
     > titre de la table des matières (défaut : **Table des matières**)
 - `epub.classeTDM`
-    > classe appliquée à la balice `<ol>` (défaut : **ol-toc**)
+    > classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
 
 
 ## Release Notes
+
+### 1.0.1
+- corrections bug
+- image
 
 ### 1.0.0
 - Manifest
