@@ -1,0 +1,63 @@
+{
+    "name": "epubtools",
+    "displayName": "Epub Tools",
+    "description": "Utilitaire Epub",
+    "version": "1.0.0",
+    "publisher": "luba",
+    "engines": {
+        "vscode": "^1.18.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "*"
+    ],
+    "icon": "icon.png",
+    "main": "./extension",
+    "contributes": {
+        "commands": [{
+                "command": "extension.epubManifest",
+                "title": "EpubTools : Manifest",
+                "description": "Modifie le manifest dans l'opf"
+            },
+            {
+                "command": "extension.epubTOC",
+                "title": "EpubTools : Table des matières",
+                "description": "Modifie les tables des matières xhtml et ncx"
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "Epub configuration",
+            "properties": {
+                "epub.niveauTitre": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Niveau de titre pour la table des matières."
+                },
+                "epub.classeTDM": {
+                    "type": "string",
+                    "default": "ol-toc",
+                    "description": "Classe appliquée au <ol>"
+                },
+                "epub.titreTDM": {
+                    "type": "string",
+                    "default": "Table des matières",
+                    "description": "Titre de la table des matières"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.6.1",
+        "vscode": "^1.1.6",
+        "eslint": "^4.6.1",
+        "@types/node": "^7.0.43",
+        "@types/mocha": "^2.2.42"
+    }
+}
