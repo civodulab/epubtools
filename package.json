@@ -59,5 +59,9 @@
         "eslint": "^4.6.1",
         "@types/node": "^7.0.43",
         "@types/mocha": "^2.2.42"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/civodulab/epubtools.git"
     }
 }
