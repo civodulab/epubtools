@@ -241,7 +241,8 @@ function ecritureLigne(fichier, fichierOPF) {
             break;
 
             //  Font Types
-        case "ttf", "otf":
+        case "ttf":
+        case "otf":
             mediaType = "application/font-sfnt"
             break;
         case "woff":
@@ -262,10 +263,12 @@ function ecritureLigne(fichier, fichierOPF) {
             mediaType = "image/svg+xml"
             break;
             // Audio types
-        case "mpg", "mp3":
+        case "mpg":
+        case "mp3":
             mediaType = "audio/mpeg"
             break;
-        case "mp4", "aac":
+        case "mp4":
+        case "aac":
             mediaType = "audio/mp4"
         default:
             break;
