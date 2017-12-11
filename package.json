@@ -1,9 +1,9 @@
 {
     "name": "epubtools",
     "displayName": "Epub Tools",
-    "description": "Utilitaire Epub",
+    "description": "Utilitaire Epub3",
     "version": "1.0.0",
-    "publisher": "luba",
+    "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
     },
