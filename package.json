@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.epubManifest",
                 "title": "EpubTools : Manifest",
                 "description": "Modifie le manifest dans l'opf"
