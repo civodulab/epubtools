@@ -7,7 +7,7 @@ Outils destinés à améliorer le travail sur les EPUB.
 - `EpubTools : Manifest`
     > remplace le manifest dans l'OPF
 - `EpubTools : Table des matières`
-    > remplace les tables `toc.xhtml` et `toc.ncx` en utilisant le spine de l'OPF
+    > modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le spine de l'OPF.
 
 ## EpubTools Configuration (`ctrl+,`)
 - `epub.niveauTitre`
@@ -19,6 +19,9 @@ Outils destinés à améliorer le travail sur les EPUB.
 
 
 ## Release Notes
+
+### 1.1.0
+- être dans un fichier TDM pour appliquer `Table des matières`
 
 ### 1.0.1
 - corrections bug

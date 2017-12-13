@@ -64,11 +64,16 @@ function pathOEBPS() {
 }
 
 
-
 function epubTOC() {
     let e = Window.activeTextEditor;
     if (!e) {
         Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier.');
+        return; // No open text editor
+    }
+    let d = e.document;
+    var tdm = isTDM(d.fileName);
+    if (!tdm) {
+        Window.showInformationMessage('Vous devez être dans un fichier toc.');
         return; // No open text editor
     }
     var mesLiens = recupSpine(),
@@ -86,7 +91,18 @@ function epubTOC() {
         }
     });
 
-    tableMatieres(mesTitres);
+    tableMatieres(mesTitres, d.fileName);
+}
+
+function isTDM(fichier) {
+    var txt = fs.readFileSync(fichier, 'utf8');
+    var regNav = new RegExp('<\/nav>', 'g');
+    var regNavMap = new RegExp("<\/navMap>", 'g');
+
+    if (txt.match(regNav) || txt.match(regNavMap)) {
+        return true;
+    }
+    return false;
 }
 
 function recupSpine() {
@@ -99,8 +115,8 @@ function recupSpine() {
 
 }
 
-function tableMatieres(titres) {
-    var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>',
+function tableMatieres(titres, fichierTOC) {
+    var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>\n',
         titreAvant = 0,
         classeOL = config.get('classeTDM');
     var maTableNCX = '';
@@ -118,31 +134,31 @@ function tableMatieres(titres) {
             }
             var result = h.exec(titre);
             if (result[2] === titreAvant) {
-                maTableXhtml += '</li><li>';
+                maTableXhtml += '</li>\n<li>\n';
 
-                maTableNCX += '</navPoint><navPoint id="navPoint' + i + '" playOrder="' + i + '">';
+                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
             } else if (result[2] < titreAvant) {
-                maTableXhtml += '</li></ol>'.repeat(titreAvant - result[2]);
-                maTableXhtml += '</li><li>';
+                maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant - result[2]);
+                maTableXhtml += '</li>\n<li>\n';
 
-                maTableNCX += '</navPoint>'.repeat(titreAvant - result[2]);
-                maTableNCX += '</navPoint><navPoint id="navPoint' + i + '" playOrder="' + i + '">';
+                maTableNCX += '</navPoint>\n'.repeat(titreAvant - result[2]);
+                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
             } else if (result[2] > titreAvant) {
                 if (titreAvant === 0) {
-                    maTableXhtml += '<ol class="' + classeOL + '"><li>';
-                    maTableXhtml += '<ol><li>'.repeat(result[2] - titreAvant - 1);
+                    maTableXhtml += '<ol class="' + classeOL + '">\n<li>\n';
+                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant - 1);
                 } else {
-                    maTableXhtml += '<ol><li>'.repeat(result[2] - titreAvant);
+                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant);
                 }
-                maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">').repeat(result[2] - titreAvant);
+                maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
             }
 
             maTableXhtml += '<a href="' + el[0] + id + '">';
             maTableXhtml += result[1] + '</a>';
 
-            maTableNCX += '<navLabel><text>';
+            maTableNCX += '<navLabel>\n<text>';
             maTableNCX += result[1];
-            maTableNCX += '</text></navLabel>';
+            maTableNCX += '</text>\n</navLabel>\n';
             maTableNCX += '<content src="' + el[0] + id + '" />';
             // maTableNCX += '</navPoint>';
 
@@ -150,15 +166,19 @@ function tableMatieres(titres) {
             i++;
         });
         if (k === ltitres - 1) {
-            maTableXhtml += '</li></ol>'.repeat(titreAvant);
+            maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant);
 
-            maTableNCX += '</navPoint>'.repeat(titreAvant);
+            maTableNCX += '</navPoint>\n'.repeat(titreAvant);
         }
     }
 
-    replaceTOC(maTableXhtml, maTableNCX);
-}
+    if (path.basename(fichierTOC) === 'toc.ncx') {
+        remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
+    } else {
+        remplaceDansFichier(fichierTOC, maTableXhtml, 'nav', 'toc');
+    }
 
+}
 
 function rechercheHrefParIdRef(texte, idref) {
     var mesLiens = [];
@@ -187,13 +207,7 @@ function rechercheTitre(texte) {
 }
 
 
-function replaceTOC(xhtml, ncx) {
-    var toc = recupFichiers('toc.xhtml'),
-        tocNcx = recupFichiers('toc.ncx');
-    remplaceDansFichier(tocNcx, ncx, 'navMap');
-    remplaceDansFichier(toc, xhtml, 'nav', 'toc');
 
-}
 
 function remplaceDansFichier(fichier, texte, balise, epubType) {
     fs.readFile(fichier, 'utf8', function (err, data) {
