@@ -18,7 +18,7 @@ String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     return this.replace(result[1], par);
 }
 
-String.prototype.rechercheEntre2Balises = function rechercheEntre2Balises(balise) {
+String.prototype.rechercheEntre2Balises = function (balise) {
     var exp = "<" + balise + "[^>]*>((?:.|\n|\r)*?)<\/" + balise + ">",
         re = new RegExp(exp, 'gi');
     return this.match(re);
@@ -90,16 +90,12 @@ function epubTOC() {
             mesTitres.push(monLien);
         }
     });
-
     tableMatieres(mesTitres, d.fileName);
 }
 
 function isTDM(fichier) {
     var txt = fs.readFileSync(fichier, 'utf8');
-    var regNav = new RegExp('<\/nav>', 'g');
-    var regNavMap = new RegExp("<\/navMap>", 'g');
-
-    if (txt.match(regNav) || txt.match(regNavMap)) {
+    if (txt.indexOf('</nav>') !== -1 || txt.indexOf('</navMap') !== -1) {
         return true;
     }
     return false;
@@ -119,14 +115,16 @@ function tableMatieres(titres, fichierTOC) {
     var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>\n',
         titreAvant = 0,
         classeOL = config.get('classeTDM');
+
     var maTableNCX = '';
     var i = 0;
     var ltitres = titres.length,
         k = 0;
     for (; k !== ltitres; k++) {
         var el = titres[k];
+
         el[1].forEach(function (titre) {
-            var h = new RegExp('<h[0-9][^>]*>([^<]*)<\/h([0-9])>', 'ig'),
+            var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig'),
                 id = '';
             if (titre.indexOf('id=') !== -1) {
                 var idexp = new RegExp('id="([^"]*)"', 'gi');
@@ -172,6 +170,7 @@ function tableMatieres(titres, fichierTOC) {
         }
     }
 
+
     if (path.basename(fichierTOC) === 'toc.ncx') {
         remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
     } else {
@@ -200,7 +199,7 @@ function rechercheIdref(texte) {
 
 function rechercheTitre(texte) {
     var nivT = config.get('niveauTitre'),
-        exp = '<h[0-' + nivT + '][^>]*>[^<]*<\/h[0-' + nivT + ']>',
+        exp = '<h[0-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[0-' + nivT + ']>',
         re = new RegExp(exp, 'gi');
     return texte.match(re);
 
@@ -232,7 +231,7 @@ function ecritureLigne(fichier, fichierOPF) {
     }
     var maligne = "",
         mediaType = "",
-        property = "",
+        properties = "",
         ext = relativeFichier.split('.').pop(),
         nom = path.basename(relativeFichier);
     switch (ext) {
@@ -240,8 +239,11 @@ function ecritureLigne(fichier, fichierOPF) {
             mediaType = "application/xhtml+xml";
             nom = path.basename(nom, '.xhtml');
             if (findScript(fichier)) {
-                property = ' properties="scripted"';
+                properties = 'scripted';
             }
+            break;
+        case 'pls':
+            mediaType = "application/pls+xml";
             break;
         case 'js':
             mediaType = "application/javascript";
@@ -288,7 +290,7 @@ function ecritureLigne(fichier, fichierOPF) {
             break;
     }
 
-    maligne = '<item id="' + nom + '" href="' + relativeFichier + '" media-type="' + mediaType + '"' + property + ' />';
+    maligne = '<item id="' + nom + '" href="' + relativeFichier + '" media-type="' + mediaType + '"' + properties + ' />\n';
     return maligne;
 }
 
@@ -308,8 +310,6 @@ function epubManifest() {
     var mesFichiers = recupFichiers(),
         montexte = "";
     mesFichiers.forEach(function (el) {
-        console.log(findScript(el));
-
         if (el !== d.fileName) {
             montexte += ecritureLigne(el, d.fileName);
         }
