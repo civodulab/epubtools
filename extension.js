@@ -11,9 +11,8 @@ const path = require('path');
 
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
-    var tsCarac = '(?:.|\n|\r)*?';
-    var exp = '<' + balise + epubType + '[^>]*>(' + tsCarac + ')<\/' + balise + '>';
-    var re = new RegExp(exp, 'gi'),
+    var exp = '<' + balise + epubType + '[^>]*>((?:.|\n|\r)*?)<\/' + balise + '>',
+        re = new RegExp(exp, 'gi'),
         result = re.exec(this);
     return this.replace(result[1], par);
 }
@@ -34,11 +33,14 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     let disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
-        epubManifest();
+        var Liens = fichierLiens();
+        epubManifest(Liens);
+
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
-        epubTOC();
+        var Liens = fichierLiens('.xhtml');
+        epubTOC(Liens);
     });
     context.subscriptions.push(disposable);
 
@@ -48,6 +50,7 @@ exports.activate = activate;
 // this method is called when your extension is deactivated
 function deactivate() {}
 exports.deactivate = deactivate;
+
 
 
 function recupFichiers(typeOrfichier) {
@@ -64,7 +67,7 @@ function pathOEBPS() {
 }
 
 
-function epubTOC() {
+function epubTOC(liens) {
     let e = Window.activeTextEditor;
     if (!e) {
         Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier.');
@@ -76,21 +79,33 @@ function epubTOC() {
         Window.showInformationMessage('Vous devez être dans un fichier toc.');
         return; // No open text editor
     }
+
     var mesLiens = recupSpine(),
-        cheminOEBPS = pathOEBPS(),
         mesTitres = [];
     mesLiens.forEach(function (el) {
-        var el1 = path.join(cheminOEBPS, el.replace('..', '')),
+        el = path.basename(el);
+        var el1 = liens[el],
             data = fs.readFileSync(el1, 'utf8'),
             rtitre = rechercheTitre(data);
+
         if (rtitre) {
             var monLien = [];
-            monLien.push(el);
+            monLien.push(el1);
             monLien.push(rtitre);
             mesTitres.push(monLien);
         }
     });
     tableMatieres(mesTitres, d.fileName);
+}
+
+function fichierLiens(type) {
+    var mesXhtml = recupFichiers(type);
+    var Liens = {};
+    mesXhtml.forEach(function (el) {
+        var el2 = path.basename(el);
+        Liens[el2] = el;
+    });
+    return Liens;
 }
 
 function isTDM(fichier) {
@@ -107,21 +122,24 @@ function recupSpine() {
     var monSpine = data.rechercheEntre2Balises('spine');
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
-
-
 }
 
 function tableMatieres(titres, fichierTOC) {
     var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>\n',
         titreAvant = 0,
         classeOL = config.get('classeTDM');
-
     var maTableNCX = '';
     var i = 0;
     var ltitres = titres.length,
         k = 0;
     for (; k !== ltitres; k++) {
         var el = titres[k];
+        var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el[0]));
+        if (relativeP !== '') {
+            relativeP = relativeP + '/' + path.basename(el[0]);
+        } else {
+            relativeP = path.basename(el[0]);
+        }
 
         el[1].forEach(function (titre) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig'),
@@ -151,13 +169,13 @@ function tableMatieres(titres, fichierTOC) {
                 maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
             }
 
-            maTableXhtml += '<a href="' + el[0] + id + '">';
+            maTableXhtml += '<a href="' + relativeP + id + '">';
             maTableXhtml += result[1] + '</a>';
 
             maTableNCX += '<navLabel>\n<text>';
             maTableNCX += result[1];
             maTableNCX += '</text>\n</navLabel>\n';
-            maTableNCX += '<content src="' + el[0] + id + '" />';
+            maTableNCX += '<content src="' + relativeP + id + '" />';
             // maTableNCX += '</navPoint>';
 
             titreAvant = result[2];
@@ -229,62 +247,63 @@ function ecritureLigne(fichier, fichierOPF) {
     } else {
         relativeFichier = path.basename(fichier);
     }
+
     var maligne = "",
         mediaType = "",
         properties = "",
-        ext = relativeFichier.split('.').pop(),
+        ext = path.extname(relativeFichier),
         nom = path.basename(relativeFichier);
     switch (ext) {
-        case 'xhtml':
+        case '.xhtml':
             mediaType = "application/xhtml+xml";
             nom = path.basename(nom, '.xhtml');
             if (findScript(fichier)) {
-                properties = 'scripted';
+                properties = ' properties="scripted"';
             }
             break;
-        case 'pls':
+        case '.pls':
             mediaType = "application/pls+xml";
             break;
-        case 'js':
+        case '.js':
             mediaType = "application/javascript";
             break;
-        case "ncx":
+        case ".ncx":
             mediaType = "application/x-dtbncx+xml"
             break;
             //  Text Types
-        case "css":
+        case ".css":
             mediaType = "text/css"
             break;
 
             //  Font Types
-        case "ttf":
-        case "otf":
+        case ".ttf":
+        case ".otf":
             mediaType = "application/font-sfnt"
             break;
-        case "woff":
+        case ".woff":
             mediaType = "application/font-woff"
             break;
 
             //  Images type
-        case "gif":
+        case ".gif":
             mediaType = "image/gif"
             break;
-        case "jpg":
+        case ".jpg":
             mediaType = "image/jpeg"
             break;
-        case "png":
+        case ".png":
             mediaType = "image/png"
             break;
-        case "svg":
+        case ".svg":
             mediaType = "image/svg+xml"
             break;
             // Audio types
-        case "mpg":
-        case "mp3":
+        case ".mpg":
+        case ".mp3":
             mediaType = "audio/mpeg"
             break;
-        case "mp4":
-        case "aac":
+        case ".mp4":
+        case ".aac":
             mediaType = "audio/mp4"
         default:
             break;
@@ -295,25 +314,25 @@ function ecritureLigne(fichier, fichierOPF) {
 }
 
 
-function epubManifest() {
+function epubManifest(mesFichiers) {
     let e = Window.activeTextEditor;
     if (!e) {
         Window.showInformationMessage('Vous devez être dans un fichier opf.');
         return; // No open text editor
     }
     let d = e.document;
-    if (d.fileName.split('.').pop() !== 'opf') {
+    if (path.extname(d.fileName) !== '.opf') {
         Window.showInformationMessage('Vous devez être dans un fichier opf');
         return;
     }
 
-    var mesFichiers = recupFichiers(),
-        montexte = "";
-    mesFichiers.forEach(function (el) {
-        if (el !== d.fileName) {
-            montexte += ecritureLigne(el, d.fileName);
+    var montexte = "";
+    for (var fich in mesFichiers) {
+        if (fich !== d.fileName) {
+            montexte += ecritureLigne(mesFichiers[fich], d.fileName);
         }
-    });
+    }
+
     remplaceDansFichier(d.fileName, montexte, 'manifest');
 }
 
@@ -343,7 +362,7 @@ function getFilesFromDir(dir, typeO) {
         for (var i in files) {
             var curFile = path.join(currentPath, files[i]);
             if (fichier === true && files[i] === type) {
-                return curFile;
+                filesToReturn = curFile;
             }
             if (!typeO) type = path.extname(curFile);
             if (fs.statSync(curFile).isFile() && path.extname(curFile) === type) {
@@ -354,10 +373,11 @@ function getFilesFromDir(dir, typeO) {
             }
         }
     };
-    if (fichier) {
-        filesToReturn = walkDir(dir);
-    } else {
-        walkDir(dir);
-    }
+    walkDir(dir);
+    // if (fichier) {
+    //     filesToReturn = walkDir(dir);
+    // } else {
+    //     walkDir(dir);
+    // }
     return filesToReturn;
 }

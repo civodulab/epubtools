@@ -23,6 +23,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.1.1
+- correction bug quand on déplace les fichiers toc
 ### 1.1.0
 - être dans un fichier TDM pour appliquer `Table des matières`
 
