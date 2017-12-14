@@ -2,6 +2,9 @@
 
 Outils destinés à améliorer le travail sur les EPUB.
 
+## À savoir
+Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans les répertoires de celui-ci.
+
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : Manifest`
