@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
