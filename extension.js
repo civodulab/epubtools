@@ -91,8 +91,8 @@ function epubTitle(fichiers) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
             var par = result[1];
+            remplaceDansFichier(el, par, 'title');
         }
-        remplaceDansFichier(el, par, 'title');
     });
 }
 

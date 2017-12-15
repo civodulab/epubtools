@@ -25,6 +25,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.2.2
+- correction bug
+
 ### 1.2.1
 - OPF xhtml item properties 
     - "scripted"
