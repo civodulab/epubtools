@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.1.1",
+    "version": "1.2.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -19,13 +19,21 @@
         "commands": [
             {
                 "command": "extension.epubManifest",
-                "title": "EpubTools : Manifest",
-                "description": "Modifie le manifest dans l'opf"
+                "title": "Manifest",
+                "description": "Modifie le manifest dans l'opf",
+                "category": "EpubTools"
             },
             {
                 "command": "extension.epubTOC",
-                "title": "EpubTools : Table des matières",
-                "description": "Modifie les tables des matières xhtml et ncx"
+                "title": "Table des matières",
+                "description": "Modifie les tables des matières xhtml et ncx",
+                "category": "EpubTools"
+            },
+            {
+                "command": "extension.epubTitle",
+                "title": "premier <h.> => <title>",
+                "description": "Copie le premier titre des pages xhtml dans la balise title de chaque page",
+                "category": "EpubTools"
             }
         ],
         "configuration": {

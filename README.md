@@ -8,23 +8,29 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : Manifest`
-    > remplace le manifest dans l'OPF
+    > Remplace le manifest dans l'OPF
 - `EpubTools : Table des matières`
-    > modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le spine de l'OPF.
+    > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le spine de l'OPF.
+- `EpubTools : premier <h.> => <title>`
+    > Copie le premier titre (s'il y en a) de chaque page xhtml dans la balise title de celle-ci
 
 ## EpubTools Configuration (`ctrl+,`)
 - `epub.niveauTitre`
-    > niveau de titre dans la table des matières (défaut : **3**)
+    > Niveau de titre dans la table des matières (défaut : **3**)
 - `epub.titreTDM`
-    > titre de la table des matières (défaut : **Table des matières**)
+    > Titre de la table des matières (défaut : **Table des matières**)
 - `epub.classeTDM`
-    > classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
+    > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
 
 
 ## Release Notes
 
+### 1.2.0
+- ajout `EpubTools : premier <h.> => <title>`
+
 ### 1.1.1
 - correction bug quand on déplace les fichiers toc
+
 ### 1.1.0
 - être dans un fichier TDM pour appliquer `Table des matières`
 

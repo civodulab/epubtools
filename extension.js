@@ -43,7 +43,11 @@ function activate(context) {
         epubTOC(Liens);
     });
     context.subscriptions.push(disposable);
-
+    disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
+        var Liens = recupFichiers('.xhtml');
+        epubTitle(Liens);
+    });
+    context.subscriptions.push(disposable);
 }
 exports.activate = activate;
 
@@ -51,7 +55,20 @@ exports.activate = activate;
 function deactivate() {}
 exports.deactivate = deactivate;
 
+function epubTitle(fichiers) {
+    Window.showOpenDialog();
+    fichiers.forEach(function (el) {
+        var txt = fs.readFileSync(el, 'utf8');
+        var titres = rechercheTitre(txt);
+        if (titres) {
+            var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
+            var result = h.exec(titres[0]);
+            var par = result[1];
+        }
+        remplaceDansFichier(el, par, 'title');
 
+    });
+}
 
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
