@@ -54,6 +54,8 @@ function activate(context) {
 
     });
     context.subscriptions.push(disposable);
+
+
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
         let e = Window.activeTextEditor;
         if (!e) {
@@ -67,7 +69,8 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = fichierLiens('.xhtml');
-        epubTOC(Liens, d.fileName);
+        ajoutAncre(Liens);
+        // epubTOC(Liens, d.fileName);
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
@@ -82,6 +85,9 @@ exports.activate = activate;
 function deactivate() {}
 exports.deactivate = deactivate;
 
+
+
+
 function epubTitle(fichiers) {
     Window.showOpenDialog();
     fichiers.forEach(function (el) {
@@ -95,6 +101,8 @@ function epubTitle(fichiers) {
         }
     });
 }
+
+
 
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
@@ -112,8 +120,6 @@ function pathOEBPS() {
 
 
 function epubTOC(liens, fichierTOC) {
-
-
     var mesLiens = recupSpine(),
         mesTitres = [];
     mesLiens.forEach(function (el) {
@@ -130,6 +136,37 @@ function epubTOC(liens, fichierTOC) {
         }
     });
     tableMatieres(mesTitres, fichierTOC);
+}
+
+function ajoutAncre(liens) {
+    var k = 0;
+    for (var fichier in liens) {
+        console.log(fichier);
+        var data = fs.readFileSync(liens[fichier], 'utf8');
+
+        var mesTitres = rechercheTitre(data);
+
+        if (mesTitres) {
+            var newdata = data;
+
+            mesTitres.forEach(function (titre) {
+                var h = new RegExp('<h[0-9]([^>]*)>', 'ig');
+                var result = h.exec(titre);
+                var newtitre = titre.replace(result[1], ' id="toc-epubtools-' + k + '"');
+                newdata = newdata.replace(titre, newtitre);
+                k++;
+            });
+            console.log(liens[fichier]);
+            // console.log(newdata);
+            fs.writeFile(liens[fichier], newdata, 'utf8', function (err) {
+                if (err) return console.log(err);
+            });
+        }
+
+
+
+
+    }
 }
 
 function fichierLiens(type) {
@@ -157,6 +194,8 @@ function recupSpine() {
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
 }
+
+
 
 function tableMatieres(titres, fichierTOC) {
     var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>\n',
