@@ -8,7 +8,6 @@ const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
 
-
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
     var exp = '<' + balise + epubType + '[^>]*>((?:.|\n|\r)*?)<\/' + balise + '>',
@@ -22,6 +21,13 @@ String.prototype.rechercheEntre2Balises = function (balise) {
         re = new RegExp(exp, 'gi');
     return this.match(re);
 }
+String.prototype.metaProperties = function () {
+    var prop = [];
+    (this.indexOf('</nav>') !== -1) && prop.push('nav');
+    (this.indexOf('</math>') !== -1) && prop.push('mathml');
+    (this.indexOf('</script>') !== -1) && prop.push('scripted');
+    return prop;
+}
 
 function activate(context) {
 
@@ -33,14 +39,35 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     let disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier opf.');
+            return; // No open text editor
+        }
+        let d = e.document;
+        if (path.extname(d.fileName) !== '.opf') {
+            Window.showInformationMessage('Vous devez être dans un fichier opf');
+            return;
+        }
         var Liens = fichierLiens();
-        epubManifest(Liens);
+        epubManifest(Liens, d.fileName);
 
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+            return; // No open text editor
+        }
+        let d = e.document;
+        var tdm = isTDM(d.fileName);
+        if (!tdm) {
+            Window.showInformationMessage('Vous devez être dans un fichier toc');
+            return; // No open text editor
+        }
         var Liens = fichierLiens('.xhtml');
-        epubTOC(Liens);
+        epubTOC(Liens, d.fileName);
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
@@ -66,13 +93,13 @@ function epubTitle(fichiers) {
             var par = result[1];
         }
         remplaceDansFichier(el, par, 'title');
-
     });
 }
 
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
 }
+
 
 function pathOEBPS() {
     let e = Window.activeTextEditor;
@@ -84,18 +111,8 @@ function pathOEBPS() {
 }
 
 
-function epubTOC(liens) {
-    let e = Window.activeTextEditor;
-    if (!e) {
-        Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier.');
-        return; // No open text editor
-    }
-    let d = e.document;
-    var tdm = isTDM(d.fileName);
-    if (!tdm) {
-        Window.showInformationMessage('Vous devez être dans un fichier toc.');
-        return; // No open text editor
-    }
+function epubTOC(liens, fichierTOC) {
+
 
     var mesLiens = recupSpine(),
         mesTitres = [];
@@ -112,7 +129,7 @@ function epubTOC(liens) {
             mesTitres.push(monLien);
         }
     });
-    tableMatieres(mesTitres, d.fileName);
+    tableMatieres(mesTitres, fichierTOC);
 }
 
 function fichierLiens(type) {
@@ -274,8 +291,10 @@ function ecritureLigne(fichier, fichierOPF) {
         case '.xhtml':
             mediaType = "application/xhtml+xml";
             nom = path.basename(nom, '.xhtml');
-            if (findScript(fichier)) {
-                properties = ' properties="scripted"';
+            var data = fs.readFileSync(fichier, 'utf8');
+            var proper = data.metaProperties();
+            if (proper) {
+                properties = ' properties="' + proper.join(' ') + '"';
             }
             break;
         case '.pls':
@@ -331,35 +350,17 @@ function ecritureLigne(fichier, fichierOPF) {
 }
 
 
-function epubManifest(mesFichiers) {
-    let e = Window.activeTextEditor;
-    if (!e) {
-        Window.showInformationMessage('Vous devez être dans un fichier opf.');
-        return; // No open text editor
-    }
-    let d = e.document;
-    if (path.extname(d.fileName) !== '.opf') {
-        Window.showInformationMessage('Vous devez être dans un fichier opf');
-        return;
-    }
-
+function epubManifest(mesFichiers, fichierOPF) {
     var montexte = "";
     for (var fich in mesFichiers) {
-        if (fich !== d.fileName) {
-            montexte += ecritureLigne(mesFichiers[fich], d.fileName);
+        if (fich !== fichierOPF) {
+            montexte += ecritureLigne(mesFichiers[fich], fichierOPF);
         }
     }
 
-    remplaceDansFichier(d.fileName, montexte, 'manifest');
+    remplaceDansFichier(fichierOPF, montexte, 'manifest');
 }
 
-function findScript(fichier) {
-    var data = fs.readFileSync(fichier);
-    if (data.indexOf('</script>') !== -1) {
-        return true;
-    }
-    return false;
-}
 
 // Return a list of files of the specified fileTypes in the provided dir, 
 // with the file path relative to the given dir

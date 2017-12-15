@@ -25,6 +25,12 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.2.1
+- OPF xhtml item properties 
+    - "scripted"
+    - "mathml"
+    - "nav"
+    
 ### 1.2.0
 - ajout `EpubTools : premier <h.> => <title>`
 
