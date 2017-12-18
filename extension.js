@@ -28,6 +28,9 @@ String.prototype.metaProperties = function () {
     (this.indexOf('</script>') !== -1) && prop.push('scripted');
     return prop;
 }
+String.prototype.isNumeric = function () {
+    return !isNaN(parseFloat(this)) && isFinite(this);
+}
 
 function activate(context) {
 
@@ -69,8 +72,12 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = fichierLiens('.xhtml');
-        ajoutAncre(Liens);
-        // epubTOC(Liens, d.fileName);
+
+        if (config.get("ancreTDM").ajouterAncre) {
+            ajoutAncre(Liens);
+        }
+        epubTOC(Liens, d.fileName);
+
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
@@ -102,12 +109,9 @@ function epubTitle(fichiers) {
     });
 }
 
-
-
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
 }
-
 
 function pathOEBPS() {
     let e = Window.activeTextEditor;
@@ -127,7 +131,6 @@ function epubTOC(liens, fichierTOC) {
         var el1 = liens[el],
             data = fs.readFileSync(el1, 'utf8'),
             rtitre = rechercheTitre(data);
-
         if (rtitre) {
             var monLien = [];
             monLien.push(el1);
@@ -140,33 +143,30 @@ function epubTOC(liens, fichierTOC) {
 
 function ajoutAncre(liens) {
     var k = 0;
+    var nomId = config.get("ancreTDM").nomAncre;
     for (var fichier in liens) {
-        console.log(fichier);
         var data = fs.readFileSync(liens[fichier], 'utf8');
-
         var mesTitres = rechercheTitre(data);
-
         if (mesTitres) {
             var newdata = data;
-
             mesTitres.forEach(function (titre) {
                 var h = new RegExp('<h[0-9]([^>]*)>', 'ig');
                 var result = h.exec(titre);
-                var newtitre = titre.replace(result[1], ' id="toc-epubtools-' + k + '"');
+                if (result[1].indexOf('id') === -1) {
+                    var newtitre = titre.replace(result[1], result[1] + ' id="' + nomId + '-' + k + '"');
+                } else {
+                    var idexp = new RegExp('id="([^"]*)"', "ig");
+                    var res = idexp.exec(titre);
+                    newtitre = titre.replace(res[1], nomId + '-' + k);
+
+                }
                 newdata = newdata.replace(titre, newtitre);
                 k++;
             });
-            console.log(liens[fichier]);
-            // console.log(newdata);
-            fs.writeFile(liens[fichier], newdata, 'utf8', function (err) {
-                if (err) return console.log(err);
-            });
+            fs.writeFileSync(liens[fichier], newdata, 'utf8');
         }
-
-
-
-
     }
+
 }
 
 function fichierLiens(type) {
@@ -293,10 +293,7 @@ function rechercheTitre(texte) {
         exp = '<h[0-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[0-' + nivT + ']>',
         re = new RegExp(exp, 'gi');
     return texte.match(re);
-
 }
-
-
 
 
 function remplaceDansFichier(fichier, texte, balise, epubType) {
@@ -326,6 +323,7 @@ function ecritureLigne(fichier, fichierOPF) {
         properties = "",
         ext = path.extname(relativeFichier),
         nom = path.basename(relativeFichier);
+    nom = nom.substring(0, 1).isNumeric() && ("x" + nom) || nom;
     switch (ext) {
         case '.xhtml':
             mediaType = "application/xhtml+xml";
@@ -353,7 +351,8 @@ function ecritureLigne(fichier, fichierOPF) {
             //  Font Types
         case ".ttf":
         case ".otf":
-            mediaType = "application/font-sfnt"
+            // mediaType = "application/font-sfnt"; //version 3.1
+            mediaType = "application/vnd.ms-opentype";
             break;
         case ".woff":
             mediaType = "application/font-woff"
@@ -391,12 +390,12 @@ function ecritureLigne(fichier, fichierOPF) {
 
 function epubManifest(mesFichiers, fichierOPF) {
     var montexte = "";
+    var opf = path.basename(fichierOPF);
     for (var fich in mesFichiers) {
-        if (fich !== fichierOPF) {
+        if (fich !== opf) {
             montexte += ecritureLigne(mesFichiers[fich], fichierOPF);
         }
     }
-
     remplaceDansFichier(fichierOPF, montexte, 'manifest');
 }
 

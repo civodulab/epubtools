@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.2.2",
+    "version": "1.3.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -54,6 +54,14 @@
                     "type": "string",
                     "default": "Table des matières",
                     "description": "Titre de la table des matières"
+                },
+                "epub.ancreTDM": {
+                    "type": "object",
+                    "default": {
+                        "ajouterAncre": true,
+                        "nomAncre": "toc-epubtools"
+                    },
+                    "description": "Ancre sur les titres"
                 }
             }
         }

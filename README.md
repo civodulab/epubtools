@@ -21,9 +21,16 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     > Titre de la table des matières (défaut : **Table des matières**)
 - `epub.classeTDM`
     > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
+- `epub.ancreTDM`
+    >- `ajouterAncre` : boolean  (défaut : **true**)
+    >- `nomAncre` : nom de l'ancre (défaut : **toc-epubtools**)
 
 
 ## Release Notes
+
+### 1.3.0
+- correction bug dans le manifest (merci [garconvacher](https://github.com/garconvacher)). 
+- ajout d'ancres sur les titres (cf. options) (re-merci [garconvacher](https://github.com/garconvacher))
 
 ### 1.2.2
 - correction bug
