@@ -28,6 +28,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.3.1
+- changement de logo
+
 ### 1.3.0
 - correction bug dans le manifest (merci [garconvacher](https://github.com/garconvacher)). 
 - ajout d'ancres sur les titres (cf. options) (re-merci [garconvacher](https://github.com/garconvacher))
