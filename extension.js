@@ -16,11 +16,23 @@ String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     return this.replace(result[1], par);
 }
 
-String.prototype.rechercheEntre2Balises = function (balise) {
-    var exp = "<" + balise + "[^>]*>((?:.|\n|\r)*?)<\/" + balise + ">",
-        re = new RegExp(exp, 'gi');
-    return this.match(re);
-}
+// String.prototype.rechercheEntre2Balises = function (balise) {
+//     var exp = "<" + balise + "[^>]*>((?:.|\n|\r)*?)<\/" + balise + ">",
+//         re = new RegExp(exp, 'gi');
+//     return this.match(re);
+// }
+
+// const rechercheEntre2Balises = require('dom-search');
+// console.log(attr.getAllAttribut('<h1 id="ludo" class="voiture" aria-hidden="true">test</h1>'));
+// console.log(attr.getAllAttribut('<h1>test</h1>'));
+
+const dom = require('dom-js');
+const attr = require('elt-attr');
+
+// var ludo = new dom('<manifest><item id="main_agir_v4.1.css" href="css/main_agir_v4.1.css" media-type="text/css" /><item id="main_basique.css" href="css/main_basique.css" media-type="text/css" /><item id="main_opendys.css" href="css/main_opendys.css" media-type="text/css" /><item id="CaeciliaLTStd-Bold.otf" href="Fonts/CaeciliaLTStd-Bold.otf" media-type="application/vnd.ms-opentype" /><item id="CaeciliaLTStd-BoldItalic.otf" href="Fonts/CaeciliaLTStd-BoldItalic.otf" media-type="application/vnd.ms-opentype" /><item id="CaeciliaLTStd-Italic.otf" href="Fonts/CaeciliaLTStd-Italic.otf" media-type="application/vnd.ms-opentype" /></manifest><ludo>teste</ludo>');
+// console.log(ludo.getElementByTagName('manifest'));
+// console.log(ludo.getElementByTagName('item'));
+
 String.prototype.metaProperties = function () {
     var prop = [];
     (this.indexOf('</nav>') !== -1) && prop.push('nav');
@@ -28,9 +40,8 @@ String.prototype.metaProperties = function () {
     (this.indexOf('</script>') !== -1) && prop.push('scripted');
     return prop;
 }
-String.prototype.isNumeric = function () {
-    return !isNaN(parseFloat(this)) && isFinite(this);
-}
+
+const isNumeric = require('str-isnum');
 
 function activate(context) {
 
@@ -96,7 +107,6 @@ exports.deactivate = deactivate;
 
 
 function epubTitle(fichiers) {
-    Window.showOpenDialog();
     fichiers.forEach(function (el) {
         var txt = fs.readFileSync(el, 'utf8');
         var titres = rechercheTitre(txt);
@@ -190,7 +200,10 @@ function isTDM(fichier) {
 function recupSpine() {
     var monOPF = recupFichiers('.opf')[0];
     var data = fs.readFileSync(monOPF, 'utf8');
-    var monSpine = data.rechercheEntre2Balises('spine');
+    var monDom = new dom(data);
+    var monSpine = monDom.getElementByTagName('spine')
+    // var monSpine = data.rechercheEntre2Balises('spine');
+    // var monSpine = rechercheEntre2Balises(data, 'spine');
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
 }
@@ -290,9 +303,18 @@ function rechercheIdref(texte) {
 
 function rechercheTitre(texte) {
     var nivT = config.get('niveauTitre'),
-        exp = '<h[0-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[0-' + nivT + ']>',
-        re = new RegExp(exp, 'gi');
-    return texte.match(re);
+        monDom = new dom(texte),
+        mesTitres = [];
+    // var tt = 'h[0-' + nivT + ']';
+    for (let i = 1; i <= nivT; i++) {
+        var tt = monDom.getElementByTagName('h' + i);
+        mesTitres = tt && mesTitres.concat(monDom.getElementByTagName('h' + i)) || mesTitres;
+    }
+    return mesTitres;
+    // var nivT = config.get('niveauTitre'),
+    //     exp = '<h[0-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[0-' + nivT + ']>',
+    //     re = new RegExp(exp, 'gi');
+    // return texte.match(re);
 }
 
 
@@ -323,7 +345,7 @@ function ecritureLigne(fichier, fichierOPF) {
         properties = "",
         ext = path.extname(relativeFichier),
         nom = path.basename(relativeFichier);
-    nom = nom.substring(0, 1).isNumeric() && ("x" + nom) || nom;
+    nom = isNumeric(nom.substring(0, 1)) && ("x" + nom) || nom;
     switch (ext) {
         case '.xhtml':
             mediaType = "application/xhtml+xml";
