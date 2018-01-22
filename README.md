@@ -28,6 +28,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.3.2
+- fix bug "properties" vide
+- fix "media-type" JPG, jpeg
+
 ### 1.3.1
 - changement de logo
 
