@@ -16,22 +16,10 @@ String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     return this.replace(result[1], par);
 }
 
-// String.prototype.rechercheEntre2Balises = function (balise) {
-//     var exp = "<" + balise + "[^>]*>((?:.|\n|\r)*?)<\/" + balise + ">",
-//         re = new RegExp(exp, 'gi');
-//     return this.match(re);
-// }
-
-// const rechercheEntre2Balises = require('dom-search');
-// console.log(attr.getAllAttribut('<h1 id="ludo" class="voiture" aria-hidden="true">test</h1>'));
-// console.log(attr.getAllAttribut('<h1>test</h1>'));
 
 const dom = require('dom-js');
-const attr = require('elt-attr');
+// const attr = require('elt-attr');
 
-// var ludo = new dom('<manifest><item id="main_agir_v4.1.css" href="css/main_agir_v4.1.css" media-type="text/css" /><item id="main_basique.css" href="css/main_basique.css" media-type="text/css" /><item id="main_opendys.css" href="css/main_opendys.css" media-type="text/css" /><item id="CaeciliaLTStd-Bold.otf" href="Fonts/CaeciliaLTStd-Bold.otf" media-type="application/vnd.ms-opentype" /><item id="CaeciliaLTStd-BoldItalic.otf" href="Fonts/CaeciliaLTStd-BoldItalic.otf" media-type="application/vnd.ms-opentype" /><item id="CaeciliaLTStd-Italic.otf" href="Fonts/CaeciliaLTStd-Italic.otf" media-type="application/vnd.ms-opentype" /></manifest><ludo>teste</ludo>');
-// console.log(ludo.getElementByTagName('manifest'));
-// console.log(ludo.getElementByTagName('item'));
 
 String.prototype.metaProperties = function () {
     var prop = [];
@@ -346,13 +334,14 @@ function ecritureLigne(fichier, fichierOPF) {
         ext = path.extname(relativeFichier),
         nom = path.basename(relativeFichier);
     nom = isNumeric(nom.substring(0, 1)) && ("x" + nom) || nom;
+    ext = ext.toLowerCase();
     switch (ext) {
         case '.xhtml':
             mediaType = "application/xhtml+xml";
             nom = path.basename(nom, '.xhtml');
             var data = fs.readFileSync(fichier, 'utf8');
             var proper = data.metaProperties();
-            if (proper) {
+            if (proper.length !== 0) {
                 properties = ' properties="' + proper.join(' ') + '"';
             }
             break;
@@ -384,6 +373,7 @@ function ecritureLigne(fichier, fichierOPF) {
         case ".gif":
             mediaType = "image/gif"
             break;
+        case ".jpeg":
         case ".jpg":
             mediaType = "image/jpeg"
             break;
