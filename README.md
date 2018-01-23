@@ -30,6 +30,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.4.5
+- Correction bug "cannot find command"
+
 ### 1.4.0
 - Ajout de "page-liste"
 
