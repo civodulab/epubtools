@@ -16,6 +16,12 @@ String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     return this.replace(result[1], par);
 }
 
+String.prototype.getAttr = function (attr) {
+    var exp = attr + '="([^"]*)"',
+        re = new RegExp(exp, 'gi'),
+        result = re.exec(this);
+    return result[1];
+}
 
 const dom = require('dom-js');
 // const attr = require('elt-attr');
@@ -78,10 +84,38 @@ function activate(context) {
         epubTOC(Liens, d.fileName);
 
     });
+
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
         var Liens = recupFichiers('.xhtml');
         epubTitle(Liens);
+    });
+
+    context.subscriptions.push(disposable);
+    disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+            return; // No open text editor
+        }
+        let d = e.document;
+        var tdm = isTDM(d.fileName);
+        if (!tdm) {
+            Window.showInformationMessage('Vous devez être dans un fichier toc');
+            return; // No open text editor
+        }
+        var Liens = recupFichiers('.xhtml');
+        var txt = fs.readFileSync(d.fileName, 'utf8');
+        var pBreak = epubPageBreak(Liens, d.fileName);
+        if (txt.indexOf('epub:type="page-list"') !== -1) {
+
+            remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+        } else {
+            pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
+            insertEditorSelection(pBreak);
+        }
+
+
     });
     context.subscriptions.push(disposable);
 }
@@ -91,7 +125,63 @@ exports.activate = activate;
 function deactivate() {}
 exports.deactivate = deactivate;
 
+function insertEditorSelection(text) {
+    const editor = vscode.window.activeTextEditor;
+    const selections = editor.selections;
+    editor.edit((editBuilder) => {
+        selections.forEach((selection) => {
+            editBuilder.insert(selection.active, text);
+        });
+    });
+}
 
+
+
+function recherchePageBreak(texte) {
+    var monDom = new dom(texte),
+        mesTitres = [];
+    // var tt = 'h[0-' + nivT + ']';
+    var tt = monDom.getElementByAttr('epub:type', 'pagebreak');
+    mesTitres = tt && mesTitres.concat(tt) || mesTitres;
+    return mesTitres;
+}
+
+
+function epubPageBreak(fichiers, fichierTOC) {
+    var pageBreaks = [];
+    fichiers.forEach(function (el) {
+        var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
+        if (relativeP !== '') {
+            relativeP = relativeP + '/' + path.basename(el);
+        } else {
+            relativeP = path.basename(el);
+        }
+        var txt = fs.readFileSync(el, 'utf8');
+        var pb = recherchePageBreak(txt);
+        if (pb.length !== 0) {
+            pb.forEach(function (sp) {
+
+                pageBreaks.push({
+                    page: relativeP,
+                    value: sp.getAttr('title'),
+                    id: sp.getAttr('id')
+                });
+            });
+
+        }
+    });
+    pageBreaks.sort(function (a, b) {
+        return a.value - b.value;
+    });
+
+    var pageList = '<ol>\n';
+    pageBreaks.forEach(function (el) {
+        pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
+
+    });
+    pageList += '</ol>\n';
+    return pageList;
+}
 
 
 function epubTitle(fichiers) {
@@ -299,10 +389,7 @@ function rechercheTitre(texte) {
         mesTitres = tt && mesTitres.concat(monDom.getElementByTagName('h' + i)) || mesTitres;
     }
     return mesTitres;
-    // var nivT = config.get('niveauTitre'),
-    //     exp = '<h[0-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[0-' + nivT + ']>',
-    //     re = new RegExp(exp, 'gi');
-    // return texte.match(re);
+
 }
 
 

@@ -13,6 +13,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le spine de l'OPF.
 - `EpubTools : premier <h.> => <title>`
     > Copie le premier titre (s'il y en a) de chaque page xhtml dans la balise title de celle-ci
+- `EpubTools : Création Page Liste`
+    >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
 
 ## EpubTools Configuration (`ctrl+,`)
 - `epub.niveauTitre`
@@ -27,6 +29,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 
 ## Release Notes
+
+### 1.4.0
+- Ajout de "page-liste"
 
 ### 1.3.2
 - fix bug "properties" vide
