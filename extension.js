@@ -23,7 +23,9 @@ String.prototype.getAttr = function (attr) {
     return result[1];
 }
 
-const dom = require('dom-js');
+const dom = require('./mes_modules/dom-js');
+const isNumeric = require('./mes_modules/str-isnum');
+
 // const attr = require('elt-attr');
 
 
@@ -35,7 +37,6 @@ String.prototype.metaProperties = function () {
     return prop;
 }
 
-const isNumeric = require('str-isnum');
 
 function activate(context) {
 
