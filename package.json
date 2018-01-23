@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.3.2",
+    "version": "1.4.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -33,6 +33,12 @@
                 "command": "extension.epubTitle",
                 "title": "premier <h.> => <title>",
                 "description": "Copie le premier titre des pages xhtml dans la balise title de chaque page",
+                "category": "EpubTools"
+            },
+            {
+                "command": "extension.epubPageList",
+                "title": "Création Page Liste",
+                "description": "Création de la 'page-list' dans le fichier de la table des matières",
                 "category": "EpubTools"
             }
         ],
