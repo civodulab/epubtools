@@ -92,6 +92,7 @@ function activate(context) {
     });
 
     context.subscriptions.push(disposable);
+
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
         let e = Window.activeTextEditor;
         if (!e) {
@@ -140,7 +141,6 @@ function insertEditorSelection(text) {
 function recherchePageBreak(texte) {
     var monDom = new dom(texte),
         mesTitres = [];
-    // var tt = 'h[0-' + nivT + ']';
     var tt = monDom.getElementByAttr('epub:type', 'pagebreak');
     mesTitres = tt && mesTitres.concat(tt) || mesTitres;
     return mesTitres;
