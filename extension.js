@@ -78,7 +78,7 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = fichierLiens('.xhtml');
-
+        testLiensPages(Liens);
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
         }
@@ -126,6 +126,18 @@ exports.activate = activate;
 // this method is called when your extension is deactivated
 function deactivate() {}
 exports.deactivate = deactivate;
+
+
+function testLiensPages(liens){
+    Object.keys(liens).forEach(function (el) {
+        var data = fs.readFileSync(liens[el], 'utf8'),
+            rtitre = rechercheTitre(data);
+        if (rtitre.length===0) {
+           Window.showWarningMessage('Le fichier "**'+path.basename(el)+'**" ne contient aucun liens');
+        }
+    });
+}
+
 
 function insertEditorSelection(text) {
     const editor = vscode.window.activeTextEditor;
@@ -281,8 +293,6 @@ function recupSpine() {
     var data = fs.readFileSync(monOPF, 'utf8');
     var monDom = new dom(data);
     var monSpine = monDom.getElementByTagName('spine')
-    // var monSpine = data.rechercheEntre2Balises('spine');
-    // var monSpine = rechercheEntre2Balises(data, 'spine');
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
 }
