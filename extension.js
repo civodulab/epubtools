@@ -107,15 +107,25 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = recupFichiers('.xhtml');
-        var txt = fs.readFileSync(d.fileName, 'utf8');
         var pBreak = epubPageBreak(Liens, d.fileName);
-        if (txt.indexOf('epub:type="page-list"') !== -1) {
+        console.log(pBreak);
+        if (pBreak.length !== 0) {
+            var txt = fs.readFileSync(d.fileName, 'utf8');
 
-            remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+            if (txt.indexOf('epub:type="page-list"') !== -1) {
+
+                remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+            } else {
+                pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
+                insertEditorSelection(pBreak);
+            }
         } else {
-            pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
-            insertEditorSelection(pBreak);
+            Window.showInformationMessage("Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.");
+            remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
+
+
         }
+
 
 
     });
@@ -128,12 +138,12 @@ function deactivate() {}
 exports.deactivate = deactivate;
 
 
-function testLiensPages(liens){
+function testLiensPages(liens) {
     Object.keys(liens).forEach(function (el) {
         var data = fs.readFileSync(liens[el], 'utf8'),
             rtitre = rechercheTitre(data);
-        if (rtitre.length===0) {
-           Window.showWarningMessage('Le fichier "**'+path.basename(el)+'**" ne contient aucun liens');
+        if (rtitre.length === 0) {
+            Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" ne contient aucun titre');
         }
     });
 }
@@ -186,14 +196,16 @@ function epubPageBreak(fichiers, fichierTOC) {
     pageBreaks.sort(function (a, b) {
         return a.value - b.value;
     });
+    if (pageBreaks.length !== 0) {
+        var pageList = '<ol>\n';
+        pageBreaks.forEach(function (el) {
+            pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
 
-    var pageList = '<ol>\n';
-    pageBreaks.forEach(function (el) {
-        pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
-
-    });
-    pageList += '</ol>\n';
-    return pageList;
+        });
+        pageList += '</ol>\n';
+        return pageList;
+    }
+    return pageBreaks;
 }
 
 
