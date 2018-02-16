@@ -20,7 +20,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.niveauTitre`
     > Niveau de titre dans la table des matières (défaut : **3**)
 - `epub.titreTDM`
-    > Titre de la table des matières (défaut : **Table des matières**)
+    >- `titre` : Titre de la table des matières (défaut : **Table des matières**)
+    >- `balise` : Balise pour le titre (défaut : **h1**)
+    >- `classe` : classe pour le titre (défaut : **titre1**)
 - `epub.classeTDM`
     > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
 - `epub.ancreTDM`
@@ -29,12 +31,19 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 
 ## Release Notes
+
+### 1.4.7
+- correction bug Table des matières (merci [garconvacher](https://github.com/garconvacher)).
+
 ### 1.4.6
-- Indique les fichiers ne contenant pas de titres
-- 
+- modification des paramètres de configuration TDM
+    - ajout de `balise`
+    - ajout de `classe`
 
 ### 1.4.5
 - Correction bug "cannot find command"
+- Indique les fichiers ne contenant pas de titre lors de `EpubTools : Table des matières`
+- Fix "page-liste" (message lorsqu'il n'y a pas de "pagebreak" dans l'EPUB)
 
 ### 1.4.0
 - Ajout de "page-liste"

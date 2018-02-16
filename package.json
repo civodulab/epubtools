@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.4.4",
+    "version": "1.4.7",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -57,8 +57,12 @@
                     "description": "Classe appliquée au <ol>"
                 },
                 "epub.titreTDM": {
-                    "type": "string",
-                    "default": "Table des matières",
+                    "type": "object",
+                    "default": {
+                        "titre": "Table des matières",
+                        "balise": "h1",
+                        "classe": "titre1"
+                    },
                     "description": "Titre de la table des matières"
                 },
                 "epub.ancreTDM": {

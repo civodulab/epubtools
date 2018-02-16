@@ -78,6 +78,7 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = fichierLiens('.xhtml');
+
         testLiensPages(Liens);
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
@@ -108,7 +109,6 @@ function activate(context) {
         }
         var Liens = recupFichiers('.xhtml');
         var pBreak = epubPageBreak(Liens, d.fileName);
-        console.log(pBreak);
         if (pBreak.length !== 0) {
             var txt = fs.readFileSync(d.fileName, 'utf8');
 
@@ -239,6 +239,7 @@ function pathOEBPS() {
 function epubTOC(liens, fichierTOC) {
     var mesLiens = recupSpine(),
         mesTitres = [];
+
     mesLiens.forEach(function (el) {
         el = path.basename(el);
         var el1 = liens[el],
@@ -312,7 +313,8 @@ function recupSpine() {
 
 
 function tableMatieres(titres, fichierTOC) {
-    var maTableXhtml = '<h2 class="titre1">' + config.get('titreTDM') + '</h2>\n',
+    var titreTDM = config.get('titreTDM');
+    var maTableXhtml = '<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n',
         titreAvant = 0,
         classeOL = config.get('classeTDM');
     var maTableNCX = '';
@@ -406,12 +408,11 @@ function rechercheTitre(texte) {
     var nivT = config.get('niveauTitre'),
         monDom = new dom(texte),
         mesTitres = [];
-    // var tt = 'h[0-' + nivT + ']';
-    for (let i = 1; i <= nivT; i++) {
-        var tt = monDom.getElementByTagName('h' + i);
-        mesTitres = tt && mesTitres.concat(monDom.getElementByTagName('h' + i)) || mesTitres;
-    }
-    return mesTitres;
+    var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
+        re = new RegExp(exp, 'gi'),
+        result = texte.match(re);
+
+    return result;
 
 }
 
