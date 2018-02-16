@@ -17,13 +17,6 @@ dom.prototype.getElementByTagName = function (tagname) {
 };
 
 dom.prototype.getElementByAttr = function (attr, val) {
-    var txt = this.txt;
-    // '<[^<>]* ?epub:type="pagebreak"[^>]*>((?:.|\n|\r)*?)<\/[^>]*>'
-    // if (txt.indexOf('/' + tagname) !== -1) {
-    //     var fin = '[^>]*>(?:.|\n|\r)*?<\/' + tagname + '>?';
-    // } else {
-    //     fin = '[^>]*>?'
-    // }
     var exp = '<[^<>]* ?' + attr + '="' + val + '"[^>]*>((?:.|\n|\r)*?)<\/[^>]*>',
         re = new RegExp(exp, 'gi'),
         result = this.txt.match(re);

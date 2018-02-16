@@ -32,6 +32,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.4.13
+- fix TOC
+
 ### 1.4.7
 - correction bug Table des matières (merci [garconvacher](https://github.com/garconvacher)).
 

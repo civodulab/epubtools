@@ -26,8 +26,6 @@ String.prototype.getAttr = function (attr) {
 const dom = require('./mes_modules/dom-js');
 const isNumeric = require('./mes_modules/str-isnum');
 
-// const attr = require('elt-attr');
-
 
 String.prototype.metaProperties = function () {
     var prop = [];
@@ -78,11 +76,11 @@ function activate(context) {
             return; // No open text editor
         }
         var Liens = fichierLiens('.xhtml');
-
         testLiensPages(Liens);
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
         }
+
         epubTOC(Liens, d.fileName);
 
     });
@@ -126,8 +124,6 @@ function activate(context) {
 
         }
 
-
-
     });
     context.subscriptions.push(disposable);
 }
@@ -142,7 +138,8 @@ function testLiensPages(liens) {
     Object.keys(liens).forEach(function (el) {
         var data = fs.readFileSync(liens[el], 'utf8'),
             rtitre = rechercheTitre(data);
-        if (rtitre.length === 0) {
+        console.log(rtitre);
+        if (!rtitre) {
             Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" ne contient aucun titre');
         }
     });
@@ -237,25 +234,31 @@ function pathOEBPS() {
 
 
 function epubTOC(liens, fichierTOC) {
-    var mesLiens = recupSpine(),
-        mesTitres = [];
+    try {
+        console.log('ok');
+        var mesLiens = recupSpine(),
+            mesTitres = [];
 
-    mesLiens.forEach(function (el) {
-        el = path.basename(el);
-        var el1 = liens[el],
-            data = fs.readFileSync(el1, 'utf8'),
-            rtitre = rechercheTitre(data);
-        if (rtitre) {
-            var monLien = [];
-            monLien.push(el1);
-            monLien.push(rtitre);
-            mesTitres.push(monLien);
-        }
-    });
-    tableMatieres(mesTitres, fichierTOC);
+        mesLiens.forEach(function (el) {
+            el = path.basename(el);
+            var el1 = liens[el],
+                data = fs.readFileSync(el1, 'utf8'),
+                rtitre = rechercheTitre(data);
+            if (rtitre) {
+                var monLien = [];
+                monLien.push(el1);
+                monLien.push(rtitre);
+                mesTitres.push(monLien);
+            }
+        });
+        tableMatieres(mesTitres, fichierTOC);
+    } catch (error) {
+        Window.showErrorMessage('Vous avez une erreur avec votre spine dans le fichier "opf".');
+    }
 }
 
 function ajoutAncre(liens) {
+
     var k = 0;
     var nomId = config.get("ancreTDM").nomAncre;
     for (var fichier in liens) {
@@ -308,9 +311,8 @@ function recupSpine() {
     var monSpine = monDom.getElementByTagName('spine')
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
+
 }
-
-
 
 function tableMatieres(titres, fichierTOC) {
     var titreTDM = config.get('titreTDM');
@@ -333,42 +335,50 @@ function tableMatieres(titres, fichierTOC) {
         el[1].forEach(function (titre) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig'),
                 id = '';
+            var nivT = config.get('niveauTitre');
             if (titre.indexOf('id=') !== -1) {
                 var idexp = new RegExp('id="([^"]*)"', 'gi');
                 id = '#' + idexp.exec(titre)[1];
             }
             var result = h.exec(titre);
-            if (result[2] === titreAvant) {
-                maTableXhtml += '</li>\n<li>\n';
 
-                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
-            } else if (result[2] < titreAvant) {
-                maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant - result[2]);
-                maTableXhtml += '</li>\n<li>\n';
+            if (result[2] <= nivT) {
+                if (result[2] === titreAvant) {
+                    maTableXhtml += '</li>\n<li>\n';
 
-                maTableNCX += '</navPoint>\n'.repeat(titreAvant - result[2]);
-                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
-            } else if (result[2] > titreAvant) {
-                if (titreAvant === 0) {
-                    maTableXhtml += '<ol class="' + classeOL + '">\n<li>\n';
-                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant - 1);
-                } else {
-                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant);
+                    maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
+                } else if (result[2] < titreAvant) {
+                    maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant - result[2]);
+                    maTableXhtml += '</li>\n<li>\n';
+
+                    maTableNCX += '</navPoint>\n'.repeat(titreAvant - result[2]);
+                    maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
+                } else if (result[2] > titreAvant) {
+                    if (titreAvant === 0) {
+                        maTableXhtml += '<ol class="' + classeOL + '">\n<li>\n';
+                        maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant - 1);
+                    } else {
+                        maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant);
+                    }
+                    maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
                 }
-                maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
+
+                console.log(path.basename(relativeP) + '===' + path.basename(fichierTOC));
+                if (path.basename(relativeP) === path.basename(fichierTOC)) {
+                    id = "";
+                }
+                maTableXhtml += '<a href="' + relativeP + id + '">';
+                maTableXhtml += result[1] + '</a>';
+
+                maTableNCX += '<navLabel>\n<text>';
+                maTableNCX += result[1];
+                maTableNCX += '</text>\n</navLabel>\n';
+
+                maTableNCX += '<content src="' + relativeP + id + '" />';
+
+                titreAvant = result[2];
+                i++;
             }
-
-            maTableXhtml += '<a href="' + relativeP + id + '">';
-            maTableXhtml += result[1] + '</a>';
-
-            maTableNCX += '<navLabel>\n<text>';
-            maTableNCX += result[1];
-            maTableNCX += '</text>\n</navLabel>\n';
-            maTableNCX += '<content src="' + relativeP + id + '" />';
-            // maTableNCX += '</navPoint>';
-
-            titreAvant = result[2];
-            i++;
         });
         if (k === ltitres - 1) {
             maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant);
@@ -405,10 +415,8 @@ function rechercheIdref(texte) {
 }
 
 function rechercheTitre(texte) {
-    var nivT = config.get('niveauTitre'),
-        monDom = new dom(texte),
-        mesTitres = [];
-    var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
+
+    var exp = '<h[0-9][^>]*>(?:.|\n|\r)*?<\/h[0-9]>?',
         re = new RegExp(exp, 'gi'),
         result = texte.match(re);
 
@@ -545,7 +553,6 @@ function getFilesFromDir(dir, typeO) {
             }
             if (!typeO) type = path.extname(curFile);
             if (fs.statSync(curFile).isFile() && path.extname(curFile) === type) {
-                // filesToReturn.push(curFile.replace(dir, ''));
                 filesToReturn.push(curFile);
             } else if (fs.statSync(curFile).isDirectory()) {
                 walkDir(curFile);
@@ -553,10 +560,6 @@ function getFilesFromDir(dir, typeO) {
         }
     };
     walkDir(dir);
-    // if (fichier) {
-    //     filesToReturn = walkDir(dir);
-    // } else {
-    //     walkDir(dir);
-    // }
+
     return filesToReturn;
 }
