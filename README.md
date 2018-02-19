@@ -5,6 +5,8 @@ Outils destinés à améliorer le travail sur les EPUB.
 ## À savoir
 Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans les répertoires de celui-ci.
 
+----------
+
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : Manifest`
@@ -15,6 +17,12 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     > Copie le premier titre (s'il y en a) de chaque page xhtml dans la balise title de celle-ci
 - `EpubTools : Création Page Liste`
     >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
+- `EpubTools : Problèmes ?`
+    >  Affiche les problèmes dans l'onglet `SORTIE`
+    >   - Pages sans titre
+    >   - Hiérarchie des titres
+
+----------
 
 ## EpubTools Configuration (`ctrl+,`)
 - `epub.niveauTitre`
@@ -29,8 +37,14 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     >- `ajouterAncre` : boolean  (défaut : **true**)
     >- `nomAncre` : nom de l'ancre (défaut : **toc-epubtools**)
 
+----------
+
 
 ## Release Notes
+
+### 1.5.0
+- Affiche les problèmes (cf. `EpubTools : Problèmes ?`)
+- Vérification de la hiérarchisation des titres.
 
 ### 1.4.13
 - fix TOC

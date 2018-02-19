@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 'use strict';
 const vscode = require('vscode');
+
 const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
@@ -102,6 +103,19 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
 
+    disposable = vscode.commands.registerCommand('extension.epubError', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+            return; // No open text editor
+        }
+        var Liens = util.recupFichiers('.xhtml');
+        testLiensPages(Liens);
+        outputChannel.show(true);
+    });
+
+    context.subscriptions.push(disposable);
+
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
         let e = Window.activeTextEditor;
         if (!e) {
@@ -152,38 +166,29 @@ function testLiensPages(liens) {
         var data = fs.readFileSync(liens[el], 'utf8'),
             rtitre = rechercheTitre(data);
         if (!rtitre) {
-            Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" ne contient aucun titre');
             sansTitre.push(fd);
-
-
         } else {
             if (!hierarchieTitre(data)) {
-                Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" a un problème de hiérarchie dans les titres');
                 pbHierarchie.push(fd);
             }
         }
     });
     if (sansTitre.length !== 0) {
-        var num = 1;
         text = '- Fichiers sans Titres\n';
-        sansTitre.forEach(function (el) {
-            text += '\t#' + num + '\t' + el.toString() + '\n';
-            num++;
+        sansTitre.forEach(function (el, i) {
+            text += '\t' + (i + 1) + ' -\t' + el.toString() + '\n';
+
         });
 
     }
     if (pbHierarchie.length !== 0) {
-        num = 1;
         text += '- Problème de hiérarchie dans les titres sur les fichiers suivants :\n';
-        pbHierarchie.forEach(function (el) {
-            console.log(el);
-            text += '\t#' + num + '\t' + el.toString() + '\n';
-            num++;
+        pbHierarchie.forEach(function (el, i) {
+            text += '\t' + (i + 1) + ' -\t' + el.toString() + '\n';
         });
     }
     outputChannel.appendLine(text);
 }
-
 
 function insertEditorSelection(text) {
     const editor = vscode.window.activeTextEditor;
@@ -258,18 +263,6 @@ function epubTitle(fichiers) {
     });
 }
 
-// function recupFichiers(typeOrfichier) {
-//     return getFilesFromDir(pathOEBPS(), typeOrfichier);
-// }
-
-// function pathOEBPS() {
-//     let e = Window.activeTextEditor;
-//     let d = e.document;
-//     if (d.fileName.indexOf('OEBPS') !== -1) {
-//         var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
-//     }
-//     return path.join(chemin, 'OEBPS');
-// }
 
 
 function epubTOC(liens, fichierTOC) {
@@ -324,15 +317,6 @@ function ajoutAncre(liens) {
 
 }
 
-// function fichierLiens(type) {
-//     var mesXhtml = util.recupFichiers(type);
-//     var Liens = {};
-//     mesXhtml.forEach(function (el) {
-//         var el2 = path.basename(el);
-//         Liens[el2] = el;
-//     });
-//     return Liens;
-// }
 
 function isTDM(fichier) {
     var txt = fs.readFileSync(fichier, 'utf8');
@@ -466,7 +450,6 @@ function hierarchieTitre(texte) {
         if (i === 0) {
             titreAvant = result[1];
         } else {
-            console.log(result[1] + " * " + titreAvant);
             if (result[1] >= titreAvant && result[1] - titreAvant > 1) {
                 return false;
             }
@@ -581,37 +564,3 @@ function epubManifest(mesFichiers, fichierOPF) {
     }
     remplaceDansFichier(fichierOPF, montexte, 'manifest');
 }
-
-
-// Return a list of files of the specified fileTypes in the provided dir, 
-// with the file path relative to the given dir
-// dir: path of the directory you want to search the files for
-// fileTypes: array of file types you are search files, ex: ['.txt', '.jpg']
-// function getFilesFromDir(dir, typeO) {
-//     var filesToReturn = [],
-//         type = typeO,
-//         fichier = false;
-//     if (type && type.split('.')[0] !== '') {
-//         fichier = true;
-//         filesToReturn = '';
-//     }
-
-//     function walkDir(currentPath) {
-//         var files = fs.readdirSync(currentPath);
-//         for (var i in files) {
-//             var curFile = path.join(currentPath, files[i]);
-//             if (fichier === true && files[i] === type) {
-//                 filesToReturn = curFile;
-//             }
-//             if (!typeO) type = path.extname(curFile);
-//             if (fs.statSync(curFile).isFile() && path.extname(curFile) === type) {
-//                 filesToReturn.push(curFile);
-//             } else if (fs.statSync(curFile).isDirectory()) {
-//                 walkDir(curFile);
-//             }
-//         }
-//     };
-//     walkDir(dir);
-
-//     return filesToReturn;
-// }

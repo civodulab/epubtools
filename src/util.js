@@ -1,9 +1,9 @@
 'use strict';
 const vscode = require('vscode');
-const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
+
 
 function fichierLiens(type) {
     var mesXhtml = recupFichiers(type);
@@ -20,6 +20,7 @@ function recupFichiers(typeOrfichier) {
 }
 
 function pathOEBPS() {
+
     let e = Window.activeTextEditor;
     let d = e.document;
     if (d.fileName.indexOf('OEBPS') !== -1) {

@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.4.13",
+    "version": "1.5.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -39,6 +39,12 @@
                 "command": "extension.epubPageList",
                 "title": "Création Page Liste",
                 "description": "Création de la 'page-list' dans le fichier de la table des matières",
+                "category": "EpubTools"
+            },
+            {
+                "command": "extension.epubError",
+                "title": "Problèmes ?",
+                "description": "Affiche les problèmes dans SORTIE",
                 "category": "EpubTools"
             }
         ],
