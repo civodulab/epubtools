@@ -3,10 +3,15 @@
 'use strict';
 const vscode = require('vscode');
 const config = vscode.workspace.getConfiguration('epub');
-
 const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
+
+var util = require('./src/util');
+
+//Sortie
+let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
+
 
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
@@ -56,7 +61,7 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un fichier opf');
             return;
         }
-        var Liens = fichierLiens();
+        var Liens = util.fichierLiens();
         epubManifest(Liens, d.fileName);
 
     });
@@ -75,19 +80,23 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un fichier toc');
             return; // No open text editor
         }
-        var Liens = fichierLiens('.xhtml');
+        outputChannel.clear();
+        var Liens = util.fichierLiens('.xhtml');
         testLiensPages(Liens);
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
         }
 
+
         epubTOC(Liens, d.fileName);
+        outputChannel.show(true);
+
 
     });
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
-        var Liens = recupFichiers('.xhtml');
+        var Liens = util.recupFichiers('.xhtml');
         epubTitle(Liens);
     });
 
@@ -105,7 +114,7 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un fichier toc');
             return; // No open text editor
         }
-        var Liens = recupFichiers('.xhtml');
+        var Liens = util.recupFichiers('.xhtml');
         var pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
             var txt = fs.readFileSync(d.fileName, 'utf8');
@@ -135,14 +144,44 @@ exports.deactivate = deactivate;
 
 
 function testLiensPages(liens) {
+    var sansTitre = [],
+        pbHierarchie = [];
+    var text = "";
     Object.keys(liens).forEach(function (el) {
+        var fd = vscode.Uri.file(liens[el]);
         var data = fs.readFileSync(liens[el], 'utf8'),
             rtitre = rechercheTitre(data);
-        console.log(rtitre);
         if (!rtitre) {
             Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" ne contient aucun titre');
+            sansTitre.push(fd);
+
+
+        } else {
+            if (!hierarchieTitre(data)) {
+                Window.showWarningMessage('Le fichier "**' + path.basename(el) + '**" a un problème de hiérarchie dans les titres');
+                pbHierarchie.push(fd);
+            }
         }
     });
+    if (sansTitre.length !== 0) {
+        var num = 1;
+        text = '- Fichiers sans Titres\n';
+        sansTitre.forEach(function (el) {
+            text += '\t#' + num + '\t' + el.toString() + '\n';
+            num++;
+        });
+
+    }
+    if (pbHierarchie.length !== 0) {
+        num = 1;
+        text += '- Problème de hiérarchie dans les titres sur les fichiers suivants :\n';
+        pbHierarchie.forEach(function (el) {
+            console.log(el);
+            text += '\t#' + num + '\t' + el.toString() + '\n';
+            num++;
+        });
+    }
+    outputChannel.appendLine(text);
 }
 
 
@@ -219,23 +258,22 @@ function epubTitle(fichiers) {
     });
 }
 
-function recupFichiers(typeOrfichier) {
-    return getFilesFromDir(pathOEBPS(), typeOrfichier);
-}
+// function recupFichiers(typeOrfichier) {
+//     return getFilesFromDir(pathOEBPS(), typeOrfichier);
+// }
 
-function pathOEBPS() {
-    let e = Window.activeTextEditor;
-    let d = e.document;
-    if (d.fileName.indexOf('OEBPS') !== -1) {
-        var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
-    }
-    return path.join(chemin, 'OEBPS');
-}
+// function pathOEBPS() {
+//     let e = Window.activeTextEditor;
+//     let d = e.document;
+//     if (d.fileName.indexOf('OEBPS') !== -1) {
+//         var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
+//     }
+//     return path.join(chemin, 'OEBPS');
+// }
 
 
 function epubTOC(liens, fichierTOC) {
     try {
-        console.log('ok');
         var mesLiens = recupSpine(),
             mesTitres = [];
 
@@ -253,12 +291,12 @@ function epubTOC(liens, fichierTOC) {
         });
         tableMatieres(mesTitres, fichierTOC);
     } catch (error) {
+
         Window.showErrorMessage('Vous avez une erreur avec votre spine dans le fichier "opf".');
     }
 }
 
 function ajoutAncre(liens) {
-
     var k = 0;
     var nomId = config.get("ancreTDM").nomAncre;
     for (var fichier in liens) {
@@ -286,15 +324,15 @@ function ajoutAncre(liens) {
 
 }
 
-function fichierLiens(type) {
-    var mesXhtml = recupFichiers(type);
-    var Liens = {};
-    mesXhtml.forEach(function (el) {
-        var el2 = path.basename(el);
-        Liens[el2] = el;
-    });
-    return Liens;
-}
+// function fichierLiens(type) {
+//     var mesXhtml = util.recupFichiers(type);
+//     var Liens = {};
+//     mesXhtml.forEach(function (el) {
+//         var el2 = path.basename(el);
+//         Liens[el2] = el;
+//     });
+//     return Liens;
+// }
 
 function isTDM(fichier) {
     var txt = fs.readFileSync(fichier, 'utf8');
@@ -305,7 +343,7 @@ function isTDM(fichier) {
 }
 
 function recupSpine() {
-    var monOPF = recupFichiers('.opf')[0];
+    var monOPF = util.recupFichiers('.opf')[0];
     var data = fs.readFileSync(monOPF, 'utf8');
     var monDom = new dom(data);
     var monSpine = monDom.getElementByTagName('spine')
@@ -335,50 +373,46 @@ function tableMatieres(titres, fichierTOC) {
         el[1].forEach(function (titre) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig'),
                 id = '';
-            var nivT = config.get('niveauTitre');
             if (titre.indexOf('id=') !== -1) {
                 var idexp = new RegExp('id="([^"]*)"', 'gi');
                 id = '#' + idexp.exec(titre)[1];
             }
             var result = h.exec(titre);
+            if (result[2] === titreAvant) {
+                maTableXhtml += '</li>\n<li>\n';
 
-            if (result[2] <= nivT) {
-                if (result[2] === titreAvant) {
-                    maTableXhtml += '</li>\n<li>\n';
+                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
+            } else if (result[2] < titreAvant) {
+                maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant - result[2]);
+                maTableXhtml += '</li>\n<li>\n';
 
-                    maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
-                } else if (result[2] < titreAvant) {
-                    maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant - result[2]);
-                    maTableXhtml += '</li>\n<li>\n';
-
-                    maTableNCX += '</navPoint>\n'.repeat(titreAvant - result[2]);
-                    maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
-                } else if (result[2] > titreAvant) {
-                    if (titreAvant === 0) {
-                        maTableXhtml += '<ol class="' + classeOL + '">\n<li>\n';
-                        maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant - 1);
-                    } else {
-                        maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant);
-                    }
-                    maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
+                maTableNCX += '</navPoint>\n'.repeat(titreAvant - result[2]);
+                maTableNCX += '</navPoint>\n<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n';
+            } else if (result[2] > titreAvant) {
+                if (titreAvant === 0) {
+                    maTableXhtml += '<ol class="' + classeOL + '">\n<li>\n';
+                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant - 1);
+                } else {
+                    maTableXhtml += '<ol>\n<li>\n'.repeat(result[2] - titreAvant);
                 }
-
-                console.log(path.basename(relativeP) + '===' + path.basename(fichierTOC));
-                if (path.basename(relativeP) === path.basename(fichierTOC)) {
-                    id = "";
-                }
-                maTableXhtml += '<a href="' + relativeP + id + '">';
-                maTableXhtml += result[1] + '</a>';
-
-                maTableNCX += '<navLabel>\n<text>';
-                maTableNCX += result[1];
-                maTableNCX += '</text>\n</navLabel>\n';
-
-                maTableNCX += '<content src="' + relativeP + id + '" />';
-
-                titreAvant = result[2];
-                i++;
+                maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
             }
+
+            if (path.basename(relativeP) === path.basename(fichierTOC)) {
+                id = "";
+            }
+            maTableXhtml += '<a href="' + relativeP + id + '">';
+            maTableXhtml += result[1] + '</a>';
+
+            maTableNCX += '<navLabel>\n<text>';
+            maTableNCX += result[1];
+            maTableNCX += '</text>\n</navLabel>\n';
+
+            maTableNCX += '<content src="' + relativeP + id + '" />';
+
+            titreAvant = result[2];
+            i++;
+
         });
         if (k === ltitres - 1) {
             maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant);
@@ -414,16 +448,34 @@ function rechercheIdref(texte) {
     return texte.match(re);
 }
 
-function rechercheTitre(texte) {
-
-    var exp = '<h[0-9][^>]*>(?:.|\n|\r)*?<\/h[0-9]>?',
+function rechercheTitre(texte, nivT) {
+    nivT = nivT || config.get('niveauTitre');
+    var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
         re = new RegExp(exp, 'gi'),
         result = texte.match(re);
-
     return result;
-
 }
 
+function hierarchieTitre(texte) {
+    var mesTitres = rechercheTitre(texte, 9);
+    var titreAvant;
+    for (let i = 0; i < mesTitres.length; i++) {
+        const el = mesTitres[i];
+        var h = new RegExp('<h([0-9])', 'ig');
+        var result = h.exec(el);
+        if (i === 0) {
+            titreAvant = result[1];
+        } else {
+            console.log(result[1] + " * " + titreAvant);
+            if (result[1] >= titreAvant && result[1] - titreAvant > 1) {
+                return false;
+            }
+            titreAvant = result[1];
+        }
+    }
+    return true;
+
+}
 
 function remplaceDansFichier(fichier, texte, balise, epubType) {
     fs.readFile(fichier, 'utf8', function (err, data) {
@@ -535,31 +587,31 @@ function epubManifest(mesFichiers, fichierOPF) {
 // with the file path relative to the given dir
 // dir: path of the directory you want to search the files for
 // fileTypes: array of file types you are search files, ex: ['.txt', '.jpg']
-function getFilesFromDir(dir, typeO) {
-    var filesToReturn = [],
-        type = typeO,
-        fichier = false;
-    if (type && type.split('.')[0] !== '') {
-        fichier = true;
-        filesToReturn = '';
-    }
+// function getFilesFromDir(dir, typeO) {
+//     var filesToReturn = [],
+//         type = typeO,
+//         fichier = false;
+//     if (type && type.split('.')[0] !== '') {
+//         fichier = true;
+//         filesToReturn = '';
+//     }
 
-    function walkDir(currentPath) {
-        var files = fs.readdirSync(currentPath);
-        for (var i in files) {
-            var curFile = path.join(currentPath, files[i]);
-            if (fichier === true && files[i] === type) {
-                filesToReturn = curFile;
-            }
-            if (!typeO) type = path.extname(curFile);
-            if (fs.statSync(curFile).isFile() && path.extname(curFile) === type) {
-                filesToReturn.push(curFile);
-            } else if (fs.statSync(curFile).isDirectory()) {
-                walkDir(curFile);
-            }
-        }
-    };
-    walkDir(dir);
+//     function walkDir(currentPath) {
+//         var files = fs.readdirSync(currentPath);
+//         for (var i in files) {
+//             var curFile = path.join(currentPath, files[i]);
+//             if (fichier === true && files[i] === type) {
+//                 filesToReturn = curFile;
+//             }
+//             if (!typeO) type = path.extname(curFile);
+//             if (fs.statSync(curFile).isFile() && path.extname(curFile) === type) {
+//                 filesToReturn.push(curFile);
+//             } else if (fs.statSync(curFile).isDirectory()) {
+//                 walkDir(curFile);
+//             }
+//         }
+//     };
+//     walkDir(dir);
 
-    return filesToReturn;
-}
+//     return filesToReturn;
+// }
