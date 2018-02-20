@@ -109,6 +109,7 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
             return; // No open text editor
         }
+        outputChannel.clear();
         var Liens = util.recupFichiers('.xhtml');
         testLiensPages(Liens);
         outputChannel.show(true);
@@ -298,10 +299,15 @@ function ajoutAncre(liens) {
         if (mesTitres) {
             var newdata = data;
             mesTitres.forEach(function (titre) {
-                var h = new RegExp('<h[0-9]([^>]*)>', 'ig');
+                var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
                 var result = h.exec(titre);
-                if (result[1].indexOf('id') === -1) {
-                    var newtitre = titre.replace(result[1], result[1] + ' id="' + nomId + '-' + k + '"');
+                if (result[2].indexOf('id') === -1) {
+                    if (result[2] === "") {
+                        var newtitre = titre.replace(result[1], result[1] + ' id="' + nomId + '-' + k + '"');
+                    } else {
+                        newtitre = titre.replace(result[2], result[2] + ' id="' + nomId + '-' + k + '"');
+                    }
+
                 } else {
                     var idexp = new RegExp('id="([^"]*)"', "ig");
                     var res = idexp.exec(titre);

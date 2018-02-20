@@ -42,6 +42,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.5.1
+- correcion bug lors de l'ajout des ancres de titre.
+
 ### 1.5.0
 - Affiche les problèmes (cf. `EpubTools : Problèmes ?`)
 - Vérification de la hiérarchisation des titres.
