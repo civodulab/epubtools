@@ -45,22 +45,43 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
 
     Object.values(fichiersXHTML).forEach(function (el) {
         var data = fs.readFileSync(el, 'utf8');
-        var tab = recupClass(data);
-        mesClass =
+        var tabClass = recupClass(data);
+        var tabId = recupId(data);
+        mesId = tabId && mesId.concat(tabId) || mesId;
+        mesClass = tabClass && mesClass.concat(tabClass) || mesClass;
     });
-    console.log(mesStyles);
+    mesClass = mesClass.filter(function (item, pos, self) {
+        return self.indexOf(item) === pos;
+    });
+    mesId = mesId.filter(function (item, pos, self) {
+        return self.indexOf(item) === pos;
+    });
+
+    console.log(mesId);
 }
 
 function recupClass(fichier) {
-    var classes = []
-    var mesClass = fichier.match(/class="[^"]*"/gi);
-    mesClass.forEach(function (el) {
-        var spl = el.split(' ');
-    });
+    var classes = [];
+    var result;
+    var re = new RegExp('class="([^"]*)"', 'gi');
+    // var result = re.exec(fichier);
+    while ((result = re.exec(fichier)) !== null) {
+        classes = classes.concat(result[1].split(' '));
+        re.lastIndex;
+    }
+    return classes;
 }
 
 function recupId(fichier) {
-
+    var classes = [];
+    var result;
+    var re = new RegExp('id="([^"]*)"', 'gi');
+    // var result = re.exec(fichier);
+    while ((result = re.exec(fichier)) !== null) {
+        classes = classes.concat(result[1].split(' '));
+        re.lastIndex;
+    }
+    return classes;
 }
 
 function recupStyleCss(txtFichierCSS) {
