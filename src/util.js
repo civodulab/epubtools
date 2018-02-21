@@ -165,4 +165,5 @@ module.exports = {
     transformePageNoire,
     remplaceDansFichier,
     rechercheTitre,
+    epureCSS
 };
