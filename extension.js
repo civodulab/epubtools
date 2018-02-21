@@ -103,6 +103,15 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
 
+    disposable = vscode.commands.registerCommand('extension.epubStyleEnTrop', function () {
+        var fichiersCSS = util.recupFichiers('.css');
+        var fichiersXHTML = util.recupFichiers('.xhtml');
+        util.epureCSS(fichiersCSS, fichiersXHTML);
+    });
+
+    context.subscriptions.push(disposable);
+
+
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
         let e = Window.activeTextEditor;
         if (!e) {

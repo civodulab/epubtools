@@ -16,7 +16,12 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
+        "commands": [{
+                "command": "extension.epubStyleEnTrop",
+                "title": "Épure CSS",
+                "description": "Nettoie le css des styles en trop",
+                "category": "EpubTools"
+            },
             {
                 "command": "extension.epubManifest",
                 "title": "Manifest",

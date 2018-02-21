@@ -20,7 +20,6 @@ function recupFichiers(typeOrfichier) {
 }
 
 function pathOEBPS() {
-
     let e = Window.activeTextEditor;
     let d = e.document;
     if (d.fileName.indexOf('OEBPS') !== -1) {
@@ -28,6 +27,49 @@ function pathOEBPS() {
     }
     return path.join(chemin, 'OEBPS');
 }
+
+function epureCSS(fichiersCSS, fichiersXHTML) {
+    var mesStyles = [],
+        mesClass = [],
+        mesId = [];
+    Object.values(fichiersCSS).forEach(function (el) {
+        var data = fs.readFileSync(el, 'utf8');
+        var tab = recupStyleCss(data);
+        mesStyles = tab && mesStyles.concat(tab) || mesStyles;
+    });
+    mesStyles = mesStyles.filter(function (item, pos, self) {
+        return self.indexOf(item) === pos;
+    });
+
+    Object.values(fichiersXHTML).forEach(function (el) {
+        var data = fs.readFileSync(el, 'utf8');
+        var tab = recupClass(data);
+        mesClass =
+    });
+    console.log(mesStyles);
+}
+
+function recupClass(fichier) {
+    var classes = []
+    var mesClass = fichier.match(/class="[^"]*"/gi);
+    mesClass.forEach(function (el) {
+        var spl = el.split(' ');
+    });
+}
+
+function recupId(fichier) {
+
+}
+
+function recupStyleCss(txtFichierCSS) {
+
+    // var newTxt = txtFichierCSS.replace(/{(?:.|\n|\r)*?}/gi, ';');
+    // newTxt = newTxt.replace(/@(?:.|\n|\r)*?;/g, "");
+    var newTxt = txtFichierCSS.match(/[\.#][\w-_]*(?=,|\s{|{)/g);
+    return newTxt;
+
+}
+
 
 // Return a list of files of the specified fileTypes in the provided dir, 
 // with the file path relative to the given dir
@@ -64,5 +106,6 @@ function getFilesFromDir(dir, typeO) {
 
 module.exports = {
     recupFichiers,
-    fichierLiens
+    fichierLiens,
+    epureCSS
 };
