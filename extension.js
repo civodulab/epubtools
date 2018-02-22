@@ -97,6 +97,11 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+            return; // No open text editor
+        }
         var Liens = util.recupFichiers('.xhtml');
         epubTitle(Liens);
     });
@@ -258,11 +263,21 @@ function epubTitle(fichiers) {
         if (titres) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
-            var par = result[1];
+            var par = epureBalise(result[1]);
             remplaceDansFichier(el, par, 'title');
         }
     });
 }
+
+function epureBalise(texte) {
+
+    var h = new RegExp('<[^>]*>(?:.|\n|\r)*?<\/[^>]*>', 'ig');
+    texte = texte.replace(h, '');
+    texte = texte.replace(/[\n\r]/g, '');
+    texte = texte.replace(/\s{2,}/g, '');
+    return texte;
+}
+
 
 
 
