@@ -229,7 +229,6 @@ function epubPageBreak(fichiers, fichierTOC) {
         var pb = recherchePageBreak(txt);
         if (pb.length !== 0) {
             pb.forEach(function (sp) {
-
                 pageBreaks.push({
                     page: relativeP,
                     value: sp.getAttr('title'),
@@ -246,7 +245,6 @@ function epubPageBreak(fichiers, fichierTOC) {
         var pageList = '<ol>\n';
         pageBreaks.forEach(function (el) {
             pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
-
         });
         pageList += '</ol>\n';
         return pageList;
@@ -268,12 +266,20 @@ function epubTitle(fichiers) {
     });
 }
 
-function epureBalise(texte) {
-
-    var h = new RegExp('<[^>]*>(?:.|\n|\r)*?<\/[^>]*>', 'ig');
-    texte = texte.replace(h, '');
+function epureBalise(texte, toc) {
+    toc = toc || false;
+    var h = new RegExp('<[^>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'g');
+    var re;
+    while ((re = h.exec(texte)) !== null) {
+        if (toc) {
+            texte = (re && re[1] === "") && texte.replace(re[0], "") || texte;
+        } else {
+            texte = re && texte.replace(re[0], re[1]) || texte;
+        }
+        h.lastIndex;
+    }
     texte = texte.replace(/[\n\r]/g, '');
-    texte = texte.replace(/\s{2,}/g, '');
+    texte = texte.replace(/\s{2,}/g, ' ');
     return texte;
 }
 
@@ -418,10 +424,10 @@ function tableMatieres(titres, fichierTOC) {
                 id = "";
             }
             maTableXhtml += '<a href="' + relativeP + id + '">';
-            maTableXhtml += result[1] + '</a>';
+            maTableXhtml += epureBalise(result[1], true) + '</a>';
 
             maTableNCX += '<navLabel>\n<text>';
-            maTableNCX += result[1];
+            maTableNCX += epureBalise(result[1]);
             maTableNCX += '</text>\n</navLabel>\n';
 
             maTableNCX += '<content src="' + relativeP + id + '" />';
