@@ -88,7 +88,6 @@ function activate(context) {
             ajoutAncre(Liens);
         }
 
-
         epubTOC(Liens, d.fileName);
         outputChannel.show(true);
 
@@ -308,12 +307,19 @@ function epubTOC(liens, fichierTOC) {
 function ajoutAncre(liens) {
     var k = 0;
     var nomId = config.get("ancreTDM").nomAncre;
-    for (var fichier in liens) {
-        var data = fs.readFileSync(liens[fichier], 'utf8');
+    var allID = recupAllID(liens);
+    Object.values(liens).forEach(function (fichier) {
+        // for (var fichier in liens) {
+        var data = fs.readFileSync(fichier, 'utf8');
         var mesTitres = rechercheTitre(data);
         if (mesTitres) {
             var newdata = data;
             mesTitres.forEach(function (titre) {
+                var newID = 'id="' + nomId + '-' + k + '"';
+                while (allID.indexOf(newID) !== -1) {
+                    k++;
+                    newID = 'id="' + +nomId + '-' + k + '"';
+                }
                 var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
                 var result = h.exec(titre);
                 if (result[2].indexOf('id') === -1) {
@@ -324,20 +330,26 @@ function ajoutAncre(liens) {
                     }
 
                 } else {
-                    var idexp = new RegExp('id="([^"]*)"', "ig");
-                    var res = idexp.exec(titre);
-                    newtitre = titre.replace(res[1], nomId + '-' + k);
-
+                    newtitre = titre;
                 }
                 newdata = newdata.replace(titre, newtitre);
-                k++;
+                // k++;
             });
-            fs.writeFileSync(liens[fichier], newdata, 'utf8');
+            fs.writeFileSync(fichier, newdata, 'utf8');
         }
-    }
+    });
 
 }
 
+function recupAllID(liens) {
+    var allID = [];
+    Object.values(liens).forEach(function (el) {
+        var data = fs.readFileSync(el, 'utf8');
+        var mesId = data.match(/id="[^"]*"/gi);
+        allID = mesId && allID.concat(mesId) || allID
+    });
+    return allID;
+}
 
 function isTDM(fichier) {
     var txt = fs.readFileSync(fichier, 'utf8');
