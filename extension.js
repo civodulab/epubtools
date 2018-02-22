@@ -270,14 +270,17 @@ function epureBalise(texte, toc) {
     toc = toc || false;
     var h = new RegExp('<[^>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'g');
     var re;
-    while ((re = h.exec(texte)) !== null) {
-        if (toc) {
+    if (toc) {
+        while ((re = h.exec(texte)) !== null) {
             texte = (re && re[1] === "") && texte.replace(re[0], "") || texte;
-        } else {
-            texte = re && texte.replace(re[0], re[1]) || texte;
+            h.lastIndex;
         }
-        h.lastIndex;
+    } else {
+        re = h.exec(texte);
+        texte = re && texte.replace(h, re[1]) || texte;
+
     }
+
     texte = texte.replace(/[\n\r]/g, '');
     texte = texte.replace(/\s{2,}/g, ' ');
     return texte;
