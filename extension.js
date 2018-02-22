@@ -313,29 +313,28 @@ function ajoutAncre(liens) {
         var data = fs.readFileSync(fichier, 'utf8');
         var mesTitres = rechercheTitre(data);
         if (mesTitres) {
-            var newdata = data;
+            // var newdata = data;
             mesTitres.forEach(function (titre) {
                 var newID = 'id="' + nomId + '-' + k + '"';
                 while (allID.indexOf(newID) !== -1) {
                     k++;
-                    newID = 'id="' + +nomId + '-' + k + '"';
+                    newID = 'id="' + nomId + '-' + k + '"';
                 }
                 var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
                 var result = h.exec(titre);
                 if (result[2].indexOf('id') === -1) {
                     if (result[2] === "") {
-                        var newtitre = titre.replace(result[1], result[1] + ' id="' + nomId + '-' + k + '"');
+                        var newtitre = titre.replace(result[1], result[1] + ' ' + newID);
                     } else {
-                        newtitre = titre.replace(result[2], result[2] + ' id="' + nomId + '-' + k + '"');
+                        newtitre = titre.replace(result[2], result[2] + ' ' + newID);
                     }
 
                 } else {
                     newtitre = titre;
                 }
-                newdata = newdata.replace(titre, newtitre);
-                // k++;
+                data = data.replace(titre, newtitre);
             });
-            fs.writeFileSync(fichier, newdata, 'utf8');
+            fs.writeFileSync(fichier, data, 'utf8');
         }
     });
 
