@@ -1,6 +1,8 @@
-# EpubTools README
+# EpubTools LISEZMOI
 
 Outils destinés à faciliter le travail sur les EPUB.
+
+([English README](README.en.md))
 
 ## À savoir
 
@@ -11,17 +13,17 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : Manifest`
-    > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
+  > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
 - `EpubTools : Table des matières`
-    > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le spine de l'OPF.
+  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.
 - `EpubTools : premier <h.> => <title>`
-    > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
+  > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
 - `EpubTools : Création Page Liste`
-    >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
+  >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
 - `EpubTools : Problèmes ?`
-    >  Affiche les problèmes dans l'onglet `SORTIE` :
-    >   - Pages sans titre
-    >   - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
+  >  Affiche les problèmes dans l'onglet `SORTIE` :
+  >- Pages sans titre
+  >- Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
 
 * * *
 
@@ -30,14 +32,14 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.niveauTitre`
     > Niveau de titre dans la table des matières (défaut : **3**)
 - `epub.titreTDM`
-    >- `titre` : Titre de la table des matières (défaut : **Table des matières**)
-    >- `balise` : Balise pour le titre (défaut : **h1**)
-    >- `classe` : classe pour le titre (défaut : **titre1**)
+  - `titre` : Titre de la table des matières (défaut : **Table des matières**)
+  - `balise` : Balise pour le titre (défaut : **h1**)
+  - `classe` : classe pour le titre (défaut : **titre1**)
 - `epub.classeTDM`
-    > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
+  > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
 - `epub.ancreTDM`
-    >- `ajouterAncre` : boolean  (défaut : **true**)
-    >- `nomAncre` : nom de l'ancre (défaut : **toc-epubtools**)
+  - `ajouterAncre` : boolean  (défaut : **true**)
+  - `nomAncre` : préfixe du nom de l'ancre (défaut : **toc-epubtools**)
 
 * * *
 
