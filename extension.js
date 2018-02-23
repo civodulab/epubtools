@@ -218,7 +218,7 @@ function recherchePageBreak(texte) {
 
 function epubPageBreak(fichiers, fichierTOC) {
     var pageBreaks = [];
-    fichiers.forEach(function (el) {
+    Object.values(fichiers).forEach(function (el) {
         var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
         if (relativeP !== '') {
             relativeP = relativeP + '/' + path.basename(el);
