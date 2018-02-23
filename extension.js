@@ -29,6 +29,21 @@ String.prototype.getAttr = function (attr) {
     return result[1];
 }
 
+String.prototype.setAttr = function (attr, val) {
+    if (this.indexOf(attr) !== -1) {
+        var exp = attr + '="([^"]*)"',
+            re = new RegExp(exp, 'gi'),
+            result = re.exec(this);
+        return this.replace(result[1], val);
+    } else {
+        exp = /<[^\/>]*>/i;
+        result = this.match(exp);
+        var newTxt = result[0].replace(/ /i, ' ' + attr + '="' + val + '" ');
+        return this.replace(exp, newTxt);
+    }
+
+}
+
 const dom = require('./mes_modules/dom-js');
 const isNumeric = require('./mes_modules/str-isnum');
 
@@ -52,12 +67,15 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     let disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
-        let e = Window.activeTextEditor;
-        if (!e) {
-            Window.showInformationMessage('Vous devez être dans un fichier opf.');
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
-        let d = e.document;
+
+
+        let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
             Window.showInformationMessage('Vous devez être dans un fichier opf');
             return;
@@ -70,12 +88,14 @@ function activate(context) {
 
 
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
-        let e = Window.activeTextEditor;
-        if (!e) {
-            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
-        let d = e.document;
+
+        let d = Window.activeTextEditor.document;
         var tdm = isTDM(d.fileName);
         if (!tdm) {
             Window.showInformationMessage('Vous devez être dans un fichier toc');
@@ -96,9 +116,10 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
-        let e = Window.activeTextEditor;
-        if (!e) {
-            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
         var Liens = util.recupFichiers('.xhtml');
@@ -108,9 +129,10 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
-        let e = Window.activeTextEditor;
-        if (!e) {
-            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
         outputChannel.clear();
@@ -122,12 +144,13 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
-        let e = Window.activeTextEditor;
-        if (!e) {
-            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
-        let d = e.document;
+        let d = Window.activeTextEditor.document;
         var tdm = isTDM(d.fileName);
         if (!tdm) {
             Window.showInformationMessage('Vous devez être dans un fichier toc');

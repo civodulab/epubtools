@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 
+
 function fichierLiens(type) {
     var mesXhtml = recupFichiers(type);
     var Liens = {};
@@ -20,7 +21,6 @@ function recupFichiers(typeOrfichier) {
 }
 
 function pathOEBPS() {
-
     let e = Window.activeTextEditor;
     let d = e.document;
     if (d.fileName.indexOf('OEBPS') !== -1) {
@@ -64,5 +64,6 @@ function getFilesFromDir(dir, typeO) {
 
 module.exports = {
     recupFichiers,
-    fichierLiens
+    fichierLiens,
+    pathOEBPS,
 };
