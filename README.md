@@ -3,9 +3,10 @@
 Outils destinés à faciliter le travail sur les EPUB.
 
 ## À savoir
+
 Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans les répertoires de celui-ci.
 
-----------
+* * *
 
 ## EpubTools contenu (`ctrl+shift+P`)
 
@@ -22,9 +23,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     >   - Pages sans titre
     >   - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
 
-----------
+* * *
 
 ## EpubTools Configuration (`ctrl+,`)
+
 - `epub.niveauTitre`
     > Niveau de titre dans la table des matières (défaut : **3**)
 - `epub.titreTDM`
@@ -37,72 +39,93 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
     >- `ajouterAncre` : boolean  (défaut : **true**)
     >- `nomAncre` : nom de l'ancre (défaut : **toc-epubtools**)
 
-----------
-
+* * *
 
 ## Release Notes
 
+### 1.5.2
+
+- corrections bug :
+  - ancres titres (merci [garconvacher](https://github.com/garconvacher))
+  - balises dans ncx, title (merci [garconvacher](https://github.com/garconvacher))
+
+
 ### 1.5.1
+
 - correcion bug lors de l'ajout des ancres de titre.
 
 ### 1.5.0
+
 - Affiche les problèmes (cf. `EpubTools : Problèmes ?`)
 - Vérification de la hiérarchisation des titres.
 
 ### 1.4.13
+
 - fix TOC
 
 ### 1.4.7
+
 - correction bug Table des matières (merci [garconvacher](https://github.com/garconvacher)).
 
 ### 1.4.6
+
 - modification des paramètres de configuration TDM
-    - ajout de `balise`
-    - ajout de `classe`
+  - ajout de `balise`
+  - ajout de `classe`
 
 ### 1.4.5
+
 - Correction bug "cannot find command"
 - Indique les fichiers ne contenant pas de titre lors de `EpubTools : Table des matières`
 - Fix "page-liste" (message lorsqu'il n'y a pas de "pagebreak" dans l'EPUB)
 
 ### 1.4.0
+
 - Ajout de "page-liste"
 
 ### 1.3.2
+
 - fix bug "properties" vide
 - fix "media-type" JPG, jpeg
 
 ### 1.3.1
+
 - changement de logo
 
 ### 1.3.0
-- correction bug dans le manifest (merci [garconvacher](https://github.com/garconvacher)). 
+
+- correction bug dans le manifest (merci [garconvacher](https://github.com/garconvacher))
 - ajout d'ancres sur les titres (cf. options) (re-merci [garconvacher](https://github.com/garconvacher))
 
 ### 1.2.2
+
 - correction bug
 
 ### 1.2.1
+
 - OPF xhtml item properties 
-    - "scripted"
-    - "mathml"
-    - "nav"
-    
+  - "scripted"
+  - "mathml"
+  - "nav"
+
 ### 1.2.0
+
 - ajout `EpubTools : premier <h.> => <title>`
 
 ### 1.1.1
+
 - correction bug quand on déplace les fichiers toc
 
 ### 1.1.0
+
 - être dans un fichier TDM pour appliquer `Table des matières`
 
 ### 1.0.1
+
 - corrections bug
 - image
 
 ### 1.0.0
+
 - Manifest
 - Table des matières
-
-

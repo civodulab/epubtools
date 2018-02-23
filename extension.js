@@ -261,33 +261,32 @@ function epubTitle(fichiers) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
             var par = epureBalise(result[1]);
-            remplaceDansFichier(el, par, 'title');
+            remplaceDansFichier(el, par.txt, 'title');
         }
     });
 }
 
-function epureBalise(texte, toc) {
-    toc = toc || false;
-    var h = new RegExp('<[^>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'g');
+function epureBalise(texte) {
+    var txtTOC = texte,
+        txt = texte;
+    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'gi');
     var re;
-    if (toc) {
-        while ((re = h.exec(texte)) !== null) {
-            texte = (re && re[1] === "") && texte.replace(re[0], "") || texte;
-            h.lastIndex;
-        }
-    } else {
-        re = h.exec(texte);
-        texte = re && texte.replace(h, re[1]) || texte;
-
+    while ((re = h.exec(texte)) !== null) {
+        txtTOC = (re[1] === "") && txtTOC.replace(re[0], '') || txtTOC;
+        txt = (re[1] === "") && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
     }
 
-    texte = texte.replace(/[\n\r]/g, '');
-    texte = texte.replace(/\s{2,}/g, ' ');
-    return texte;
+    txtTOC = txtTOC.replace(/[\n\r]/g, '');
+    txt = txt.replace(/[\n\r]/g, '');
+    txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
+    txt = txt.replace(/\s{2,}/g, ' ');
+    txtTOC = txtTOC.trim();
+    txt = txt.trim();
+    return {
+        'toc': txtTOC,
+        'txt': txt,
+    };
 }
-
-
-
 
 function epubTOC(liens, fichierTOC) {
     try {
@@ -426,11 +425,12 @@ function tableMatieres(titres, fichierTOC) {
             if (path.basename(relativeP) === path.basename(fichierTOC)) {
                 id = "";
             }
+            var monTexte = epureBalise(result[1]);
             maTableXhtml += '<a href="' + relativeP + id + '">';
-            maTableXhtml += epureBalise(result[1], true) + '</a>';
+            maTableXhtml += monTexte.toc + '</a>';
 
             maTableNCX += '<navLabel>\n<text>';
-            maTableNCX += epureBalise(result[1]);
+            maTableNCX += monTexte.txt;
             maTableNCX += '</text>\n</navLabel>\n';
 
             maTableNCX += '<content src="' + relativeP + id + '" />';
