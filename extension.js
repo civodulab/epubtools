@@ -348,6 +348,7 @@ function testLiensPages(liens) {
         });
     }
     outputChannel.appendLine(text);
+    
 }
 
 function insertEditorSelection(text) {
