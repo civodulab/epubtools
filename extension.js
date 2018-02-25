@@ -88,7 +88,6 @@ function activate(context) {
             ajoutAncre(Liens);
         }
 
-
         epubTOC(Liens, d.fileName);
         outputChannel.show(true);
 
@@ -97,6 +96,11 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
+        let e = Window.activeTextEditor;
+        if (!e) {
+            Window.showInformationMessage('Vous devez être dans un fichier quelconque du dossier');
+            return; // No open text editor
+        }
         var Liens = util.recupFichiers('.xhtml');
         epubTitle(Liens);
     });
@@ -224,7 +228,7 @@ function recherchePageBreak(texte) {
 
 function epubPageBreak(fichiers, fichierTOC) {
     var pageBreaks = [];
-    fichiers.forEach(function (el) {
+    Object.values(fichiers).forEach(function (el) {
         var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
         if (relativeP !== '') {
             relativeP = relativeP + '/' + path.basename(el);
@@ -235,7 +239,6 @@ function epubPageBreak(fichiers, fichierTOC) {
         var pb = recherchePageBreak(txt);
         if (pb.length !== 0) {
             pb.forEach(function (sp) {
-
                 pageBreaks.push({
                     page: relativeP,
                     value: sp.getAttr('title'),
@@ -252,7 +255,6 @@ function epubPageBreak(fichiers, fichierTOC) {
         var pageList = '<ol>\n';
         pageBreaks.forEach(function (el) {
             pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
-
         });
         pageList += '</ol>\n';
         return pageList;
@@ -268,13 +270,33 @@ function epubTitle(fichiers) {
         if (titres) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
-            var par = result[1];
-            remplaceDansFichier(el, par, 'title');
+            var par = epureBalise(result[1]);
+            remplaceDansFichier(el, par.txt, 'title');
         }
     });
 }
 
+function epureBalise(texte) {
+    var txtTOC = texte,
+        txt = texte;
+    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'gi');
+    var re;
+    while ((re = h.exec(texte)) !== null) {
+        txtTOC = (re[1] === "") && txtTOC.replace(re[0], '') || txtTOC;
+        txt = (re[1] === "") && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
+    }
 
+    txtTOC = txtTOC.replace(/[\n\r]/g, '');
+    txt = txt.replace(/[\n\r]/g, '');
+    txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
+    txt = txt.replace(/\s{2,}/g, ' ');
+    txtTOC = txtTOC.trim();
+    txt = txt.trim();
+    return {
+        'toc': txtTOC,
+        'txt': txt,
+    };
+}
 
 function epubTOC(liens, fichierTOC) {
     try {
@@ -303,36 +325,48 @@ function epubTOC(liens, fichierTOC) {
 function ajoutAncre(liens) {
     var k = 0;
     var nomId = config.get("ancreTDM").nomAncre;
-    for (var fichier in liens) {
-        var data = fs.readFileSync(liens[fichier], 'utf8');
+    var allID = recupAllID(liens);
+    Object.values(liens).forEach(function (fichier) {
+        // for (var fichier in liens) {
+        var data = fs.readFileSync(fichier, 'utf8');
         var mesTitres = rechercheTitre(data);
         if (mesTitres) {
-            var newdata = data;
+            // var newdata = data;
             mesTitres.forEach(function (titre) {
+                var newID = 'id="' + nomId + '-' + k + '"';
+                while (allID.indexOf(newID) !== -1) {
+                    k++;
+                    newID = 'id="' + nomId + '-' + k + '"';
+                }
                 var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
                 var result = h.exec(titre);
                 if (result[2].indexOf('id') === -1) {
                     if (result[2] === "") {
-                        var newtitre = titre.replace(result[1], result[1] + ' id="' + nomId + '-' + k + '"');
+                        var newtitre = titre.replace(result[1], result[1] + ' ' + newID);
                     } else {
-                        newtitre = titre.replace(result[2], result[2] + ' id="' + nomId + '-' + k + '"');
+                        newtitre = titre.replace(result[2], result[2] + ' ' + newID);
                     }
 
                 } else {
-                    var idexp = new RegExp('id="([^"]*)"', "ig");
-                    var res = idexp.exec(titre);
-                    newtitre = titre.replace(res[1], nomId + '-' + k);
-
+                    newtitre = titre;
                 }
-                newdata = newdata.replace(titre, newtitre);
-                k++;
+                data = data.replace(titre, newtitre);
             });
-            fs.writeFileSync(liens[fichier], newdata, 'utf8');
+            fs.writeFileSync(fichier, data, 'utf8');
         }
-    }
+    });
 
 }
 
+function recupAllID(liens) {
+    var allID = [];
+    Object.values(liens).forEach(function (el) {
+        var data = fs.readFileSync(el, 'utf8');
+        var mesId = data.match(/id="[^"]*"/gi);
+        allID = mesId && allID.concat(mesId) || allID
+    });
+    return allID;
+}
 
 function isTDM(fichier) {
     var txt = fs.readFileSync(fichier, 'utf8');
@@ -401,11 +435,12 @@ function tableMatieres(titres, fichierTOC) {
             if (path.basename(relativeP) === path.basename(fichierTOC)) {
                 id = "";
             }
+            var monTexte = epureBalise(result[1]);
             maTableXhtml += '<a href="' + relativeP + id + '">';
-            maTableXhtml += result[1] + '</a>';
+            maTableXhtml += monTexte.toc + '</a>';
 
             maTableNCX += '<navLabel>\n<text>';
-            maTableNCX += result[1];
+            maTableNCX += monTexte.txt;
             maTableNCX += '</text>\n</navLabel>\n';
 
             maTableNCX += '<content src="' + relativeP + id + '" />';
