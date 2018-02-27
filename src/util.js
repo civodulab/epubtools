@@ -39,6 +39,7 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
         var tab = recupStyleCss(data);
         mesStyles = tab && mesStyles.concat(tab) || mesStyles;
     });
+    // supprime doublons
     mesStyles = mesStyles.filter(function (item, pos, self) {
         return self.indexOf(item) === pos;
     });
@@ -50,6 +51,7 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
         mesId = tabId && mesId.concat(tabId) || mesId;
         mesClass = tabClass && mesClass.concat(tabClass) || mesClass;
     });
+    //supprime doublons
     mesClass = mesClass.filter(function (item, pos, self) {
         return self.indexOf(item) === pos;
     });
@@ -67,7 +69,7 @@ function recupClass(fichier) {
     // var result = re.exec(fichier);
     while ((result = re.exec(fichier)) !== null) {
         classes = classes.concat(result[1].split(' '));
-        re.lastIndex;
+        // re.lastIndex;
     }
     return classes;
 }
@@ -79,7 +81,7 @@ function recupId(fichier) {
     // var result = re.exec(fichier);
     while ((result = re.exec(fichier)) !== null) {
         classes = classes.concat(result[1].split(' '));
-        re.lastIndex;
+        // re.lastIndex;
     }
     return classes;
 }
