@@ -137,15 +137,12 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubStyleEnTrop', function () {
-        var relatPat = new vscode.RelativePattern(util.pathOEBPS(), '**/*.xhtml');
-
-
-
-
-        vscode.workspace.findFiles(relatPat).then(function (el) {
-            console.log('ok');
-            console.log(el);
-        });
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            return; // No open text editor
+        }
         var fichiersCSS = util.recupFichiers('.css');
         var fichiersXHTML = util.recupFichiers('.xhtml');
         util.epureCSS(fichiersCSS, fichiersXHTML);
