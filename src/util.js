@@ -52,15 +52,43 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
         mesClass = tabClass && mesClass.concat(tabClass) || mesClass;
     });
     //supprime doublons
-    mesClass = mesClass.filter(function (item, pos, self) {
+    mesClass = mesClass.filter((item, pos, self) => {
         return self.indexOf(item) === pos;
     });
-    mesId = mesId.filter(function (item, pos, self) {
+    mesClass = mesClass.map(x => '.' + x);
+    mesId = mesId.filter((item, pos, self) => {
         return self.indexOf(item) === pos;
+    });
+    mesId = mesId.map(x => '#' + x);
+
+    mesStyles.forEach(style => {
+        (mesClass.indexOf(style) === -1 && mesId.indexOf(style) === -1) && suppStyle(style, fichiersCSS);
     });
 
-    console.log(mesId);
+    // console.log(mesClass);
+    // console.log(mesId);
 }
+
+function suppStyle(style, fichiersCSS) {
+    style = '\\' + style;
+
+    Object.values(fichiersCSS).forEach(el => {
+        let data = fs.readFileSync(el, 'utf8'),
+            exp = '[^,}]*(?:' + style + ')[^,{]*',
+            re = new RegExp(exp, 'gi');
+
+        data = data.replace(re, '');
+        data = data.replace(/,{2,}/g, ',');
+        data = data.replace(/[}][\W]*(?:{)[^}]*}/g, '}');
+        data = data.replace(/[,][\W]*{/g, '{');
+        data = data.replace(/}[\W]*[,]/g, '}');
+
+        fs.writeFileSync(el, data);
+    });
+
+
+}
+
 
 function recupClass(fichier) {
     var classes = [];
