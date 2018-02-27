@@ -48,6 +48,8 @@ const dom = require('./mes_modules/dom-js');
 const isNumeric = require('./mes_modules/str-isnum');
 
 
+
+
 String.prototype.metaProperties = function () {
     var prop = [];
     (this.indexOf('</nav>') !== -1) && prop.push('nav');
@@ -59,9 +61,15 @@ String.prototype.metaProperties = function () {
 
 function activate(context) {
 
+
+
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
     console.log('Congratulations, your extension "EpubTools" is now active!');
+
+
+
+
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
@@ -129,6 +137,15 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubStyleEnTrop', function () {
+        var relatPat = new vscode.RelativePattern(util.pathOEBPS(), '**/*.xhtml');
+
+
+
+
+        vscode.workspace.findFiles(relatPat).then(function (el) {
+            console.log('ok');
+            console.log(el);
+        });
         var fichiersCSS = util.recupFichiers('.css');
         var fichiersXHTML = util.recupFichiers('.xhtml');
         util.epureCSS(fichiersCSS, fichiersXHTML);
@@ -198,9 +215,9 @@ function testLiensPages(liens) {
     var sansTitre = [],
         pbHierarchie = [];
     var text = "";
-    Object.keys(liens).forEach(function (el) {
-        var fd = vscode.Uri.file(liens[el]);
-        var data = fs.readFileSync(liens[el], 'utf8'),
+    Object.values(liens).forEach(function (el) {
+        var fd = vscode.Uri.file(el);
+        var data = fs.readFileSync(el, 'utf8'),
             rtitre = rechercheTitre(data);
         if (!rtitre) {
             sansTitre.push(fd);
@@ -225,7 +242,7 @@ function testLiensPages(liens) {
         });
     }
     outputChannel.appendLine(text);
-    
+
 }
 
 function insertEditorSelection(text) {
