@@ -22,8 +22,8 @@ function recupFichiers(typeOrfichier) {
 }
 
 function pathOEBPS() {
-    let e = Window.activeTextEditor;
-    let d = e.document;
+    let e = Window.activeTextEditor,
+        d = e.document;
     if (d.fileName.indexOf('OEBPS') !== -1) {
         var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
     }
@@ -31,27 +31,30 @@ function pathOEBPS() {
 }
 
 function epureCSS(fichiersCSS, fichiersXHTML) {
-    var mesStyles = [],
+    let mesStyles = [],
         mesClass = [],
         mesId = [];
+    // mesBalises = [];
+
     Object.values(fichiersCSS).forEach(function (el) {
-        var data = fs.readFileSync(el, 'utf8');
-        var tab = recupStyleCss(data);
+        let data = fs.readFileSync(el, 'utf8'),
+            tab = recupStyleCss(data);
         mesStyles = tab && mesStyles.concat(tab) || mesStyles;
-    });
-    // supprime doublons
-    mesStyles = mesStyles.filter(function (item, pos, self) {
-        return self.indexOf(item) === pos;
     });
 
     Object.values(fichiersXHTML).forEach(function (el) {
-        var data = fs.readFileSync(el, 'utf8');
-        var tabClass = recupClass(data);
-        var tabId = recupId(data);
+        let data = fs.readFileSync(el, 'utf8'),
+            tabClass = recupClass(data),
+            tabId = recupId(data);
+        // tabBalise = recupBalise(data);
         mesId = tabId && mesId.concat(tabId) || mesId;
         mesClass = tabClass && mesClass.concat(tabClass) || mesClass;
+        // mesBalises = tabBalise && mesBalises.concat(tabBalise) || mesBalises;
     });
     //supprime doublons
+    mesStyles = mesStyles.filter((item, pos, self) => {
+        return self.indexOf(item) === pos;
+    });
     mesClass = mesClass.filter((item, pos, self) => {
         return self.indexOf(item) === pos;
     });
@@ -61,23 +64,31 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
     });
     mesId = mesId.map(x => '#' + x);
 
+    // à voir pour les balises
     mesStyles.forEach(style => {
         (mesClass.indexOf(style) === -1 && mesId.indexOf(style) === -1) && suppStyle(style, fichiersCSS);
     });
-
-    // console.log(mesClass);
-    // console.log(mesId);
 }
 
 function suppStyle(style, fichiersCSS) {
-    style = '\\' + style;
-
+    if (style === ".titre-partie") {
+        console.log(style);
+    }
+    style = (style.indexOf('.') !== -1 || style.indexOf('#') !== -1) && ('\\' + style) || style;
+    /(?:\W|^)(\Q\.courant\E)(?:\W|$)/gi;
+    /[^,;}{]*\.courant(?=[\s,{])/g;
+    /\.courant/gim;
     Object.values(fichiersCSS).forEach(el => {
         let data = fs.readFileSync(el, 'utf8'),
-            exp = '[^,}]*(?:' + style + ')[^,{]*',
+            exp = '[^,;}{]*' + style + '[^,{]*',
             re = new RegExp(exp, 'gi');
+        let ludo;
+        while ((ludo = re.exec(data)) !== null) {
+            data = data.replace(ludo[0], '');
+            fs.writeFileSync(el, data);
+        }
 
-        data = data.replace(re, '');
+        // data = data.replace(re, '');
         data = data.replace(/,{2,}/g, ',');
         data = data.replace(/[}][\W]*(?:{)[^}]*}/g, '}');
         data = data.replace(/[,][\W]*{/g, '{');
@@ -86,14 +97,19 @@ function suppStyle(style, fichiersCSS) {
         fs.writeFileSync(el, data);
     });
 
-
 }
 
+function recupBalise(fichier) {
+    let balises = fichier.match(/<([\w])*/g);
+    balises = balises.filter(el => el.length > 1);
+    balises = balises.map(el => el.substring(1));
+    return balises;
+}
 
 function recupClass(fichier) {
-    var classes = [];
-    var result;
-    var re = new RegExp('class="([^"]*)"', 'gi');
+    let classes = [],
+        result,
+        re = new RegExp('class="([^"]*)"', 'gi');
     // var result = re.exec(fichier);
     while ((result = re.exec(fichier)) !== null) {
         classes = classes.concat(result[1].split(' '));
@@ -115,9 +131,7 @@ function recupId(fichier) {
 }
 
 function recupStyleCss(txtFichierCSS) {
-
-    // var newTxt = txtFichierCSS.replace(/{(?:.|\n|\r)*?}/gi, ';');
-    // newTxt = newTxt.replace(/@(?:.|\n|\r)*?;/g, "");
+    // que class et id
     var newTxt = txtFichierCSS.match(/[\.#][\w-_]*(?=,|\s{|{)/g);
     return newTxt;
 
