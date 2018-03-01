@@ -68,36 +68,44 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
     mesStyles.forEach(style => {
         (mesClass.indexOf(style) === -1 && mesId.indexOf(style) === -1) && suppStyle(style, fichiersCSS);
     });
+    nettoyageStyle(fichiersCSS);
 }
 
 function suppStyle(style, fichiersCSS) {
-    if (style === ".titre-partie") {
+    if (style === ".courant-liste") {
         console.log(style);
     }
     style = (style.indexOf('.') !== -1 || style.indexOf('#') !== -1) && ('\\' + style) || style;
-    /(?:\W|^)(\Q\.courant\E)(?:\W|$)/gi;
-    /[^,;}{]*\.courant(?=[\s,{])/g;
-    /\.courant/gim;
     Object.values(fichiersCSS).forEach(el => {
         let data = fs.readFileSync(el, 'utf8'),
-            exp = '[^,;}{]*' + style + '[^,{]*',
+            exp = '[^,;}{]*' + style + '(?![-_\w])[^,{]*',
             re = new RegExp(exp, 'gi');
-        let ludo;
-        while ((ludo = re.exec(data)) !== null) {
-            data = data.replace(ludo[0], '');
-            fs.writeFileSync(el, data);
-        }
 
-        // data = data.replace(re, '');
-        data = data.replace(/,{2,}/g, ',');
-        data = data.replace(/[}][\W]*(?:{)[^}]*}/g, '}');
-        data = data.replace(/[,][\W]*{/g, '{');
-        data = data.replace(/}[\W]*[,]/g, '}');
-
+        data = data.replace(re, '');
         fs.writeFileSync(el, data);
+
     });
 
 }
+
+function nettoyageStyle(fichiersCSS) {
+    Object.values(fichiersCSS).forEach(el => {
+        let data = fs.readFileSync(el, 'utf8');
+
+        data = data.replace(/,{2,}/g, ',');
+        fs.writeFileSync(el, data);
+        let re = RegExp('([}{;])(?:[\W]*{)[^}]*}');
+
+        while (re.test(data)) {
+            data = data.replace(/([}{;])(?:[\W]*{)[^}]*}/g, '$1');
+        }
+        data = data.replace(/[,][\W]*{/g, '{');
+        data = data.replace(/}[\s\n\r]*[,]/g, '}');
+        data = data.replace(/[^,;}{]*{[\W]*[}]/g, '');
+        fs.writeFileSync(el, data);
+    });
+}
+
 
 function recupBalise(fichier) {
     let balises = fichier.match(/<([\w])*/g);
