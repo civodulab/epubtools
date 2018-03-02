@@ -66,7 +66,24 @@ function activate(context) {
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    let disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
+
+    let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            return; // No open text editor
+        }
+
+
+        var Liens = util.fichierLiens('.xhtml');
+        util.transformePageNoire(Liens);
+
+    });
+    context.subscriptions.push(disposable);
+
+
+    disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
         try {
             util.pathOEBPS();
         } catch (error) {
