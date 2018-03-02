@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.5.3",
+    "version": "1.5.4",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.epubSpanPageNoir",
                 "title": "<span...>{numPage}</span> => <span {epub:type} />",
                 "description": "Transforme les span epubTools-numPage-style en pagebreak",
