@@ -17,16 +17,37 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : Manifest`
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
+
 - `EpubTools : Table des matières`
+
   > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.
+
 - `EpubTools : premier <h.> => <title>`
+
   > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
 - `EpubTools : Création Page Liste`
+
+
   >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
 - `EpubTools : Problèmes ?`
+
   >  Affiche les problèmes dans l'onglet `SORTIE` :
-  >- Pages sans titre
-  >- Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
+  > - Pages sans titre
+
+  > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
+
+- `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
+
+  >  Transforme les ...
+  > ```xhtml
+  > <span class="epubTools-numPage-style">{numéro}</span>
+  > ```
+  > ... en
+  > ```xhtml
+  >  <span id="page{numéro}" title="{numéro}" epub:type="pagebreak" role="doc-pagebreak"></span>
+  >  ```
+
+  _**Astuce :** Utiliser le script Indesign [epubTools-numPage](https://github.com/civodulab/epubTools-numPage) avant l'export en EPUB._
 
 * * *
 
@@ -47,6 +68,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 * * *
 
 ## Release Notes
+
+### 1.5.4
+
+- ajout de `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
 ### 1.5.3
 
