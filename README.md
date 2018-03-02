@@ -48,6 +48,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.5.3
+
+- correction bug ancre titres
+
 ### 1.5.2
 
 - corrections bug :

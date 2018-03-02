@@ -346,9 +346,10 @@ function ajoutAncre(liens) {
         if (mesTitres) {
             // var newdata = data;
             mesTitres.forEach(function (titre) {
+                ++k;
                 var newID = 'id="' + nomId + '-' + k + '"';
                 while (allID.indexOf(newID) !== -1) {
-                    k++;
+                    ++k;
                     newID = 'id="' + nomId + '-' + k + '"';
                 }
                 var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
