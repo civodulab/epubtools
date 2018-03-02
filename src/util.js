@@ -62,8 +62,20 @@ function getFilesFromDir(dir, typeO) {
     return filesToReturn;
 }
 
+function transformePageNoire(fichiersXhtml) {
+    Object.values(fichiersXhtml).forEach(el => {
+        var data = fs.readFileSync(el, 'utf8');
+        var exp = '<span class="epubTools-numPage-style">(.[^<]*)</span>';
+        var re = new RegExp(exp, 'gi');
+        data = data.replace(re, '<span id="page$1" title="$1" epub:type="pagebreak" role="doc-pagebreak"></span>');
+        fs.writeFileSync(el, data);
+    });
+}
+
+
 module.exports = {
     recupFichiers,
     fichierLiens,
     pathOEBPS,
+    transformePageNoire,
 };
