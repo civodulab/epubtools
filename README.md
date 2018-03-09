@@ -5,7 +5,7 @@
 
 Outils destinés à faciliter le travail sur les EPUB.
 
-([English README](README.en.md))
+([English README](README.en.md)) merci [garconvacher](https://github.com/garconvacher) 
 
 ## À savoir
 
@@ -68,6 +68,11 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 * * *
 
 ## Release Notes
+
+### 1.5.5
+
+- correction bug TDM (ncx)
+- ajout mediaType (vtt, srt)
 
 ### 1.5.4
 

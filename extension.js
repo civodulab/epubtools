@@ -309,11 +309,11 @@ function epubTitle(fichiers) {
 function epureBalise(texte) {
     var txtTOC = texte,
         txt = texte;
-    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>', 'gi');
+    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>?|<[^>]*>?', 'gi');
     var re;
     while ((re = h.exec(texte)) !== null) {
-        txtTOC = (re[1] === "") && txtTOC.replace(re[0], '') || txtTOC;
-        txt = (re[1] === "") && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
+        txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
+        txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
     }
 
     txtTOC = txtTOC.replace(/[\n\r]/g, '');
@@ -593,6 +593,12 @@ function ecritureLigne(fichier, fichierOPF) {
             //  Text Types
         case ".css":
             mediaType = "text/css"
+            break;
+        case ".vtt":
+            mediaType = "text/vtt"
+            break;
+        case ".srt":
+            mediaType = "text/srt"
             break;
 
             //  Font Types
