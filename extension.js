@@ -16,10 +16,9 @@ let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
-    var exp = '<' + balise + epubType + '[^>]*>((?:.|\n|\r)*?)<\/' + balise + '>',
-        re = new RegExp(exp, 'gi'),
-        result = re.exec(this);
-    return this.replace(result[1], par);
+    var exp = '(<' + balise + epubType + '[^>]*>)((?:.|\n|\r)*?)(<\/' + balise + '>)',
+        re = new RegExp(exp, 'gi');
+    return this.replace(re, '$1' + par + '$3');
 }
 
 String.prototype.getAttr = function (attr) {

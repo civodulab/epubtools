@@ -69,6 +69,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.5.6
+
+- correction bug `EpubTools : premier <h.> => <title>`
+
 ### 1.5.5
 
 - correction bug TDM (ncx)
