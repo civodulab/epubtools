@@ -8,7 +8,9 @@ const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
 
-var util = require('./src/util');
+const util = require('./src/util');
+const manifest = require('./src/manifest');
+
 
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
@@ -44,7 +46,7 @@ String.prototype.setAttr = function (attr, val) {
 }
 
 const dom = require('./mes_modules/dom-js');
-const isNumeric = require('./mes_modules/str-isnum');
+// const isNumeric = require('./mes_modules/str-isnum');
 
 
 String.prototype.metaProperties = function () {
@@ -90,14 +92,28 @@ function activate(context) {
             return; // No open text editor
         }
 
-
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
             Window.showInformationMessage('Vous devez être dans un fichier opf');
             return;
         }
-        var Liens = util.fichierLiens();
-        epubManifest(Liens, d.fileName);
+        outputChannel.clear();
+
+        manifest.epubManifest(d.fileName);
+
+        let test = manifest.testSpine(d.fileName);
+        if (test) {
+            outputChannel.appendLine('Problème de spine :');
+
+            test.forEach(el => {
+                outputChannel.appendLine('\t' + el);
+
+            });
+
+            outputChannel.show(true);
+        }
+
+
 
     });
     context.subscriptions.push(disposable);
@@ -123,11 +139,8 @@ function activate(context) {
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
         }
-
         epubTOC(Liens, d.fileName);
         outputChannel.show(true);
-
-
     });
 
     context.subscriptions.push(disposable);
@@ -153,7 +166,15 @@ function activate(context) {
         }
         outputChannel.clear();
         var Liens = util.recupFichiers('.xhtml');
+        var monOpf = util.recupFichiers('.opf')[0];
         testLiensPages(Liens);
+        var outSpine = manifest.testSpine(monOpf);
+        if (outSpine) {
+            outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
+            outSpine.forEach(el => {
+                outputChannel.appendLine('\t' + el);
+            })
+        }
         outputChannel.show(true);
     });
 
@@ -179,14 +200,14 @@ function activate(context) {
 
             if (txt.indexOf('epub:type="page-list"') !== -1) {
 
-                remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
             } else {
                 pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
                 insertEditorSelection(pBreak);
             }
         } else {
             Window.showInformationMessage("Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.");
-            remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
+            util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
 
 
         }
@@ -205,9 +226,9 @@ function testLiensPages(liens) {
     var sansTitre = [],
         pbHierarchie = [];
     var text = "";
-    Object.keys(liens).forEach(function (el) {
-        var fd = vscode.Uri.file(liens[el]);
-        var data = fs.readFileSync(liens[el], 'utf8'),
+    Object.values(liens).forEach(function (el) {
+        var fd = vscode.Uri.file(el);
+        var data = fs.readFileSync(el, 'utf8'),
             rtitre = rechercheTitre(data);
         if (!rtitre) {
             sansTitre.push(fd);
@@ -300,7 +321,7 @@ function epubTitle(fichiers) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
             var par = epureBalise(result[1]);
-            remplaceDansFichier(el, par.txt, 'title');
+            util.remplaceDansFichier(el, par.txt, 'title');
         }
     });
 }
@@ -410,7 +431,7 @@ function recupSpine() {
     var monOPF = util.recupFichiers('.opf')[0];
     var data = fs.readFileSync(monOPF, 'utf8');
     var monDom = new dom(data);
-    var monSpine = monDom.getElementByTagName('spine')
+    var monSpine = monDom.getElementByTagName('spine');
     var idref = rechercheIdref(monSpine[0]);
     return rechercheHrefParIdRef(data, idref);
 
@@ -488,9 +509,9 @@ function tableMatieres(titres, fichierTOC) {
 
 
     if (path.basename(fichierTOC) === 'toc.ncx') {
-        remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
+        util.remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
     } else {
-        remplaceDansFichier(fichierTOC, maTableXhtml, 'nav', 'toc');
+        util.remplaceDansFichier(fichierTOC, maTableXhtml, 'nav', 'toc');
     }
 
 }
@@ -499,7 +520,7 @@ function rechercheHrefParIdRef(texte, idref) {
     var mesLiens = [];
     idref.forEach(function (el) {
         var id = el.replace('ref=', '='),
-            exp = id + '.+?href="([^"]*)"',
+            exp = id + '.+?href=(\'|").*?(\'|")',
             re = new RegExp(exp, 'gi'),
             val = re.exec(texte);
         mesLiens.push(val[1]);
@@ -509,8 +530,7 @@ function rechercheHrefParIdRef(texte, idref) {
 }
 
 function rechercheIdref(texte) {
-    var re = new RegExp('idref="[^"]*"', 'gi');
-    return texte.match(re);
+    return texte.match(/idref=(\'|").*?(\'|")/gi);
 }
 
 function rechercheTitre(texte, nivT) {
@@ -539,115 +559,4 @@ function hierarchieTitre(texte) {
     }
     return true;
 
-}
-
-function remplaceDansFichier(fichier, texte, balise, epubType) {
-    fs.readFile(fichier, 'utf8', function (err, data) {
-        if (err) {
-            return console.log(err);
-        }
-        var rpl = data.remplaceEntre2Balises(balise, texte, epubType);
-        fs.writeFile(fichier, rpl, 'utf8', function (err) {
-            if (err) return console.log(err);
-        });
-    });
-}
-
-
-function ecritureLigne(fichier, fichierOPF) {
-    var relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
-        relativeFichier;
-    if (relativeP !== '') {
-        relativeFichier = relativeP + '/' + path.basename(fichier);
-    } else {
-        relativeFichier = path.basename(fichier);
-    }
-
-    var maligne = "",
-        mediaType = "",
-        properties = "",
-        ext = path.extname(relativeFichier),
-        nom = path.basename(relativeFichier);
-    nom = isNumeric(nom.substring(0, 1)) && ("x" + nom) || nom;
-    ext = ext.toLowerCase();
-    switch (ext) {
-        case '.xhtml':
-            mediaType = "application/xhtml+xml";
-            nom = path.basename(nom, '.xhtml');
-            var data = fs.readFileSync(fichier, 'utf8');
-            var proper = data.metaProperties();
-            if (proper.length !== 0) {
-                properties = ' properties="' + proper.join(' ') + '"';
-            }
-            break;
-        case '.pls':
-            mediaType = "application/pls+xml";
-            break;
-        case '.js':
-            mediaType = "application/javascript";
-            break;
-        case ".ncx":
-            mediaType = "application/x-dtbncx+xml"
-            break;
-            //  Text Types
-        case ".css":
-            mediaType = "text/css"
-            break;
-        case ".vtt":
-            mediaType = "text/vtt"
-            break;
-        case ".srt":
-            mediaType = "text/srt"
-            break;
-
-            //  Font Types
-        case ".ttf":
-        case ".otf":
-            // mediaType = "application/font-sfnt"; //version 3.1
-            mediaType = "application/vnd.ms-opentype";
-            break;
-        case ".woff":
-            mediaType = "application/font-woff"
-            break;
-
-            //  Images type
-        case ".gif":
-            mediaType = "image/gif"
-            break;
-        case ".jpeg":
-        case ".jpg":
-            mediaType = "image/jpeg"
-            break;
-        case ".png":
-            mediaType = "image/png"
-            break;
-        case ".svg":
-            mediaType = "image/svg+xml"
-            break;
-            // Audio types
-        case ".mpg":
-        case ".mp3":
-            mediaType = "audio/mpeg"
-            break;
-        case ".mp4":
-        case ".aac":
-            mediaType = "audio/mp4"
-        default:
-            break;
-    }
-
-    maligne = '<item id="' + nom + '" href="' + relativeFichier + '" media-type="' + mediaType + '"' + properties + ' />\n';
-    return maligne;
-}
-
-
-function epubManifest(mesFichiers, fichierOPF) {
-    var montexte = "";
-    var opf = path.basename(fichierOPF);
-    for (var fich in mesFichiers) {
-        if (fich !== opf) {
-            montexte += ecritureLigne(mesFichiers[fich], fichierOPF);
-        }
-    }
-    remplaceDansFichier(fichierOPF, montexte, 'manifest');
 }

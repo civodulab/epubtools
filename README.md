@@ -33,8 +33,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
   >  Affiche les problèmes dans l'onglet `SORTIE` :
   > - Pages sans titre
-
-  > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple).
+  > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
+  > - Affiche les problèmes de liens dans le spine de l'opf
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
@@ -54,20 +54,33 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools Configuration (`ctrl+,`)
 
 - `epub.niveauTitre`
-    > Niveau de titre dans la table des matières (défaut : **3**)
+  > Niveau de titre dans la table des matières (défaut : **3**)
+
 - `epub.titreTDM`
   - `titre` : Titre de la table des matières (défaut : **Table des matières**)
   - `balise` : Balise pour le titre (défaut : **h1**)
   - `classe` : classe pour le titre (défaut : **titre1**)
+
 - `epub.classeTDM`
   > Classe appliquée à la balise `<ol>` (défaut : **ol-toc**)
+
 - `epub.ancreTDM`
   - `ajouterAncre` : boolean  (défaut : **true**)
   - `nomAncre` : préfixe du nom de l'ancre (défaut : **toc-epubtools**)
 
+- `epub.coverImage`
+  > Nom de la couverture de l'ouvrage (Permet d'ajouter la _properties_ **cover-image** à l'image dans le _manifest_)
+
+
 * * *
 
 ## Release Notes
+
+### 1.5.7
+
+- ajout du nom du fichier ncx dans l'attribut toc du spine
+- ajout properties="cover-image" (fichier opf)
+- ajout recherche erreur dans spine
 
 ### 1.5.6
 
