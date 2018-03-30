@@ -16,6 +16,9 @@ const manifest = require('./src/manifest');
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 
+
+
+
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
     var exp = '(<' + balise + epubType + '[^>]*>)((?:.|\n|\r)*?)(<\/' + balise + '>)',
@@ -558,5 +561,68 @@ function hierarchieTitre(texte) {
         }
     }
     return true;
+
+}
+
+
+function roleDoc(mesFichiers) {
+    var mappings = {
+        "abstract": "doc-abstract",
+        "acknowledgments": "doc-acknowledgments",
+        "afterword": "doc-afterword",
+        "appendix": "doc-appendix",
+        "biblioentry": "doc-biblioentry",
+        "bibliography": "doc-bibliography",
+        "biblioref": "doc-biblioref",
+        "chapter": "doc-chapter",
+        "colophon": "doc-colophon",
+        "conclusion": "doc-conclusion",
+        "cover": "doc-cover",
+        "credit": "doc-credit",
+        "credits": "doc-credits",
+        "dedication": "doc-dedication",
+        "endnote": "doc-endnote",
+        "endnotes": "doc-endnotes",
+        "epigraph": "doc-epigraph",
+        "epilogue": "doc-epilogue",
+        "errata": "doc-errata",
+        "figure": "figure",
+        "footnote": "doc-footnote",
+        "foreword": "doc-foreword",
+        "glossary": "doc-glossary",
+        "glossdef": "definition",
+        "glossref": "doc-glossref",
+        "glossterm": "term",
+        "index": "doc-index",
+        "introduction": "doc-introduction",
+        "landmarks": "directory",
+        "list": "list",
+        "list-item": "listitem",
+        "noteref": "doc-noteref",
+        "notice": "doc-notice",
+        "pagebreak": "doc-pagebreak",
+        "page-list": "doc-pagelist",
+        "part": "doc-part",
+        "preface": "doc-preface",
+        "prologue": "doc-prologue",
+        "pullquote": "doc-pullquote",
+        "qna": "doc-qna",
+        "referrer": "doc-backlink",
+        "subtitle": "doc-subtitle",
+        "table": "table",
+        "table-row": "row",
+        "table-cell": "cell",
+        "tip": "doc-tip",
+        "toc": "doc-toc",
+    };
+    Object.values(mesFichiers).forEach(el => {
+        var data = fs.readFileSync(el, 'utf8');
+        var regex = RegExp('<[^<>]* ?epub:type="[^>]*>', 'g');
+        var array1;
+        while ((array1 = regex.exec(data)) !== null) {
+
+        }
+
+    });
 
 }

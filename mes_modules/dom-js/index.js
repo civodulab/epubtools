@@ -22,4 +22,6 @@ dom.prototype.getElementByAttr = function (attr, val) {
         result = this.txt.match(re);
     return result;
 };
+
+
 module.exports = dom;
