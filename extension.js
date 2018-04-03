@@ -11,12 +11,8 @@ const path = require('path');
 const util = require('./src/util');
 const manifest = require('./src/manifest');
 
-
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
-
-
-
 
 
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
@@ -30,7 +26,7 @@ String.prototype.getAttr = function (attr) {
     var exp = attr + '="([^"]*)"',
         re = new RegExp(exp, 'gi'),
         result = re.exec(this);
-    return result[1];
+    return result && result[1] || false;
 }
 
 String.prototype.setAttr = function (attr, val) {
@@ -71,6 +67,10 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
+
+
+
+
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         try {
             util.pathOEBPS();
@@ -85,6 +85,24 @@ function activate(context) {
 
     });
     context.subscriptions.push(disposable);
+
+
+
+    disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            return; // No open text editor
+        }
+        const a11y = require('./src/a11y');
+        let Liens = util.fichierLiens('.xhtml');
+        a11y.roleDoc(Liens);
+
+
+    });
+    context.subscriptions.push(disposable);
+
 
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
@@ -169,6 +187,8 @@ function activate(context) {
         }
         outputChannel.clear();
         var Liens = util.recupFichiers('.xhtml');
+        roleDoc(Liens);
+
         var monOpf = util.recupFichiers('.opf')[0];
         testLiensPages(Liens);
         var outSpine = manifest.testSpine(monOpf);
@@ -561,68 +581,5 @@ function hierarchieTitre(texte) {
         }
     }
     return true;
-
-}
-
-
-function roleDoc(mesFichiers) {
-    var mappings = {
-        "abstract": "doc-abstract",
-        "acknowledgments": "doc-acknowledgments",
-        "afterword": "doc-afterword",
-        "appendix": "doc-appendix",
-        "biblioentry": "doc-biblioentry",
-        "bibliography": "doc-bibliography",
-        "biblioref": "doc-biblioref",
-        "chapter": "doc-chapter",
-        "colophon": "doc-colophon",
-        "conclusion": "doc-conclusion",
-        "cover": "doc-cover",
-        "credit": "doc-credit",
-        "credits": "doc-credits",
-        "dedication": "doc-dedication",
-        "endnote": "doc-endnote",
-        "endnotes": "doc-endnotes",
-        "epigraph": "doc-epigraph",
-        "epilogue": "doc-epilogue",
-        "errata": "doc-errata",
-        "figure": "figure",
-        "footnote": "doc-footnote",
-        "foreword": "doc-foreword",
-        "glossary": "doc-glossary",
-        "glossdef": "definition",
-        "glossref": "doc-glossref",
-        "glossterm": "term",
-        "index": "doc-index",
-        "introduction": "doc-introduction",
-        "landmarks": "directory",
-        "list": "list",
-        "list-item": "listitem",
-        "noteref": "doc-noteref",
-        "notice": "doc-notice",
-        "pagebreak": "doc-pagebreak",
-        "page-list": "doc-pagelist",
-        "part": "doc-part",
-        "preface": "doc-preface",
-        "prologue": "doc-prologue",
-        "pullquote": "doc-pullquote",
-        "qna": "doc-qna",
-        "referrer": "doc-backlink",
-        "subtitle": "doc-subtitle",
-        "table": "table",
-        "table-row": "row",
-        "table-cell": "cell",
-        "tip": "doc-tip",
-        "toc": "doc-toc",
-    };
-    Object.values(mesFichiers).forEach(el => {
-        var data = fs.readFileSync(el, 'utf8');
-        var regex = RegExp('<[^<>]* ?epub:type="[^>]*>', 'g');
-        var array1;
-        while ((array1 = regex.exec(data)) !== null) {
-
-        }
-
-    });
 
 }
