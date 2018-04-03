@@ -31,8 +31,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
 - `EpubTools : Création Page Liste`
 
-
   >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
+
 - `EpubTools : Problèmes ?`
 
   >  Affiche les problèmes dans l'onglet `SORTIE` :

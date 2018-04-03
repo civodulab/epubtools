@@ -213,12 +213,10 @@ function activate(context) {
             return; // No open text editor
         }
         outputChannel.clear();
-        var Liens = util.recupFichiers('.xhtml');
-        roleDoc(Liens);
-
-        var monOpf = util.recupFichiers('.opf')[0];
+        let Liens = util.recupFichiers('.xhtml'),
+            monOpf = util.recupFichiers('.opf')[0];
         testLiensPages(Liens);
-        var outSpine = manifest.testSpine(monOpf);
+        let outSpine = manifest.testSpine(monOpf);
         if (outSpine) {
             outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
             outSpine.forEach(el => {
@@ -237,16 +235,16 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
-        let d = Window.activeTextEditor.document;
-        var tdm = isTDM(d.fileName);
+        let d = Window.activeTextEditor.document,
+            tdm = isTDM(d.fileName);
         if (!tdm) {
             Window.showInformationMessage('Vous devez être dans un fichier toc');
             return; // No open text editor
         }
-        var Liens = util.recupFichiers('.xhtml');
-        var pBreak = epubPageBreak(Liens, d.fileName);
+        let Liens = util.recupFichiers('.xhtml'),
+            pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
-            var txt = fs.readFileSync(d.fileName, 'utf8');
+            let txt = fs.readFileSync(d.fileName, 'utf8');
 
             if (txt.indexOf('epub:type="page-list"') !== -1) {
 
@@ -570,10 +568,10 @@ function rechercheHrefParIdRef(texte, idref) {
     var mesLiens = [];
     idref.forEach(function (el) {
         var id = el.replace('ref=', '='),
-            exp = id + '.+?href=(\'|").*?(\'|")',
+            exp = id + '.+?href=(\'|")(.*?)(\'|")',
             re = new RegExp(exp, 'gi'),
             val = re.exec(texte);
-        mesLiens.push(val[1]);
+        mesLiens.push(val[2]);
 
     });
     return mesLiens;
