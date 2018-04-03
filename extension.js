@@ -11,7 +11,6 @@ const path = require('path');
 const util = require('./src/util');
 const manifest = require('./src/manifest');
 
-
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
@@ -27,7 +26,7 @@ String.prototype.getAttr = function (attr) {
     var exp = attr + '="([^"]*)"',
         re = new RegExp(exp, 'gi'),
         result = re.exec(this);
-    return result[1];
+    return result && result[1] || false;
 }
 
 String.prototype.setAttr = function (attr, val) {
@@ -68,6 +67,10 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
+
+
+
+
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         try {
             util.pathOEBPS();
@@ -82,6 +85,51 @@ function activate(context) {
 
     });
     context.subscriptions.push(disposable);
+
+
+
+    disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            return; // No open text editor
+        }
+        const a11y = require('./src/a11y');
+        let Liens = util.fichierLiens('.xhtml');
+
+        var opts = {
+            matchOnDescription: true,
+            placeHolder: "Choisissez dans la liste ci-dessous."
+        };
+        var items = [];
+
+        items.push({
+            label: "DPub-Aria roles",
+            description: "Ajoute role=\"doc-...\""
+        });
+        Window.showQuickPick(items, opts).then((selection) => {
+            if (!selection) {
+                return;
+            }
+            let e = Window.activeTextEditor;
+            let d = e.document;
+            let sel = e.selections;
+
+            switch (selection.label) {
+                case "DPub-Aria roles":
+                    a11y.roleDoc(Liens);
+                    break;
+                default:
+                    console.log("Vous n'avez rien sélectionné !")
+                    break;
+            }
+        });
+
+
+    });
+    context.subscriptions.push(disposable);
+
 
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
@@ -166,6 +214,8 @@ function activate(context) {
         }
         outputChannel.clear();
         var Liens = util.recupFichiers('.xhtml');
+        roleDoc(Liens);
+
         var monOpf = util.recupFichiers('.opf')[0];
         testLiensPages(Liens);
         var outSpine = manifest.testSpine(monOpf);

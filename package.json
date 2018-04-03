@@ -16,7 +16,12 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
+        "commands": [{
+                "command": "extension.epubA11Y",
+                "title": "A11Y",
+                "description": "Outils d'accessibilité",
+                "category": "EpubTools"
+            },
             {
                 "command": "extension.epubSpanPageNoir",
                 "title": "<span...>{numPage}</span> => <span {epub:type} />",
