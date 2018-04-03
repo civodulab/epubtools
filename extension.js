@@ -97,7 +97,34 @@ function activate(context) {
         }
         const a11y = require('./src/a11y');
         let Liens = util.fichierLiens('.xhtml');
-        a11y.roleDoc(Liens);
+
+        var opts = {
+            matchOnDescription: true,
+            placeHolder: "Choisissez dans la liste ci-dessous."
+        };
+        var items = [];
+
+        items.push({
+            label: "DPub-Aria roles",
+            description: "Ajoute role=\"doc-...\""
+        });
+        Window.showQuickPick(items, opts).then((selection) => {
+            if (!selection) {
+                return;
+            }
+            let e = Window.activeTextEditor;
+            let d = e.document;
+            let sel = e.selections;
+
+            switch (selection.label) {
+                case "DPub-Aria roles":
+                    a11y.roleDoc(Liens);
+                    break;
+                default:
+                    console.log("Vous n'avez rien sélectionné !")
+                    break;
+            }
+        });
 
 
     });

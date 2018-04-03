@@ -18,8 +18,8 @@
     "contributes": {
         "commands": [{
                 "command": "extension.epubA11Y",
-                "title": "DPub-Aria roles",
-                "description": "Ajoute role=\"doc-...\"",
+                "title": "A11Y",
+                "description": "Outils d'accessibilité",
                 "category": "EpubTools"
             },
             {
