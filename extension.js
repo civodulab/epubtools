@@ -120,7 +120,6 @@ function activate(context) {
                     a11y.roleDoc(Liens);
                     break;
                 default:
-                    console.log("Vous n'avez rien sélectionné !")
                     break;
             }
         });
@@ -250,7 +249,7 @@ function activate(context) {
                 if (txt.indexOf('epub:type="page-list"') !== -1) {
                     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
                 } else {
-                    pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
+                    pBreak = '<nav epub:type="page-list" role="doc-pagelist">\n' + pBreak + '\n</nav>';
                     // find </nav>
                     if (txt.indexOf('</nav>') !== -1) {
                         var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
@@ -261,17 +260,6 @@ function activate(context) {
                 }
             });
 
-
-            // let txt = fs.readFileSync(d.fileName, 'utf8');
-
-
-
-            // if (txt.indexOf('epub:type="page-list"') !== -1) {
-            //     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
-            // } else {
-            //     pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
-            //     insertEditorSelection(pBreak);
-            // }
         } else {
             Window.showInformationMessage("Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.");
             util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
