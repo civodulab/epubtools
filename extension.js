@@ -45,7 +45,6 @@ String.prototype.setAttr = function (attr, val) {
 }
 
 const dom = require('./mes_modules/dom-js');
-// const isNumeric = require('./mes_modules/str-isnum');
 
 
 String.prototype.metaProperties = function () {
@@ -244,20 +243,38 @@ function activate(context) {
         let Liens = util.recupFichiers('.xhtml'),
             pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
-            let txt = fs.readFileSync(d.fileName, 'utf8');
 
-            if (txt.indexOf('epub:type="page-list"') !== -1) {
 
-                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
-            } else {
-                pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
-                insertEditorSelection(pBreak);
-            }
+            fs.readFile(d.fileName, 'utf8', (err, txt, ) => {
+
+                if (txt.indexOf('epub:type="page-list"') !== -1) {
+                    util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+                } else {
+                    pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
+                    // find </nav>
+                    if (txt.indexOf('</nav>') !== -1) {
+                        var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
+                        fs.writeFileSync(d.fileName, data);
+                    } else {
+                        insertEditorSelection(pBreak);
+                    }
+                }
+            });
+
+
+            // let txt = fs.readFileSync(d.fileName, 'utf8');
+
+
+
+            // if (txt.indexOf('epub:type="page-list"') !== -1) {
+            //     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
+            // } else {
+            //     pBreak = '<nav epub:type="page-list">\n' + pBreak + '\n</nav>';
+            //     insertEditorSelection(pBreak);
+            // }
         } else {
             Window.showInformationMessage("Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.");
             util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
-
-
         }
 
     });
