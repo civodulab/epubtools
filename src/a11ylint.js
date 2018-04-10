@@ -9,6 +9,10 @@ const diagSource = 'epubtoolslint'
 let diagnosticCollection = null;
 diagnosticCollection = vscode.languages.createDiagnosticCollection('epubTools');
 
+function removeDoc(doc) {
+    diagnosticCollection.delete(vscode.Uri.file(doc.fsPath));
+}
+
 function diagRemove(rep) {
     diagnosticCollection.forEach(elt => {
         (elt.fsPath.indexOf(rep) !== -1) && diagnosticCollection.delete(vscode.Uri.file(elt.fsPath));
@@ -76,4 +80,5 @@ module.exports = {
     epubToolsDiagnostic,
     diagnosticDoc,
     diagRemove,
+    removeDoc,
 }

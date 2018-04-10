@@ -71,7 +71,10 @@ function activate(context) {
 
     // vscode.workspace.onDidChangeTextDocument(a11ylint.diagnosticDoc);
     // // vscode.workspace.onDidCloseTextDocument(didCloseTextDocument);
-    // vscode.workspace.onDidChangeConfiguration(a11ylint.epubToolsDiagnostic);
+    // vscode.workspace.onDidChangeConfiguration(elt => {
+    //     console.log('config');
+    //     a11ylint.epubToolsDiagnostic();
+    // });
     vscode.workspace.onDidChangeWorkspaceFolders(elt => {
         let remove = elt.removed;
         if (remove.length > 0) {
@@ -83,25 +86,19 @@ function activate(context) {
         }
     });
 
-
-
     var watcher = vscode.workspace.createFileSystemWatcher("**/OEBPS/**/*.xhtml");
     watcher.onDidChange(() => {
         a11ylint.diagnosticDoc();
-        vscode.window.showInformationMessage("change !"); //In my opinion this should be called
     });
-    watcher.onDidCreate(() => {
-        a11ylint.diagnosticDoc();
-        vscode.window.showInformationMessage("create applied!"); //In my opinion this should be called
+    watcher.onDidCreate(elt => {
+        vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
+            a11ylint.diagnosticDoc(doc);
+        });
     });
-    watcher.onDidDelete(() => {
-        a11ylint.epubToolsDiagnostic();
-        console.log('delete');
-        vscode.window.showInformationMessage("change delete"); //In my opinion this should be called
+    watcher.onDidDelete(elt => {
+        a11ylint.removeDoc(elt);
     });
     a11ylint.epubToolsDiagnostic();
-
-    // vscode.workspace.onDidSaveTextDocument(diagnosticDoc);
 
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
@@ -111,7 +108,6 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
-
 
         var Liens = util.fichierLiens('.xhtml');
         util.transformePageNoire(Liens);

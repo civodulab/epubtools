@@ -88,6 +88,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.7.1
+
+- fix bug a11ylint
+
 ### 1.7.0
 
 - ajout a11ylint -> image
