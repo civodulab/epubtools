@@ -88,6 +88,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
+### 1.7.2
+
+- fix mediatype smil (manifest)
+
 ### 1.7.1
 
 - fix bug a11ylint

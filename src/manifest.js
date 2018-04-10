@@ -103,6 +103,9 @@ function _ecritureLigne(fichier, fichierOPF) {
         case ".mp3":
             mediaType = "audio/mpeg"
             break;
+        case ".smil":
+            mediaType = "application/smil+xml"
+            break;
         case ".mp4":
         case ".aac":
             mediaType = "audio/mp4"
