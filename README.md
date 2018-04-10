@@ -5,7 +5,7 @@
 
 Outils destinés à faciliter le travail sur les EPUB.
 
-([English README](README.en.md)) merci [garconvacher](https://github.com/garconvacher) 
+([English README](README.en.md)) merci [garconvacher](https://github.com/garconvacher)
 
 ## À savoir
 
@@ -17,7 +17,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils d'accessibilité :
-  > - `DPub-Aria roles` : Ajoute _role="doc-..."_ si _epub:type_ (je me suis aidé des script de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))
+  > - `DPub-Aria roles` : Ajoute _role="doc-..."_ si _epub:type_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))
 
 - `EpubTools : Manifest`
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
@@ -76,10 +76,19 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.coverImage`
   > Nom de la couverture de l'ouvrage (Permet d'ajouter la _properties_ **cover-image** à l'image dans le _manifest_)
 
-
 * * *
 
+## EpubToolsLint
+
+- Vérification des images :
+  - `alt` vide
+  - pas de `alt`
+
+* * *
 ## Release Notes
+
+### 1.7.0
+- ajout a11ylint -> image
 
 ### 1.6.0
 - Ajout a11y
@@ -168,7 +177,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ### 1.2.1
 
-- OPF xhtml item properties 
+- OPF xhtml item properties
   - "scripted"
   - "mathml"
   - "nav"

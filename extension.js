@@ -10,6 +10,8 @@ const path = require('path');
 
 const util = require('./src/util');
 const manifest = require('./src/manifest');
+const a11ylint = require('./src/a11ylint');
+
 
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
@@ -56,6 +58,7 @@ String.prototype.metaProperties = function () {
 }
 
 
+
 function activate(context) {
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -66,8 +69,39 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
+    // vscode.workspace.onDidChangeTextDocument(a11ylint.diagnosticDoc);
+    // // vscode.workspace.onDidCloseTextDocument(didCloseTextDocument);
+    // vscode.workspace.onDidChangeConfiguration(a11ylint.epubToolsDiagnostic);
+    vscode.workspace.onDidChangeWorkspaceFolders(elt => {
+        let remove = elt.removed;
+        if (remove.length > 0) {
+            remove.forEach(el => {
+                a11ylint.diagRemove(el.name);
+            })
+        } else {
+            a11ylint.epubToolsDiagnostic();
+        }
+    });
 
 
+
+    var watcher = vscode.workspace.createFileSystemWatcher("**/OEBPS/**/*.xhtml");
+    watcher.onDidChange(() => {
+        a11ylint.diagnosticDoc();
+        vscode.window.showInformationMessage("change !"); //In my opinion this should be called
+    });
+    watcher.onDidCreate(() => {
+        a11ylint.diagnosticDoc();
+        vscode.window.showInformationMessage("create applied!"); //In my opinion this should be called
+    });
+    watcher.onDidDelete(() => {
+        a11ylint.epubToolsDiagnostic();
+        console.log('delete');
+        vscode.window.showInformationMessage("change delete"); //In my opinion this should be called
+    });
+    a11ylint.epubToolsDiagnostic();
+
+    // vscode.workspace.onDidSaveTextDocument(diagnosticDoc);
 
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {

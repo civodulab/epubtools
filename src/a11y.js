@@ -1,7 +1,6 @@
 'use strict';
 const fs = require('fs');
 
-
 function roleDoc(mesFichiers) {
     var mappings = {
         "abstract": "doc-abstract",
@@ -49,15 +48,12 @@ function roleDoc(mesFichiers) {
         var regex = RegExp('<[^<>]* ?epub:type=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
         var array1;
         while ((array1 = regex.exec(data)) !== null) {
-            // console.log(array1);
             var balise = array1[0];
             var epubType = array1[2];
             var role = balise.getAttr('role');
             if (!role) {
                 var roles = epubType.split(' ').map(inflection => mappings[inflection]).filter(el => !!el);
                 data = (roles.length !== 0) && data.replace(balise, balise.setAttr('role', roles.shift())) || data;
-                // console.log(balise + ' - ' + balise.getAttr('role'));
-                // console.log(epubType);
             }
         }
         fs.writeFileSync(fichier, data);
