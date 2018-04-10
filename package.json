@@ -16,8 +16,7 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.epubA11Y",
                 "title": "A11Y",
                 "description": "Outils d'accessibilité",
@@ -64,6 +63,11 @@
             "type": "object",
             "title": "Epub configuration",
             "properties": {
+                "epub.activerA11ylint": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Active a11ylint."
+                },
                 "epub.niveauTitre": {
                     "type": "integer",
                     "default": 3,

@@ -10,7 +10,6 @@ const path = require('path');
 
 const util = require('./src/util');
 const manifest = require('./src/manifest');
-const a11ylint = require('./src/a11ylint');
 
 
 //Sortie
@@ -75,30 +74,35 @@ function activate(context) {
     //     console.log('config');
     //     a11ylint.epubToolsDiagnostic();
     // });
-    vscode.workspace.onDidChangeWorkspaceFolders(elt => {
-        let remove = elt.removed;
-        if (remove.length > 0) {
-            remove.forEach(el => {
-                a11ylint.diagRemove(el.name);
-            })
-        } else {
-            a11ylint.epubToolsDiagnostic();
-        }
-    });
 
-    var watcher = vscode.workspace.createFileSystemWatcher("**/OEBPS/**/*.xhtml");
-    watcher.onDidChange(() => {
-        a11ylint.diagnosticDoc();
-    });
-    watcher.onDidCreate(elt => {
-        vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
-            a11ylint.diagnosticDoc(doc);
+    if (config.get('activerA11ylint')) {
+        const a11ylint = require('./src/a11ylint');
+
+        vscode.workspace.onDidChangeWorkspaceFolders(elt => {
+            let remove = elt.removed;
+            if (remove.length > 0) {
+                remove.forEach(el => {
+                    a11ylint.diagRemove(el.name);
+                });
+            } else {
+                a11ylint.epubToolsDiagnostic();
+            }
         });
-    });
-    watcher.onDidDelete(elt => {
-        a11ylint.removeDoc(elt);
-    });
-    a11ylint.epubToolsDiagnostic();
+
+        var watcher = vscode.workspace.createFileSystemWatcher("**/OEBPS/**/*.xhtml");
+        watcher.onDidChange(() => {
+            a11ylint.diagnosticDoc();
+        });
+        watcher.onDidCreate(elt => {
+            vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
+                a11ylint.diagnosticDoc(doc);
+            });
+        });
+        watcher.onDidDelete(elt => {
+            a11ylint.removeDoc(elt);
+        });
+        a11ylint.epubToolsDiagnostic();
+    }
 
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {

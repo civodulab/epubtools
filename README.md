@@ -76,6 +76,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.coverImage`
   > Nom de la couverture de l'ouvrage (Permet d'ajouter la _properties_ **cover-image** à l'image dans le _manifest_)
 
+- `epub.activerA11ylint`
+  > Active _a11ylint_ (défaut **true**)
+
 * * *
 
 ## EpubToolsLint
