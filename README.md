@@ -85,14 +85,16 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   - pas de `alt`
 
 * * *
+
 ## Release Notes
 
 ### 1.7.0
+
 - ajout a11ylint -> image
 
 ### 1.6.0
-- Ajout a11y
 
+- Ajout a11y
 
 ### 1.5.7
 
@@ -122,7 +124,6 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - corrections bug :
   - ancres titres (merci [garconvacher](https://github.com/garconvacher))
   - balises dans ncx, title (merci [garconvacher](https://github.com/garconvacher))
-
 
 ### 1.5.1
 
