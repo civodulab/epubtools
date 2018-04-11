@@ -16,7 +16,30 @@ function epubManifest(fichierOPF) {
             montexte += _ecritureLigne(mesFichiers[fich], fichierOPF);
         }
     }
+    montexte = _mediaOverlay(montexte);
     util.remplaceDansFichier(fichierOPF, montexte, 'manifest');
+}
+
+function _mediaOverlay(texte) {
+    if (texte.indexOf('.smil"') !== -1) {
+        let mesSmil = util.recupFichiers('.smil');
+        mesSmil.forEach(lien => {
+            let data = fs.readFileSync(lien, 'utf8');
+            // let regEx1=new RegExp('src=(?:\'|").*?(?:\'|")','g');
+            let mesSrc = data.match(/src=(?:\'|").*?(?:\'|")/g);
+            mesSrc = mesSrc.filter(elt => elt.indexOf('.xhtml') !== -1);
+            mesSrc = mesSrc
+                .map(elt => elt.split('/').pop().split('#')[0])
+                .filter((elt, i, self) => {
+                    return i === self.indexOf(elt);
+                });
+            mesSrc.forEach(src => {
+                let regexp1 = new RegExp('(href=(?:\'|").*?' + src + '(?:\'|"))', 'i');
+                texte = texte.replace(regexp1, '$1 media-overlay="' + lien.split('\\').pop() + '" ');
+            })
+        });
+    }
+    return texte
 }
 
 function _ecritureLigne(fichier, fichierOPF) {
