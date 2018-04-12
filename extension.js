@@ -75,35 +75,19 @@ function activate(context) {
     //     a11ylint.epubToolsDiagnostic();
     // });
 
+    const a11ylint = require('./src/a11ylint');
+    let wkFolderAvant;
     if (config.get('activerA11ylint')) {
-        const a11ylint = require('./src/a11ylint');
-
-        vscode.workspace.onDidChangeWorkspaceFolders(elt => {
-            let remove = elt.removed;
-            if (remove.length > 0) {
-                remove.forEach(el => {
-                    a11ylint.diagRemove(el.name);
-                });
-            } else {
-                a11ylint.epubToolsDiagnostic();
+        vscode.workspace.onDidOpenTextDocument(doc => {
+            let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
+            if (wkFolder && (wkFolder !== wkFolderAvant)) {
+                wkFolderAvant = wkFolder;
+                a11ylint.remiseAzero();
+                a11ylint.epubToolsDiagnostic(wkFolderAvant);
+                a11ylint.epubToolsWatcher(wkFolderAvant);
             }
-        });
-
-        var watcher = vscode.workspace.createFileSystemWatcher("**/OEBPS/**/*.xhtml");
-        watcher.onDidChange(() => {
-            a11ylint.diagnosticDoc();
-        });
-        watcher.onDidCreate(elt => {
-            vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
-                a11ylint.diagnosticDoc(doc);
-            });
-        });
-        watcher.onDidDelete(elt => {
-            a11ylint.removeDoc(elt);
-        });
-        a11ylint.epubToolsDiagnostic();
+        })
     }
-
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         try {

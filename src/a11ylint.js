@@ -5,11 +5,11 @@ const txtImg = {
     'sansAlt': 'image / sans "alt"',
     'altVide': 'image / "alt" vide',
 };
-const diagSource = 'epubtoolslint'
+const diagSource = 'a11ylint'
 let diagnosticCollection = null;
 diagnosticCollection = vscode.languages.createDiagnosticCollection('epubTools');
 
-function removeDoc(doc) {
+function _removeDoc(doc) {
     diagnosticCollection.delete(vscode.Uri.file(doc.fsPath));
 }
 
@@ -19,17 +19,39 @@ function diagRemove(rep) {
     });
 }
 
-function epubToolsDiagnostic() {
-    vscode.workspace.findFiles('**/OEBPS/**/*.xhtml').then(liens => {
-        liens.forEach(el => {
-            vscode.workspace.openTextDocument(vscode.Uri.file(el.fsPath)).then(doc => {
-                diagnosticDoc(doc)
-            });
-        });
-    })
+function remiseAzero() {
+    diagnosticCollection.clear();
 }
 
-function diagnosticDoc(doc) {
+function epubToolsDiagnostic(workFolder) {
+    vscode.workspace.findFiles(new vscode.RelativePattern(workFolder, '**/*.xhtml')).then(liens => {
+        liens.forEach(el => {
+            vscode.workspace.openTextDocument(vscode.Uri.file(el.fsPath)).then(doc => {
+                _diagnosticDoc(doc)
+            });
+        });
+    });
+}
+
+
+function epubToolsWatcher(workFolder) {
+    let watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workFolder, '**/*.xhtml'));
+    watcher.onDidChange(() => {
+        _diagnosticDoc();
+    });
+    watcher.onDidCreate(elt => {
+        vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
+            _diagnosticDoc(doc);
+        });
+    });
+    watcher.onDidDelete(elt => {
+        _removeDoc(elt);
+    });
+
+
+}
+
+function _diagnosticDoc(doc) {
     doc = doc && doc || vscode.window.activeTextEditor.document;
     let diagnostics = [];
     let lline = doc.lineCount,
@@ -78,7 +100,7 @@ function _imageA11y(line, nl) {
 
 module.exports = {
     epubToolsDiagnostic,
-    diagnosticDoc,
     diagRemove,
-    removeDoc,
+    remiseAzero,
+    epubToolsWatcher,
 }
