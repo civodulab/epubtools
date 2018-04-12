@@ -16,15 +16,17 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : A11Y`
-  > Ouvre une liste d'outils d'accessibilité :
-  > - `DPub-Aria roles` : Ajoute _role="doc-..."_ si _epub:type_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))
+  > Ouvre une liste d'outils pour améliorer l'accessibilité :
+  > - `DPub-Aria roles` : Ajoute _role="doc-..."_ si _epub:type_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
+  Référence : [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
 - `EpubTools : Manifest`
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
 
 - `EpubTools : Table des matières`
 
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.
+  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
+  Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
 
 - `EpubTools : premier <h.> => <title>`
 
@@ -39,7 +41,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   >  Affiche les problèmes dans l'onglet `SORTIE` :
   > - Pages sans titre
   > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
-  > - Affiche les problèmes de liens dans le spine de l'opf
+  > - Affiche les problèmes de liens dans le `<spine>` de l'opf
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
