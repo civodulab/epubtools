@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.7.4
+
+- fix `a11ylint` (ne scanne que les fichiers xhtml du dossier de l'epub)
+
 ## 1.7.3
 
 - ajout `media-overlay` (manifest)

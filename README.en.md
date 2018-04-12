@@ -16,8 +16,8 @@ The EPUB file must be uncompressed. Then you can work in his directories.
 - `EpubTools: A11Y`
   > Open a list of tools to improve accessibility (a11y):
   > - `DPub-Aria roles` : Add _role="doc-`X`"_ in markup if _epub:type="`X`"_ is in it  (I was helped by the scripts from [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
-  Reference: [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
-  
+  > Reference: [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
+
 - `EpubTools: Manifest`
   > Rebuilds the manifest in the OPF according to the files in the EPUB. The command must be launched in the `.opf` file.
 - `EpubTools: Table des matières`
@@ -66,7 +66,7 @@ The EPUB file must be uncompressed. Then you can work in his directories.
 
 * * *
 
-## EpubToolsLint
+## A11yLint
 
 - Display issues with `<img>`:
   - if `alt` is empty
