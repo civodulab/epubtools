@@ -16,15 +16,17 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools contenu (`ctrl+shift+P`)
 
 - `EpubTools : A11Y`
-  > Ouvre une liste d'outils d'accessibilité :
-  > - `DPub-Aria roles` : Ajoute _role="doc-..."_ si _epub:type_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))
+  > Ouvre une liste d'outils pour améliorer l'accessibilité :
+  > - `DPub-Aria roles` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
+  Référence : [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
 - `EpubTools : Manifest`
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
 
 - `EpubTools : Table des matières`
 
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.
+  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
+  Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
 
 - `EpubTools : premier <h.> => <title>`
 
@@ -39,7 +41,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   >  Affiche les problèmes dans l'onglet `SORTIE` :
   > - Pages sans titre
   > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
-  > - Affiche les problèmes de liens dans le spine de l'opf
+  > - Problèmes dans le `<spine>` de l'opf si un `idref` dans un `<itemref>` manque dans le `<manifest>`
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
@@ -52,7 +54,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   >  <span id="page{numéro}" title="{numéro}" epub:type="pagebreak" role="doc-pagebreak"></span>
   >  ```
 
-  _**Astuce :** Utiliser le script Indesign [epubTools-numPage](https://github.com/civodulab/epubTools-numPage) avant l'export en EPUB._
+  _**Astuce :** Utiliser le script InDesign [epubTools-numPage](https://github.com/civodulab/epubTools-numPage) avant l'export en EPUB._
 
 * * *
 
@@ -62,8 +64,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Niveau de titre dans la table des matières (défaut : **3**)
 
 - `epub.titreTDM`
-  - `titre` : Titre de la table des matières (défaut : **Table des matières**)
-  - `balise` : Balise pour le titre (défaut : **h1**)
+  - `titre` : titre de la table des matières (défaut : **Table des matières**)
+  - `balise` : balise pour le titre (défaut : **h1**)
   - `classe` : classe pour le titre (défaut : **titre1**)
 
 - `epub.classeTDM`
@@ -74,7 +76,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   - `nomAncre` : préfixe du nom de l'ancre (défaut : **toc-epubtools**)
 
 - `epub.coverImage`
-  > Nom de la couverture de l'ouvrage (Permet d'ajouter la _properties_ **cover-image** à l'image dans le _manifest_)
+  > Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  _properties="**cover-image**"_ à l'image dans le `<manifest>` - défaut : **cover**)
 
 - `epub.activerA11ylint`
   > Active _a11ylint_ (défaut **true**)
@@ -83,7 +85,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## EpubToolsLint
 
-- Vérification des images :
+- Vérification des images `<img>`:
   - `alt` vide
   - pas de `alt`
 
