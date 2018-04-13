@@ -86,7 +86,10 @@ function activate(context) {
                 a11ylint.epubToolsDiagnostic(wkFolderAvant);
                 a11ylint.epubToolsWatcher(wkFolderAvant);
             }
-        })
+        });
+        vscode.workspace.onDidChangeTextDocument(doc => {
+            a11ylint.diagnosticDoc(doc.document);
+        });
     }
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {

@@ -7,6 +7,7 @@ const txtImg = {
 };
 const diagSource = 'a11ylint'
 let diagnosticCollection = null;
+
 diagnosticCollection = vscode.languages.createDiagnosticCollection('epubTools');
 
 function _removeDoc(doc) {
@@ -26,8 +27,8 @@ function remiseAzero() {
 function epubToolsDiagnostic(workFolder) {
     vscode.workspace.findFiles(new vscode.RelativePattern(workFolder, '**/*.xhtml')).then(liens => {
         liens.forEach(el => {
-            vscode.workspace.openTextDocument(vscode.Uri.file(el.fsPath)).then(doc => {
-                _diagnosticDoc(doc)
+            vscode.workspace.openTextDocument(el).then(doc => {
+                diagnosticDoc(doc)
             });
         });
     });
@@ -36,40 +37,33 @@ function epubToolsDiagnostic(workFolder) {
 
 function epubToolsWatcher(workFolder) {
     let watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workFolder, '**/*.xhtml'));
-    watcher.onDidChange(() => {
-        _diagnosticDoc();
-    });
-    watcher.onDidCreate(elt => {
-        vscode.workspace.openTextDocument(vscode.Uri.file(elt.fsPath)).then(doc => {
-            _diagnosticDoc(doc);
-        });
-    });
     watcher.onDidDelete(elt => {
+        console.log('delete');
         _removeDoc(elt);
     });
-
-
 }
 
-function _diagnosticDoc(doc) {
-    doc = doc && doc || vscode.window.activeTextEditor.document;
+
+
+function diagnosticDoc(doc) {
     let diagnostics = [];
-    let lline = doc.lineCount,
-        i = 0;
-    for (; i < lline; i++) {
-        let txt = doc.getText(doc.lineAt(i).range);
-        let mesA11Y = _imageA11y(txt, i);
-        mesA11Y.forEach(elt => {
-            const diagnostic = new vscode.Diagnostic(elt.range, elt.message, vscode.DiagnosticSeverity.Warning);
-            diagnostic.source = diagSource;
-            diagnostics.push(diagnostic);
-        });
-        diagnosticCollection.set(doc.uri, diagnostics);
-    }
+    let docTxt = doc.getText();
+    let mesA11Y = _imageA11y(docTxt);
+    mesA11Y.forEach(elt => {
+        let pos1 = doc.positionAt(elt.pstart),
+            pos2 = doc.positionAt(elt.pend),
+            rg = new vscode.Range(pos1, pos2);
+        const diagnostic = new vscode.Diagnostic(rg, elt.message, vscode.DiagnosticSeverity.Warning);
+        diagnostic.source = diagSource;
+        diagnostics.push(diagnostic);
+    });
+
+    diagnosticCollection.set(doc.uri, diagnostics);
+
+
 }
 
-
-function _imageA11y(line, nl) {
+function _imageA11y(docTxt) {
     let mesRanges = [];
     let regex1 = new RegExp('<img[^>]*?>', 'g');
     let regex2 = new RegExp('alt=', 'i');
@@ -77,18 +71,18 @@ function _imageA11y(line, nl) {
 
     let array1, array2;
 
-    while ((array1 = regex1.exec(line)) !== null) {
+    while ((array1 = regex1.exec(docTxt)) !== null) {
         if (!regex2.test(array1[0])) {
-            var rg = new vscode.Range(nl, array1.index, nl, regex1.lastIndex);
             mesRanges.push({
-                range: rg,
+                pstart: array1.index,
+                pend: regex1.lastIndex,
                 message: txtImg.sansAlt,
             });
         } else {
             while ((array2 = regex3.exec(array1[0])) !== null) {
-                var rg2 = new vscode.Range(nl, array1.index + array2.index, nl, array1.index + regex3.lastIndex);
                 mesRanges.push({
-                    range: rg2,
+                    pstart: array1.index + array2.index,
+                    pend: array1.index + regex3.lastIndex,
                     message: txtImg.altVide,
                 });
             }
@@ -98,9 +92,11 @@ function _imageA11y(line, nl) {
 }
 
 
+
 module.exports = {
     epubToolsDiagnostic,
     diagRemove,
     remiseAzero,
     epubToolsWatcher,
+    diagnosticDoc,
 }

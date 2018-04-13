@@ -93,8 +93,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
-## 1.7.4
+### 1.7.5
 
-- fix `a11ylint` (ne scanne que les fichiers xhtml du dossier de l'epub)
+- optimisation `a11ylint`
 
 Toutes les [release notes](release-notes.md).
