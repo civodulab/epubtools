@@ -97,4 +97,4 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - optimisation `a11ylint`
 
-Toutes les [release notes](release-notes.md).
+Toutes les [release notes](CHANGELOG.md).
