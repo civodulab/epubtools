@@ -242,7 +242,7 @@ function activate(context) {
         outputChannel.clear();
         let Liens = util.recupFichiers('.xhtml');
 
-        let mesErreurs = problemes.allProblems(Liens);
+        let mesErreurs = problemes.problemesTable(Liens);
         outputChannel.appendLine('- Tableaux sans th');
         mesErreurs[1].forEach(erreur => {
             outputChannel.appendLine('\t' + erreur);
@@ -285,9 +285,7 @@ function activate(context) {
             pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
 
-
             fs.readFile(d.fileName, 'utf8', (err, txt, ) => {
-
                 if (txt.indexOf('epub:type="page-list"') !== -1) {
                     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
                 } else {

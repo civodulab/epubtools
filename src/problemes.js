@@ -8,7 +8,20 @@ const txtTable = {
     'th': '- Tableaux sans th',
 };
 
-function testLiensPages(liens) {
+function problemesTitres(liens) {
+    let erreursScope = [];
+    let erreursTH = [];
+    liens.forEach(lien => {
+        vscode.workspace.openTextDocument(vscode.Uri.file(lien)).then(doc => {
+            let docTxt = doc.getText();
+            let erreurs = _tableA11y(docTxt, doc);
+            erreursScope = erreursScope.concat(erreurs.scope);
+            erreursTH = erreursTH.concat(erreurs.th);
+        });
+    })
+    return [erreursScope, erreursTH];
+
+
     var sansTitre = [],
         pbHierarchie = [];
     var text = "";
@@ -63,7 +76,7 @@ function _hierarchieTitre(texte) {
 
 }
 
-function allProblems(liens) {
+function problemesTable(liens) {
     let erreursScope = [];
     let erreursTH = [];
     liens.forEach(lien => {
@@ -107,5 +120,5 @@ function _tableA11y(docTxt, doc) {
 }
 
 module.exports = {
-    allProblems,
+    problemesTable,
 }
