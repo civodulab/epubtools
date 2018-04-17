@@ -88,13 +88,16 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - Vérification des images `<img>`:
   - `alt` vide
   - pas de `alt`
+- Vérification des tableaux `<table>`:
+  - sans `th`
+  - sans `scope` et/ou `headers`
 
 * * *
 
 ## Release Notes
 
-### 1.7.5
+### 1.7.6
 
-- optimisation `a11ylint`
+- `a11ylint` : ajout vérification tableaux
 
-Toutes les [release notes](release-notes.md).
+Toutes les [release notes](CHANGELOG.md).

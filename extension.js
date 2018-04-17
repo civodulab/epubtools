@@ -7,6 +7,7 @@ const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
+const problemes = require('./src/problemes');
 
 const util = require('./src/util');
 const manifest = require('./src/manifest');
@@ -78,6 +79,7 @@ function activate(context) {
     const a11ylint = require('./src/a11ylint');
     let wkFolderAvant;
     if (config.get('activerA11ylint')) {
+
         vscode.workspace.onDidOpenTextDocument(doc => {
             let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
             if (wkFolder && (wkFolder !== wkFolderAvant)) {
@@ -231,17 +233,36 @@ function activate(context) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
         }
+
+        let doc = Window.activeTextEditor.document;
+        let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
+
+        let textOutput;
+
         outputChannel.clear();
-        let Liens = util.recupFichiers('.xhtml'),
-            monOpf = util.recupFichiers('.opf')[0];
-        testLiensPages(Liens);
-        let outSpine = manifest.testSpine(monOpf);
-        if (outSpine) {
-            outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
-            outSpine.forEach(el => {
-                outputChannel.appendLine('\t' + el);
-            })
-        }
+        let Liens = util.recupFichiers('.xhtml');
+
+        let mesErreurs = problemes.allProblems(Liens);
+        outputChannel.appendLine('- Tableaux sans th');
+        mesErreurs[1].forEach(erreur => {
+            outputChannel.appendLine('\t' + erreur);
+        });
+        outputChannel.appendLine('\n- Tableaux sans scope et/ou headers');
+        mesErreurs[0].forEach(erreur => {
+            outputChannel.appendLine('\t' + erreur);
+        });
+
+        // let Liens = util.recupFichiers('.xhtml'),
+        //     monOpf = util.recupFichiers('.opf')[0];
+        // testLiensPages(Liens);
+        // let outSpine = manifest.testSpine(monOpf);
+        // if (outSpine) {
+        //     outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
+        //     outSpine.forEach(el => {
+        //         outputChannel.appendLine('\t' + el);
+        //     })
+        // }
+
         outputChannel.show(true);
     });
 
@@ -303,7 +324,7 @@ function testLiensPages(liens) {
     Object.values(liens).forEach(function (el) {
         var fd = vscode.Uri.file(el);
         var data = fs.readFileSync(el, 'utf8'),
-            rtitre = rechercheTitre(data);
+            rtitre = util.rechercheTitre(data);
         if (!rtitre) {
             sansTitre.push(fd);
         } else {
@@ -312,6 +333,8 @@ function testLiensPages(liens) {
             }
         }
     });
+
+
     if (sansTitre.length !== 0) {
         text = '- Fichiers sans Titres\n';
         sansTitre.forEach(function (el, i) {
@@ -390,7 +413,7 @@ function epubPageBreak(fichiers, fichierTOC) {
 function epubTitle(fichiers) {
     fichiers.forEach(function (el) {
         var txt = fs.readFileSync(el, 'utf8');
-        var titres = rechercheTitre(txt);
+        var titres = util.rechercheTitre(txt);
         if (titres) {
             var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
             var result = h.exec(titres[0]);
@@ -431,7 +454,7 @@ function epubTOC(liens, fichierTOC) {
             el = path.basename(el);
             var el1 = liens[el],
                 data = fs.readFileSync(el1, 'utf8'),
-                rtitre = rechercheTitre(data);
+                rtitre = util.rechercheTitre(data);
             if (rtitre) {
                 var monLien = [];
                 monLien.push(el1);
@@ -453,7 +476,7 @@ function ajoutAncre(liens) {
     Object.values(liens).forEach(function (fichier) {
         // for (var fichier in liens) {
         var data = fs.readFileSync(fichier, 'utf8');
-        var mesTitres = rechercheTitre(data);
+        var mesTitres = util.rechercheTitre(data);
         if (mesTitres) {
             // var newdata = data;
             mesTitres.forEach(function (titre) {
@@ -607,30 +630,10 @@ function rechercheIdref(texte) {
     return texte.match(/idref=(\'|").*?(\'|")/gi);
 }
 
-function rechercheTitre(texte, nivT) {
-    nivT = nivT || config.get('niveauTitre');
-    var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
-        re = new RegExp(exp, 'gi'),
-        result = texte.match(re);
-    return result;
-}
-
-function hierarchieTitre(texte) {
-    var mesTitres = rechercheTitre(texte, 9);
-    var titreAvant;
-    for (let i = 0; i < mesTitres.length; i++) {
-        const el = mesTitres[i];
-        var h = new RegExp('<h([0-9])', 'ig');
-        var result = h.exec(el);
-        if (i === 0) {
-            titreAvant = result[1];
-        } else {
-            if (result[1] >= titreAvant && result[1] - titreAvant > 1) {
-                return false;
-            }
-            titreAvant = result[1];
-        }
-    }
-    return true;
-
-}
+// function rechercheTitre(texte, nivT) {
+//     nivT = nivT || config.get('niveauTitre');
+//     var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
+//         re = new RegExp(exp, 'gi'),
+//         result = texte.match(re);
+//     return result;
+// }

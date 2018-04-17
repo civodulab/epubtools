@@ -84,10 +84,20 @@ function remplaceDansFichier(fichier, texte, balise, epubType) {
     });
 }
 
+function rechercheTitre(texte, nivT) {
+    nivT = nivT || config.get('niveauTitre');
+    var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
+        re = new RegExp(exp, 'gi'),
+        result = texte.match(re);
+    return result;
+}
+
+
 module.exports = {
     recupFichiers,
     fichierLiens,
     pathOEBPS,
     transformePageNoire,
     remplaceDansFichier,
+    rechercheTitre,
 };
