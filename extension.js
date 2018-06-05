@@ -233,26 +233,26 @@ function activate(context) {
         let Liens = util.recupFichiers('.xhtml');
 
         let mesErreurs = problemes.problemesTable(Liens);
-        console.log(mesErreurs);
         (mesErreurs[1].length > 0) && outputChannel.appendLine('- Tableaux sans th');
         mesErreurs[1].forEach(erreur => {
-            outputChannel.appendLine('\t' + erreur);
+            outputChannel.appendLine('\t' + erreur + '\n');
         });
-        (mesErreurs[0].length > 0) && outputChannel.appendLine('\n- Tableaux sans scope et/ou headers');
+        (mesErreurs[0].length > 0) && outputChannel.appendLine('- Tableaux sans scope et/ou headers');
         mesErreurs[0].forEach(erreur => {
-            outputChannel.appendLine('\t' + erreur);
+            outputChannel.appendLine('\t' + erreur + '\n');
         });
 
-        // let Liens = util.recupFichiers('.xhtml'),
-        //     monOpf = util.recupFichiers('.opf')[0];
+        outputChannel.appendLine(problemes.problemesTitres(Liens));
+
+        let monOpf = util.recupFichiers('.opf')[0];
         // testLiensPages(Liens);
-        // let outSpine = manifest.testSpine(monOpf);
-        // if (outSpine) {
-        //     outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
-        //     outSpine.forEach(el => {
-        //         outputChannel.appendLine('\t' + el);
-        //     })
-        // }
+        let outSpine = manifest.testSpine(monOpf);
+        if (outSpine) {
+            outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
+            outSpine.forEach(el => {
+                outputChannel.appendLine('\t' + el);
+            })
+        }
 
         outputChannel.show(true);
     });
@@ -317,7 +317,7 @@ function testLiensPages(liens) {
         if (!rtitre) {
             sansTitre.push(fd);
         } else {
-            if (!hierarchieTitre(data)) {
+            if (!util.hierarchieTitre(data)) {
                 pbHierarchie.push(fd);
             }
         }
