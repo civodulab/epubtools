@@ -95,9 +95,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
-### 1.7.6
+### 1.7.7
 
-- `a11ylint` : ajout span italique, gras, etc. => emphase
-- 
+- correction bug `a11ylint`
 
 Toutes les [release notes](CHANGELOG.md).
