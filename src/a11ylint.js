@@ -117,7 +117,7 @@ function _imageA11y(docTxt) {
 function _grasItalicEtc(docTxt) {
 
     let mesRanges = [];
-    let re_itabold = new RegExp('<span (?:.*)class=(?:"|\')([^>]*(?:' + styleEmphaseTous + ')[^>]*)(?:"|\')[^>]*>(?:.|\n|\r)*?<\/span>', 'g');
+    let re_itabold = new RegExp('<span [^>]*class=(?:"|\')([^>]*(?:' + styleEmphaseTous + ')[^>]*)(?:"|\')[^>]*>(?:.|\n|\r)*?<\/span>', 'g');
     let result;
     while ((result = re_itabold.exec(docTxt)) !== null) {
         let textePB = "";
