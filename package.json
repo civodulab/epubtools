@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.7.5",
+    "version": "1.7.6",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.epubA11Y",
                 "title": "A11Y",
                 "description": "Outils d'accessibilité",
@@ -71,9 +72,19 @@
                 "epub.emphaseStyleAChercher": {
                     "type": "object",
                     "default": {
-                        "italique": ["italique", "italic"],
-                        "gras": ["bold", "gras", "strong"],
-                        "emphase": ["emphase", "emphasis"]
+                        "italique": [
+                            "italique",
+                            "italic"
+                        ],
+                        "gras": [
+                            "bold",
+                            "gras",
+                            "strong"
+                        ],
+                        "emphase": [
+                            "emphase",
+                            "emphasis"
+                        ]
                     }
                 },
                 "epub.niveauTitre": {

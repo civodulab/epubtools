@@ -3,6 +3,7 @@
 ### 1.7.6
 
 - `a11ylint` : ajout span italique, gras, etc. => emphase
+- ajout `EpubTools : Problèmes ?` tableaux sans th, scope ou headers
 
 ## 1.7.5
 
