@@ -3,6 +3,7 @@ const vscode = require('vscode');
 const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
+const config = vscode.workspace.getConfiguration('epub');
 
 
 

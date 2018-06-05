@@ -2,9 +2,17 @@
 const fs = require('fs');
 const vscode = require('vscode');
 const path = require('path');
+const config = vscode.workspace.getConfiguration('epub');
+let styleEmphase = config.get('emphaseStyleAChercher');
+let styleEmphaseTous = Object.values(styleEmphase).map(val => val.join('|')).join('|');
 const txtImg = {
     'sansAlt': 'image / sans "alt"',
     'altVide': 'image / "alt" vide',
+};
+const txtEmphase = {
+    italique: 'remplacer par i ou em ?',
+    gras: 'remplacer par b, strong ou em ?',
+    emphase: 'remplacer par em ?'
 };
 // const txtTable = {
 //     'scopeHeader': 'table / sans scope ou headers',
@@ -51,13 +59,15 @@ function epubToolsWatcher(workFolder) {
 
 
 function diagnosticDoc(doc) {
-    if (path.extname(doc.fileName) !== '.xhtml') return;
+    if (doc.languageId !== 'html') return;
     let diagnostics = [];
     let docTxt = doc.getText();
     let mesImgA11y = _imageA11y(docTxt);
+    let mesEmphaseA11y = _grasItalicEtc(docTxt);
     // let mesTableA11Y = _tableA11y(docTxt);
 
     let mesA11y = mesImgA11y;
+    mesA11y = mesA11y.concat(mesEmphaseA11y);
     mesA11y.forEach(elt => {
         let pos1 = doc.positionAt(elt.pstart),
             pos2 = doc.positionAt(elt.pend),
@@ -101,6 +111,30 @@ function _imageA11y(docTxt) {
     }
 
 
+    return mesRanges;
+}
+
+function _grasItalicEtc(docTxt) {
+
+    let mesRanges = [];
+    let re_itabold = new RegExp('<span (?:.*)class=(?:"|\')([^>]*(?:' + styleEmphaseTous + ')[^>]*)(?:"|\')[^>]*>(?:.|\n|\r)*?<\/span>', 'g');
+    let result;
+    while ((result = re_itabold.exec(docTxt)) !== null) {
+        let textePB = "";
+        Object.keys(styleEmphase).forEach(k => {
+            styleEmphase[k].forEach(elt => {
+                if (result[1].indexOf(elt) !== -1) {
+                    textePB = txtEmphase[k];
+                }
+            });
+        });
+        mesRanges.push({
+            pstart: result.index,
+            pend: re_itabold.lastIndex,
+            message: textePB,
+            erreur: vscode.DiagnosticSeverity.Error
+        });
+    }
     return mesRanges;
 }
 

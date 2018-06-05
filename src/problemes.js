@@ -8,14 +8,15 @@ const txtTable = {
     'th': '- Tableaux sans th',
 };
 
-function testLiensPages(liens) {
+function problemesTitres(liens) {
+
     var sansTitre = [],
         pbHierarchie = [];
     var text = "";
     Object.values(liens).forEach(function (el) {
         var fd = vscode.Uri.file(el);
         var data = fs.readFileSync(el, 'utf8'),
-            rtitre = rechercheTitre(data);
+            rtitre = util.rechercheTitre(data);
         if (!rtitre) {
             sansTitre.push(fd);
         } else {
@@ -35,16 +36,17 @@ function testLiensPages(liens) {
 
     }
     if (pbHierarchie.length !== 0) {
+        text += (sansTitre.length !== 0) && '\n';
         text += '- Problème de hiérarchie dans les titres sur les fichiers suivants :\n';
         pbHierarchie.forEach(function (el, i) {
             text += '\t' + (i + 1) + ' -\t' + el.toString() + '\n';
         });
     }
-    outputChannel.appendLine(text);
+    return text;
 }
 
 function _hierarchieTitre(texte) {
-    var mesTitres = rechercheTitre(texte, 9);
+    var mesTitres = util.rechercheTitre(texte, 9);
     var titreAvant;
     for (let i = 0; i < mesTitres.length; i++) {
         const el = mesTitres[i];
@@ -63,7 +65,7 @@ function _hierarchieTitre(texte) {
 
 }
 
-function allProblems(liens) {
+function problemesTable(liens) {
     let erreursScope = [];
     let erreursTH = [];
     liens.forEach(lien => {
@@ -107,5 +109,6 @@ function _tableA11y(docTxt, doc) {
 }
 
 module.exports = {
-    allProblems,
+    problemesTable,
+    problemesTitres
 }

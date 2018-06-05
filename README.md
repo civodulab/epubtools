@@ -42,6 +42,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > - Pages sans titre
   > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
   > - Problèmes dans le `<spine>` de l'opf si un `idref` dans un `<itemref>` manque dans le `<manifest>`
+  > - Problèmes des tableaux sans `<th>`, `scope` ou `headers`.
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
@@ -85,12 +86,10 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## A11yLint
 
-- Vérification des images `<img>`:
+- Vérification des images `<img>` :
   - `alt` vide
   - pas de `alt`
-- Vérification des tableaux `<table>`:
-  - sans `th`
-  - sans `scope` et/ou `headers`
+- Vérification des `<span>` avec classe italique, gras, etc. => transformer en `<em>` ?
 
 * * *
 
@@ -98,6 +97,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ### 1.7.6
 
-- `a11ylint` : ajout vérification tableaux
+- `a11ylint` : ajout span italique, gras, etc. => emphase
+- 
 
 Toutes les [release notes](CHANGELOG.md).

@@ -16,8 +16,7 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.epubA11Y",
                 "title": "A11Y",
                 "description": "Outils d'accessibilité",
@@ -68,6 +67,14 @@
                     "type": "boolean",
                     "default": true,
                     "description": "Active a11ylint."
+                },
+                "epub.emphaseStyleAChercher": {
+                    "type": "object",
+                    "default": {
+                        "italique": ["italique", "italic"],
+                        "gras": ["bold", "gras", "strong"],
+                        "emphase": ["emphase", "emphasis"]
+                    }
                 },
                 "epub.niveauTitre": {
                     "type": "integer",

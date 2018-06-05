@@ -45,9 +45,7 @@ String.prototype.setAttr = function (attr, val) {
     }
 
 }
-
 const dom = require('./mes_modules/dom-js');
-
 
 String.prototype.metaProperties = function () {
     var prop = [];
@@ -69,17 +67,9 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
-    // vscode.workspace.onDidChangeTextDocument(a11ylint.diagnosticDoc);
-    // // vscode.workspace.onDidCloseTextDocument(didCloseTextDocument);
-    // vscode.workspace.onDidChangeConfiguration(elt => {
-    //     console.log('config');
-    //     a11ylint.epubToolsDiagnostic();
-    // });
-
     const a11ylint = require('./src/a11ylint');
     let wkFolderAvant;
     if (config.get('activerA11ylint')) {
-
         vscode.workspace.onDidOpenTextDocument(doc => {
             let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
             if (wkFolder && (wkFolder !== wkFolderAvant)) {
@@ -103,6 +93,7 @@ function activate(context) {
         }
 
         var Liens = util.fichierLiens('.xhtml');
+
         util.transformePageNoire(Liens);
 
     });
@@ -150,7 +141,6 @@ function activate(context) {
 
     });
     context.subscriptions.push(disposable);
-
 
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
@@ -242,26 +232,27 @@ function activate(context) {
         outputChannel.clear();
         let Liens = util.recupFichiers('.xhtml');
 
-        let mesErreurs = problemes.allProblems(Liens);
-        outputChannel.appendLine('- Tableaux sans th');
+        let mesErreurs = problemes.problemesTable(Liens);
+        (mesErreurs[1].length > 0) && outputChannel.appendLine('- Tableaux sans th');
         mesErreurs[1].forEach(erreur => {
-            outputChannel.appendLine('\t' + erreur);
+            outputChannel.appendLine('\t' + erreur + '\n');
         });
-        outputChannel.appendLine('\n- Tableaux sans scope et/ou headers');
+        (mesErreurs[0].length > 0) && outputChannel.appendLine('- Tableaux sans scope et/ou headers');
         mesErreurs[0].forEach(erreur => {
-            outputChannel.appendLine('\t' + erreur);
+            outputChannel.appendLine('\t' + erreur + '\n');
         });
 
-        // let Liens = util.recupFichiers('.xhtml'),
-        //     monOpf = util.recupFichiers('.opf')[0];
+        outputChannel.appendLine(problemes.problemesTitres(Liens));
+
+        let monOpf = util.recupFichiers('.opf')[0];
         // testLiensPages(Liens);
-        // let outSpine = manifest.testSpine(monOpf);
-        // if (outSpine) {
-        //     outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
-        //     outSpine.forEach(el => {
-        //         outputChannel.appendLine('\t' + el);
-        //     })
-        // }
+        let outSpine = manifest.testSpine(monOpf);
+        if (outSpine) {
+            outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
+            outSpine.forEach(el => {
+                outputChannel.appendLine('\t' + el);
+            })
+        }
 
         outputChannel.show(true);
     });
@@ -285,9 +276,7 @@ function activate(context) {
             pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
 
-
             fs.readFile(d.fileName, 'utf8', (err, txt, ) => {
-
                 if (txt.indexOf('epub:type="page-list"') !== -1) {
                     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
                 } else {
@@ -328,7 +317,7 @@ function testLiensPages(liens) {
         if (!rtitre) {
             sansTitre.push(fd);
         } else {
-            if (!hierarchieTitre(data)) {
+            if (!util.hierarchieTitre(data)) {
                 pbHierarchie.push(fd);
             }
         }
