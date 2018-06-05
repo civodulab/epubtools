@@ -98,6 +98,6 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ### 1.7.6
 
-- `a11ylint` : ajout vérification tableaux
+- `a11ylint` : ajout span italique, gras, etc. => emphase
 
 Toutes les [release notes](CHANGELOG.md).

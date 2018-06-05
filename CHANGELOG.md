@@ -1,5 +1,9 @@
 # Release Notes
 
+### 1.7.6
+
+- `a11ylint` : ajout span italique, gras, etc. => emphase
+
 ## 1.7.5
 
 - optimisation `a11ylint`

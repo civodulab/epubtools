@@ -9,18 +9,6 @@ const txtTable = {
 };
 
 function problemesTitres(liens) {
-    let erreursScope = [];
-    let erreursTH = [];
-    liens.forEach(lien => {
-        vscode.workspace.openTextDocument(vscode.Uri.file(lien)).then(doc => {
-            let docTxt = doc.getText();
-            let erreurs = _tableA11y(docTxt, doc);
-            erreursScope = erreursScope.concat(erreurs.scope);
-            erreursTH = erreursTH.concat(erreurs.th);
-        });
-    })
-    return [erreursScope, erreursTH];
-
 
     var sansTitre = [],
         pbHierarchie = [];
