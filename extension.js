@@ -194,7 +194,8 @@ function activate(context) {
         }
         outputChannel.clear();
         var Liens = util.fichierLiens('.xhtml');
-        testLiensPages(Liens);
+        // console.log(problemes.problemesTitres(Liens));
+        outputChannel.appendLine(problemes.problemesTitres(Liens));
         if (config.get("ancreTDM").ajouterAncre) {
             ajoutAncre(Liens);
         }
@@ -245,7 +246,6 @@ function activate(context) {
         outputChannel.appendLine(problemes.problemesTitres(Liens));
 
         let monOpf = util.recupFichiers('.opf')[0];
-        // testLiensPages(Liens);
         let outSpine = manifest.testSpine(monOpf);
         if (outSpine) {
             outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
