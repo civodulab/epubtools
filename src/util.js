@@ -226,6 +226,7 @@ function rechercheTitre(texte, nivT) {
 module.exports = {
     recupFichiers,
     fichierLiens,
+    epureCSS,
     pathOEBPS,
     transformePageNoire,
     remplaceDansFichier,
