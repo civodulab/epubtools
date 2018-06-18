@@ -34,7 +34,7 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
     let mesStyles = [],
         mesClass = [],
         mesId = [],
-    mesBalises = [];
+        mesBalises = [];
 
     Object.values(fichiersCSS).forEach(function (el) {
         let data = fs.readFileSync(el, 'utf8'),
@@ -46,12 +46,12 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
         let data = fs.readFileSync(el, 'utf8'),
             tabClass = recupClass(data),
             tabId = recupId(data),
-        tabBalise = recupBalise(data);
+            tabBalise = recupBalise(data);
         mesId = tabId && mesId.concat(tabId) || mesId;
         mesClass = tabClass && mesClass.concat(tabClass) || mesClass;
         mesBalises = tabBalise && mesBalises.concat(tabBalise) || mesBalises;
     });
-    
+
     //supprime doublons
     mesBalises = mesBalises.filter((item, pos, self) => {
         return self.indexOf(item) === pos;
@@ -72,20 +72,20 @@ function epureCSS(fichiersCSS, fichiersXHTML) {
         return self.indexOf(item) === pos;
     });
     mesId = mesId.map(x => '#' + x);
-
+    console.log(mesId, mesClass);
     // à voir pour les balises
     mesStyles.forEach(style => {
         (mesClass.indexOf(style) === -1 && mesId.indexOf(style) === -1) && suppStyle(style, fichiersCSS);
     });
+    // console.log(mesStyles);
     nettoyageStyle(fichiersCSS);
 }
 
 function suppStyle(style, fichiersCSS) {
-  
     style = (style.indexOf('.') !== -1 || style.indexOf('#') !== -1) && ('\\' + style) || style;
     Object.values(fichiersCSS).forEach(el => {
         let data = fs.readFileSync(el, 'utf8'),
-            exp = '[^,;}{]*\b' + style + '\b(?![-_\w])[^,{]*',
+            exp = '[^,;}{]*' + style + '(?![-_\w])[^,{]*',
             re = new RegExp(exp, 'gi');
 
         data = data.replace(re, '');
@@ -101,7 +101,7 @@ function nettoyageStyle(fichiersCSS) {
 
         data = data.replace(/,{2,}/g, ',');
         fs.writeFileSync(el, data);
-        let re = RegExp('([}{;])(?:[\W]*{)[^}]*}');
+        let re = new RegExp('([}{])(?:[\W]*{)[^}]*}');
 
         while (re.test(data)) {
             data = data.replace(/([}{;])(?:[\W]*{)[^}]*}/g, '$1');
@@ -116,8 +116,8 @@ function nettoyageStyle(fichiersCSS) {
 
 function recupBalise(fichier) {
     let balises = fichier.match(/<([\w])*/g);
-    console.log(balises);
-    
+    // console.log(balises);
+
     balises = balises.filter(el => el.length > 1);
     balises = balises.map(el => el.substring(1));
     return balises;
@@ -149,12 +149,12 @@ function recupId(fichier) {
 
 function recupStyleCss(txtFichierCSS) {
     // que class et id
-    var newTxt = txtFichierCSS.match(/(\n|\s|\.|\#)[\w-_]*(?=,|\s{|{)/g);
-        newTxt=newTxt.map(el=>el.trim());
-        newTxt=newTxt.map(el=>el.replace(/\n/g,''));
-        newTxt=newTxt.filter(el=>el.length>0);
+    var newTxt = txtFichierCSS.match(/(\.|\#)[\w-_]*(?=,|\s{|{)/g);
+    newTxt = newTxt.map(el => el.trim());
+    newTxt = newTxt.map(el => el.replace(/\n/g, ''));
+    newTxt = newTxt.filter(el => el.length > 0);
 
-        return newTxt;
+    return newTxt;
 
 }
 
