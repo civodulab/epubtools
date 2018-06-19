@@ -67,6 +67,8 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
+    vscode.commands.executeCommand('workbench.view.search');
+
     const a11ylint = require('./src/a11ylint');
     let wkFolderAvant;
     if (config.get('activerA11ylint')) {
@@ -82,6 +84,7 @@ function activate(context) {
         vscode.workspace.onDidChangeTextDocument(doc => {
             a11ylint.diagnosticDoc(doc.document);
         });
+
     }
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
