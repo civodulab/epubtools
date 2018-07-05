@@ -175,14 +175,12 @@ function _renameFichier(files) {
     for (var file in files) {
         let parse = path.parse(files[file]);
         let fileName = parse.base;
-        /[^\w.-]/g
-        let newFileName = fileName.replace(/[^\w.-]/g, '_');
+        let newFileName = fileName.replace(/[^\w.\-\\)\\(]/g, '_');
         if (fileName !== newFileName) {
             fs.renameSync(files[file], parse.dir + '/' + newFileName);
             arrayName.push(fileName + '|' + newFileName);
         }
     }
-    console.log(arrayName);
     if (arrayName.length > 0) {
         _rechercheEtRemplaceNom(arrayName);
     } else {
@@ -196,19 +194,15 @@ function _rechercheEtRemplaceNom(listeNom) {
     console.log(mesXhtml);
     mesXhtml.forEach(file => {
         let data = fs.readFileSync(file, 'utf8');
-
-        if (path.extname(file) === '.opf') {
-            console.log(data);
-        }
+    
         listeNom.forEach(noms => {
             let N = noms.split('|');
             if (data.indexOf(N[0]) !== -1) {
-
                 let re = new RegExp(N[0], 'g');
                 data = data.replace(re, N[1]);
                 fs.writeFileSync(file, data);
             }
-        })
+        });
     });
 
 }
