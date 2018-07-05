@@ -24,6 +24,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.  
   > Renomme les fichiers contenant des caractères accentués ou des espaces
 
+- `EpubTools : Récriture Spine`
+  > Récrit le spine dans le fichier `.opf`. La commande doit être lancée dans le fichier `.opf`.  
+
 - `EpubTools : Table des matières`
 
   > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
@@ -99,5 +102,6 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ### 1.8.0
 
 - Renomme les fichiers contenant des caractères accentués ou des espaces dans le manifest
+- ajout `EpubTools : Récriture Spine`
 
 Toutes les [release notes](CHANGELOG.md).

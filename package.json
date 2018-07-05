@@ -16,8 +16,12 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
+                "command": "extension.ecritureSpine",
+                "title": "Récriture Spine",
+                "description": "Récrit le spine",
+                "category": "EpubTools"
+            }, {
                 "command": "extension.epubA11Y",
                 "title": "A11Y",
                 "description": "Outils d'accessibilité",
