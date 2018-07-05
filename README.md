@@ -21,11 +21,12 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Référence : [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
 - `EpubTools : Manifest`
-  > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.
+  > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.  
+  > Renomme les fichiers contenant des caractères accentués ou des espaces
 
 - `EpubTools : Table des matières`
 
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.
+  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
   > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
 
 - `EpubTools : premier <h.> => <title>`
@@ -95,9 +96,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
-### 1.7.9
+### 1.8.0
 
-- correction `a11ylint` (information sur emphase, strong, etc.)
-- modification `EpubTools : A11Y` -> `DPub-Aria roles|epub:type`
+- Renomme les fichiers contenant des caractères accentués ou des espaces dans le manifest
 
 Toutes les [release notes](CHANGELOG.md).
