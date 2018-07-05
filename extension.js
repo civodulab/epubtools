@@ -118,8 +118,8 @@ function activate(context) {
         var items = [];
 
         items.push({
-            label: "DPub-Aria roles",
-            description: "Ajoute role=\"doc-...\""
+            label: "DPub-Aria roles|epub:type",
+            description: "Ajoute role=\"doc-...\" si epub:type et vice-versa"
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -130,7 +130,7 @@ function activate(context) {
             let sel = e.selections;
 
             switch (selection.label) {
-                case "DPub-Aria roles":
+                case "DPub-Aria roles|epub:type":
                     a11y.roleDoc(Liens);
                     break;
                 default:
