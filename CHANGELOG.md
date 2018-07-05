@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.7.9
+
+- correction `a11ylint` (information sur emphase, strong, etc.)
+- modification `EpubTools : A11Y` -> `DPub-Aria roles|epub:type`
+
 ## 1.7.8
 
 - correction bug

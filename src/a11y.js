@@ -45,9 +45,11 @@ function roleDoc(mesFichiers) {
     };
     Object.values(mesFichiers).forEach(fichier => {
         var data = fs.readFileSync(fichier, 'utf8');
-        var regex = RegExp('<[^<>]* ?epub:type=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
+        var re_epubType = RegExp('<[^<>]* ?epub:type=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
+        var re_role = RegExp('<[^<>]* ?role=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
         var array1;
-        while ((array1 = regex.exec(data)) !== null) {
+        // role
+        while ((array1 = re_epubType.exec(data)) !== null) {
             var balise = array1[0];
             var epubType = array1[2];
             var role = balise.getAttr('role');
@@ -56,9 +58,23 @@ function roleDoc(mesFichiers) {
                 data = (roles.length !== 0) && data.replace(balise, balise.setAttr('role', roles.shift())) || data;
             }
         }
+        // epub:type
+        let array2;
+        while ((array2 = re_role.exec(data)) !== null) {
+            var balise = array2[0];
+            var epubType = array2[2];
+            var role = balise.getAttr('epub:type');
+            if (!role) {
+                var roles = epubType.split(' ').map(inflection => inflection.replace('doc-', '')).filter(el => !!el);
+                data = (roles.length !== 0) && data.replace(balise, balise.setAttr('epub:type', roles.shift())) || data;
+            }
+        }
+
         fs.writeFileSync(fichier, data);
 
     });
+
+
 
 }
 

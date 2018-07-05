@@ -17,7 +17,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
-  > - `DPub-Aria roles` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
+  > - `DPub-Aria roles|epub:type` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ et inversement (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
   > Référence : [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
 - `EpubTools : Manifest`
@@ -95,8 +95,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## Release Notes
 
-### 1.7.7
+### 1.7.9
 
-- correction bug `a11ylint`
+- correction `a11ylint` (information sur emphase, strong, etc.)
+- modification `EpubTools : A11Y` -> `DPub-Aria roles|epub:type`
 
 Toutes les [release notes](CHANGELOG.md).

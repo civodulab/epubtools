@@ -132,7 +132,7 @@ function _grasItalicEtc(docTxt) {
             pstart: result.index,
             pend: re_itabold.lastIndex,
             message: textePB,
-            erreur: vscode.DiagnosticSeverity.Error
+            erreur: vscode.DiagnosticSeverity.Information
         });
     }
     return mesRanges;
