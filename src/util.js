@@ -74,15 +74,9 @@ function transformePageNoire(fichiersXhtml) {
 }
 
 function remplaceDansFichier(fichier, texte, balise, epubType) {
-    fs.readFile(fichier, 'utf8', function (err, data) {
-        if (err) {
-            return console.log(err);
-        }
-        var rpl = data.remplaceEntre2Balises(balise, texte, epubType);
-        fs.writeFile(fichier, rpl, 'utf8', function (err) {
-            if (err) return console.log(err);
-        });
-    });
+    let data = fs.readFileSync(fichier, 'utf8');
+    let rpl = data.remplaceEntre2Balises(balise, texte, epubType);
+    fs.writeFileSync(fichier, rpl);
 }
 
 function rechercheTitre(texte, nivT) {

@@ -9,6 +9,7 @@ const util = require('./util');
 
 function epubManifest(fichierOPF) {
     var mesFichiers = util.fichierLiens();
+
     var montexte = "";
     var opf = path.basename(fichierOPF);
     for (var fich in mesFichiers) {
@@ -18,6 +19,7 @@ function epubManifest(fichierOPF) {
     }
     montexte = _mediaOverlay(montexte);
     util.remplaceDansFichier(fichierOPF, montexte, 'manifest');
+    _renameFichier(mesFichiers);
 }
 
 function _mediaOverlay(texte) {
@@ -166,6 +168,45 @@ function testSpine(fichierOPF) {
         return false;
     }
 }
+
+function _renameFichier(files) {
+    let arrayName = [];
+
+    for (var file in files) {
+        let parse = path.parse(files[file]);
+        let fileName = parse.base;
+        let newFileName = fileName.replace(/[^\w.\-\\)\\(]/g, '_');
+        if (fileName !== newFileName) {
+            fs.renameSync(files[file], parse.dir + '/' + newFileName);
+            arrayName.push(fileName + '|' + newFileName);
+        }
+    }
+    if (arrayName.length > 0) {
+        _rechercheEtRemplaceNom(arrayName);
+    } else {
+        return false;
+    }
+
+}
+
+function _rechercheEtRemplaceNom(listeNom) {
+    let mesXhtml = util.recupFichiers();
+    console.log(mesXhtml);
+    mesXhtml.forEach(file => {
+        let data = fs.readFileSync(file, 'utf8');
+    
+        listeNom.forEach(noms => {
+            let N = noms.split('|');
+            if (data.indexOf(N[0]) !== -1) {
+                let re = new RegExp(N[0], 'g');
+                data = data.replace(re, N[1]);
+                fs.writeFileSync(file, data);
+            }
+        });
+    });
+
+}
+
 
 
 module.exports = {
