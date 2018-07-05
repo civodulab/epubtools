@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.7.9",
+    "version": "1.8.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,12 +16,14 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.ecritureSpine",
                 "title": "Récriture Spine",
                 "description": "Récrit le spine",
                 "category": "EpubTools"
-            }, {
+            },
+            {
                 "command": "extension.epubA11Y",
                 "title": "A11Y",
                 "description": "Outils d'accessibilité",
