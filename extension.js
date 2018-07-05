@@ -119,7 +119,7 @@ function activate(context) {
 
         items.push({
             label: "DPub-Aria roles|epub:type",
-            description: "Ajoute role=\"doc-...\" si epub:type et vice-versa"
+            description: "Ajoute role=\"doc-...\" si epub:type et inversement"
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
