@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.8.0
+
+- Renomme les fichiers contenant des caractères accentués ou des espaces dans le manifest
+- ajout `EpubTools : Récriture Spine`
+
 ## 1.7.9
 
 - correction `a11ylint` (information sur emphase, strong, etc.)
