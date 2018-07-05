@@ -180,7 +180,27 @@ function activate(context) {
     });
     context.subscriptions.push(disposable);
 
+    disposable = vscode.commands.registerCommand('extension.ecritureSpine', function () {
+        try {
+            util.pathOEBPS();
+        } catch (error) {
+            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            return; // No open text editor
+        }
 
+        let d = Window.activeTextEditor.document;
+        if (path.extname(d.fileName) !== '.opf') {
+            Window.showInformationMessage('Vous devez être dans un fichier opf');
+            return;
+        }
+        outputChannel.clear();
+
+        manifest.ecritureSpine(d.fileName);
+
+
+
+    });
+    context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
         try {
             util.pathOEBPS();

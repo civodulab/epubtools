@@ -194,7 +194,6 @@ function _rechercheEtRemplaceNom(listeNom) {
     console.log(mesXhtml);
     mesXhtml.forEach(file => {
         let data = fs.readFileSync(file, 'utf8');
-    
         listeNom.forEach(noms => {
             let N = noms.split('|');
             if (data.indexOf(N[0]) !== -1) {
@@ -207,9 +206,20 @@ function _rechercheEtRemplaceNom(listeNom) {
 
 }
 
-
+function ecritureSpine(fichierOPF) {
+    let data = fs.readFileSync(fichierOPF, 'utf8');
+    let re_xhtml = new RegExp('<[^>]* id=([^ ]*)[^>]* ?media-type="application\/xhtml\\+xml"[^>]*>', 'g');
+    let result;
+    let mesItems = '';
+    while ((result = re_xhtml.exec(data)) !== null) {
+        mesItems += '<itemref idref=' + result[1] + ' />\n'
+    }
+    data = data.remplaceEntre2Balises('spine', mesItems);
+    fs.writeFileSync(fichierOPF, data);
+}
 
 module.exports = {
     epubManifest,
     testSpine,
+    ecritureSpine
 };
