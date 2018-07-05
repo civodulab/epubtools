@@ -51,7 +51,6 @@ function epubToolsDiagnostic(workFolder) {
 function epubToolsWatcher(workFolder) {
     let watcher = vscode.workspace.createFileSystemWatcher(new vscode.RelativePattern(workFolder, '**/*.xhtml'));
     watcher.onDidDelete(elt => {
-        console.log('delete');
         _removeDoc(elt);
     });
 }
