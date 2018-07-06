@@ -11,11 +11,10 @@ Outils destinés à faciliter le travail sur les EPUB.
 
 ## Table des matières <!-- omit in toc -->
 - [À savoir](#%C3%A0-savoir)
-- [EpubTools contenu (`ctrl+shift+P`)](#epubtools-contenu-ctrlshiftp)
-- [EpubTools Configuration (`ctrl+,`)](#epubtools-configuration-ctrl)
+- [EpubTools contenu](#epubtools-contenu)
+- [EpubTools Configuration](#epubtools-configuration)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
-  - [1.8.1](#181)
 
 ***
 
@@ -25,7 +24,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 * * *
 
-## EpubTools contenu (`ctrl+shift+P`)
+## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
@@ -75,7 +74,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 * * *
 
-## EpubTools Configuration (`ctrl+,`)
+## EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>
 
 - `epub.niveauTitre`
   > Niveau de titre dans la table des matières (défaut : **3**)
