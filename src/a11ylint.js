@@ -14,6 +14,7 @@ const txtEmphase = {
     gras: 'remplacer par b, strong ou em ?',
     emphase: 'remplacer par em ?'
 };
+const txtNoteref = 'pas de <sup> avec noteref';
 // const txtTable = {
 //     'scopeHeader': 'table / sans scope ou headers',
 //     'th': 'table / sans th',
@@ -55,8 +56,6 @@ function epubToolsWatcher(workFolder) {
     });
 }
 
-
-
 function diagnosticDoc(doc) {
     if (doc.languageId !== 'html') return;
     let diagnostics = [];
@@ -64,9 +63,9 @@ function diagnosticDoc(doc) {
     let mesImgA11y = _imageA11y(docTxt);
     let mesEmphaseA11y = _grasItalicEtc(docTxt);
     // let mesTableA11Y = _tableA11y(docTxt);
-
+    let mesNotesA11y = _noteRef(docTxt);
     let mesA11y = mesImgA11y;
-    mesA11y = mesA11y.concat(mesEmphaseA11y);
+    mesA11y = mesA11y.concat(mesEmphaseA11y, mesNotesA11y);
     mesA11y.forEach(elt => {
         let pos1 = doc.positionAt(elt.pstart),
             pos2 = doc.positionAt(elt.pend),
@@ -77,8 +76,6 @@ function diagnosticDoc(doc) {
     });
 
     diagnosticCollection.set(doc.uri, diagnostics);
-
-
 }
 
 function _imageA11y(docTxt) {
@@ -114,7 +111,6 @@ function _imageA11y(docTxt) {
 }
 
 function _grasItalicEtc(docTxt) {
-
     let mesRanges = [];
     let re_itabold = new RegExp('<span [^>]*class=(?:"|\')([^>]*(?:' + styleEmphaseTous + ')[^>]*)(?:"|\')[^>]*>(?:.|\n|\r)*?<\/span>', 'g');
     let result;
@@ -136,6 +132,24 @@ function _grasItalicEtc(docTxt) {
     }
     return mesRanges;
 }
+
+function _noteRef(docTxt) {
+    let mesRanges = [];
+    let re_noteref = new RegExp('(<sup>|<sup [^>]*>)(?:.|\n|\r)*(?:noteref)(?:.|\n|\r)*?<\/sup>', 'g');
+    let result;
+    while ((result = re_noteref.exec(docTxt)) !== null) {
+        mesRanges.push({
+            pstart: result.index,
+            pend: re_noteref.lastIndex,
+            message: txtNoteref,
+            erreur: vscode.DiagnosticSeverity.Error,
+
+        });
+    }
+    return mesRanges;
+
+}
+
 
 // function _tableA11y(docTxt) {
 //     let mesRanges = [];

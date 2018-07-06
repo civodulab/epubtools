@@ -1,4 +1,4 @@
-# EpubTools LISEZMOI
+# EpubTools LISEZMOI <!-- omit in toc -->
 
 [![Licence](https://img.shields.io/github/license/civodulab/epubtools.svg)](https://github.com/civodulab/epubtools)
 [![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/civodulab.epubtools.svg) ![Rating](https://vsmarketplacebadge.apphb.com/rating-short/civodulab.epubtools.svg) ![Installs](https://vsmarketplacebadge.apphb.com/installs/civodulab.epubtools.svg)](https://marketplace.visualstudio.com/items?itemName=civodulab.epubtools)
@@ -6,6 +6,18 @@
 Outils destinés à faciliter le travail sur les EPUB.
 
 ([English README](README.en.md)) merci [garconvacher](https://github.com/garconvacher)
+
+***
+
+## Table des matières <!-- omit in toc -->
+- [À savoir](#%C3%A0-savoir)
+- [EpubTools contenu (`ctrl+shift+P`)](#epubtools-contenu-ctrlshiftp)
+- [EpubTools Configuration (`ctrl+,`)](#epubtools-configuration-ctrl)
+- [A11yLint](#a11ylint)
+- [Release Notes](#release-notes)
+  - [1.8.1](#181)
+
+***
 
 ## À savoir
 
@@ -89,19 +101,19 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 * * *
 
 ## A11yLint
-
+_[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
 - Vérification des images `<img>` :
   - `alt` vide
   - pas de `alt`
 - Vérification des `<span>` avec classe italique, gras, etc. => transformer en `<em>` ?
+- Vérification des `noteref` dans des `<sup>` => retirer `<sup>`
 
 * * *
 
 ## Release Notes
 
-### 1.8.0
+### 1.8.1
 
-- Renomme les fichiers contenant des caractères accentués ou des espaces dans le manifest
-- ajout `EpubTools : Récriture Spine`
+- `A11yLint` Vérification noteref
 
 Toutes les [release notes](CHANGELOG.md).
