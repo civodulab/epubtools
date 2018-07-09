@@ -111,8 +111,8 @@ _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
 
 ## Release Notes
 
-### 1.8.1
+### 1.8.2
 
-- `A11yLint` Vérification noteref
+- fix bug `A11yLint` Vérification noteref
 
 Toutes les [release notes](CHANGELOG.md).

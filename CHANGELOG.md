@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.8.1
+
+- `A11yLint` Vérification noteref
+
 ## 1.8.0
 
 - Renomme les fichiers contenant des caractères accentués ou des espaces dans le manifest

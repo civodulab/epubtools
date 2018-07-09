@@ -135,19 +135,19 @@ function _grasItalicEtc(docTxt) {
 
 function _noteRef(docTxt) {
     let mesRanges = [];
-    let re_noteref = new RegExp('(<sup>|<sup [^>]*>)(?:.|\n|\r)*(?:noteref)(?:.|\n|\r)*?<\/sup>', 'g');
+    let re_noteref = new RegExp('(<sup>|<sup [^>]*>)(.|\n|\r)*?<\/sup>', 'g');
     let result;
     while ((result = re_noteref.exec(docTxt)) !== null) {
-        mesRanges.push({
-            pstart: result.index,
-            pend: re_noteref.lastIndex,
-            message: txtNoteref,
-            erreur: vscode.DiagnosticSeverity.Error,
-
-        });
+        if (result[0].indexOf('role="doc-noteref"') !== -1 || result[0].indexOf('epub:type="noteref"') !== -1) {
+            mesRanges.push({
+                pstart: result.index,
+                pend: re_noteref.lastIndex,
+                message: txtNoteref,
+                erreur: vscode.DiagnosticSeverity.Error,
+            });
+        }
     }
     return mesRanges;
-
 }
 
 
