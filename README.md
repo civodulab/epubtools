@@ -94,8 +94,17 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.coverImage`
   > Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  _properties="**cover-image**"_ à l'image dans le `<manifest>` - défaut : **cover**)
 
-- `epub.activerA11ylint`
+- `epub.activerA11ylint` ([A11yLint](#a11ylint))
   > Active _a11ylint_ (défaut **true**)
+
+- `epub.emphaseStyleAChercher` ([A11yLint](#a11ylint))
+  > Styles contenant le mot dans son nom. Permet de trouver les classes à changer.
+  > - `italique` (défaut **["italique","italic"]**)
+  > - `gras` (défaut **["bold", "gras", "strong"]**)
+  > - `emphase` (défaut **["emphase", "emphasis"]**)
+
+- `epub.emphaseStyleAEviter` ([A11yLint](#a11ylint))
+  > Styles non pris en compte par `epub.emphaseStyleAChercher` (default **["no-bold", "no-italique","no-emphase"]**)
 
 * * *
 
@@ -111,8 +120,8 @@ _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
 
 ## Release Notes
 
-### 1.8.2
+### 1.8.3
 
-- fix bug `A11yLint` Vérification noteref
+- ajout configuration `a11ylint`
 
 Toutes les [release notes](CHANGELOG.md).

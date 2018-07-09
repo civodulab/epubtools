@@ -4,6 +4,7 @@ const vscode = require('vscode');
 const path = require('path');
 const config = vscode.workspace.getConfiguration('epub');
 let styleEmphase = config.get('emphaseStyleAChercher');
+let styleAEviter = config.get('emphaseStyleAEviter');
 let styleEmphaseTous = Object.values(styleEmphase).map(val => val.join('|')).join('|');
 const txtImg = {
     'sansAlt': 'image / sans "alt"',
@@ -116,6 +117,15 @@ function _grasItalicEtc(docTxt) {
     let result;
     while ((result = re_itabold.exec(docTxt)) !== null) {
         let textePB = "";
+        let monBreak = false;
+        styleAEviter.forEach(st => {
+            if (result[1].indexOf(st) !== -1) {
+                monBreak = true;
+            }
+        });
+        if (monBreak) {
+            break;
+        }
         Object.keys(styleEmphase).forEach(k => {
             styleEmphase[k].forEach(elt => {
                 if (result[1].indexOf(elt) !== -1) {
@@ -123,6 +133,7 @@ function _grasItalicEtc(docTxt) {
                 }
             });
         });
+
         mesRanges.push({
             pstart: result.index,
             pend: re_itabold.lastIndex,
