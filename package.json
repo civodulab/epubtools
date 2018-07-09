@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "Utilitaire Epub3",
-    "version": "1.8.2",
+    "version": "1.8.3",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.ecritureSpine",
                 "title": "Récriture Spine",
                 "description": "Récrit le spine",
@@ -95,7 +96,11 @@
                 },
                 "epub.emphaseStyleAEviter": {
                     "type": "array",
-                    "default": ["no-bold", "no-italique", "no-emphase"],
+                    "default": [
+                        "no-bold",
+                        "no-italique",
+                        "no-emphase"
+                    ],
                     "description": "Styles non pris en compte dans l'emphase"
                 },
                 "epub.niveauTitre": {
