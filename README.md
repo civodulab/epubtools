@@ -22,7 +22,7 @@ Outils destinés à faciliter le travail sur les EPUB.
 
 Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans les répertoires de celui-ci.
 
-* * *
+***
 
 ## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
@@ -72,7 +72,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
   _**Astuce :** Utiliser le script InDesign [epubTools-numPage](https://github.com/civodulab/epubTools-numPage) avant l'export en EPUB._
 
-* * *
+***
 
 ## EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>
 
@@ -106,7 +106,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.emphaseStyleAEviter` ([A11yLint](#a11ylint))
   > Styles non pris en compte par `epub.emphaseStyleAChercher` (default **["no-bold", "no-italique","no-emphase"]**)
 
-* * *
+***
 
 ## A11yLint
 _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
@@ -118,7 +118,7 @@ _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
 - Vérification des `noteref` dans des `<sup>` => retirer `<sup>`
 - Vérification des `aria-label` et `controls` dans les balises `<audio>` et `<video>`
 
-* * *
+***
 
 ## Release Notes
 
