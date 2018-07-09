@@ -16,6 +16,11 @@ const txtEmphase = {
     emphase: 'remplacer par em ?'
 };
 const txtNoteref = 'pas de <sup> avec noteref';
+const txtAudioVideo = {
+    txt: 'manque ',
+    aria: 'aria-label',
+    controls: 'controls',
+};
 // const txtTable = {
 //     'scopeHeader': 'table / sans scope ou headers',
 //     'th': 'table / sans th',
@@ -65,8 +70,9 @@ function diagnosticDoc(doc) {
     let mesEmphaseA11y = _grasItalicEtc(docTxt);
     // let mesTableA11Y = _tableA11y(docTxt);
     let mesNotesA11y = _noteRef(docTxt);
+    let mesAudioVideo = _audioVideo(docTxt);
     let mesA11y = mesImgA11y;
-    mesA11y = mesA11y.concat(mesEmphaseA11y, mesNotesA11y);
+    mesA11y = mesA11y.concat(mesEmphaseA11y, mesNotesA11y, mesAudioVideo);
     mesA11y.forEach(elt => {
         let pos1 = doc.positionAt(elt.pstart),
             pos2 = doc.positionAt(elt.pend),
@@ -161,7 +167,40 @@ function _noteRef(docTxt) {
     return mesRanges;
 }
 
+function _audioVideo(docTxt) {
+    let mesRanges = [];
+    let re_audiovideo = new RegExp('<video [^>]*>|<audio [^>]*>', 'g');
+    let result;
+    while ((result = re_audiovideo.exec(docTxt)) !== null) {
+        let aria = result[0].getAttr('aria-label');
+        let controls = result[0].getAttr('controls');
 
+        if (!aria && !controls) {
+            mesRanges.push({
+                pstart: result.index,
+                pend: re_audiovideo.lastIndex,
+                message: txtAudioVideo.txt + txtAudioVideo.aria + ' et ' + txtAudioVideo.controls,
+                erreur: vscode.DiagnosticSeverity.Warning,
+            });
+        } else if (!aria) {
+            mesRanges.push({
+                pstart: result.index,
+                pend: re_audiovideo.lastIndex,
+                message: txtAudioVideo.txt + txtAudioVideo.aria,
+                erreur: vscode.DiagnosticSeverity.Warning,
+            });
+        } else if (!controls) {
+            mesRanges.push({
+                pstart: result.index,
+                pend: re_audiovideo.lastIndex,
+                message: txtAudioVideo.txt + txtAudioVideo.controls,
+                erreur: vscode.DiagnosticSeverity.Warning,
+            });
+        }
+
+    }
+    return mesRanges;
+}
 // function _tableA11y(docTxt) {
 //     let mesRanges = [];
 //     // /<table[^>]*>((?:.|\n|\r)*?)<\/table>/

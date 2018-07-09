@@ -91,11 +91,11 @@
                             "emphasis"
                         ]
                     },
-                    "description": "A11Ylint - "
+                    "description": "A11Ylint - Permet de trouver les classes à changer pour l'emphase"
                 },
                 "epub.emphaseStyleAEviter": {
                     "type": "array",
-                    "default": ["no-bold", "no-italique","no-emphase"],
+                    "default": ["no-bold", "no-italique", "no-emphase"],
                     "description": "Styles non pris en compte dans l'emphase"
                 },
                 "epub.niveauTitre": {

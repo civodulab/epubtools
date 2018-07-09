@@ -110,11 +110,13 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## A11yLint
 _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
+
 - Vérification des images `<img>` :
   - `alt` vide
   - pas de `alt`
 - Vérification des `<span>` avec classe italique, gras, etc. => transformer en `<em>` ?
 - Vérification des `noteref` dans des `<sup>` => retirer `<sup>`
+- Vérification des `aria-label` et `controls` dans les balises `<audio>` et `<video>`
 
 * * *
 
@@ -123,5 +125,6 @@ _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
 ### 1.8.3
 
 - ajout configuration `a11ylint`
+- `a11ylint`: audio et vidéo
 
 Toutes les [release notes](CHANGELOG.md).
