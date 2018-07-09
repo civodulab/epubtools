@@ -22,7 +22,7 @@ Outils destinés à faciliter le travail sur les EPUB.
 
 Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans les répertoires de celui-ci.
 
-* * *
+***
 
 ## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
@@ -72,7 +72,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
   _**Astuce :** Utiliser le script InDesign [epubTools-numPage](https://github.com/civodulab/epubTools-numPage) avant l'export en EPUB._
 
-* * *
+***
 
 ## EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>
 
@@ -94,25 +94,38 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.coverImage`
   > Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  _properties="**cover-image**"_ à l'image dans le `<manifest>` - défaut : **cover**)
 
-- `epub.activerA11ylint`
+- `epub.activerA11ylint` ([A11yLint](#a11ylint))
   > Active _a11ylint_ (défaut **true**)
 
-* * *
+- `epub.emphaseStyleAChercher` ([A11yLint](#a11ylint))
+  > Styles contenant le mot dans son nom. Permet de trouver les classes à changer.
+  > - `italique` (défaut **["italique","italic"]**)
+  > - `gras` (défaut **["bold", "gras", "strong"]**)
+  > - `emphase` (défaut **["emphase", "emphasis"]**)
+
+- `epub.emphaseStyleAEviter` ([A11yLint](#a11ylint))
+  > Styles non pris en compte par `epub.emphaseStyleAChercher` (default **["no-bold", "no-italique","no-emphase"]**)
+
+***
 
 ## A11yLint
-_[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
+
+Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)
+
 - Vérification des images `<img>` :
   - `alt` vide
   - pas de `alt`
 - Vérification des `<span>` avec classe italique, gras, etc. => transformer en `<em>` ?
 - Vérification des `noteref` dans des `<sup>` => retirer `<sup>`
+- Vérification des `aria-label` et `controls` dans les balises `<audio>` et `<video>`
 
-* * *
+***
 
 ## Release Notes
 
-### 1.8.2
+### 1.8.3
 
-- fix bug `A11yLint` Vérification noteref
+- ajout configuration `a11ylint`
+- `a11ylint`: audio et vidéo
 
 Toutes les [release notes](CHANGELOG.md).
