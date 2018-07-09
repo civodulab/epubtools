@@ -110,6 +110,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## A11yLint
 _[Accessible Publishing Knowledge Base](http://kb.daisy.org/publishing/)_
+
 - Vérification des images `<img>` :
   - `alt` vide
   - pas de `alt`
