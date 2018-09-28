@@ -20,15 +20,41 @@ function fichierLiens(type) {
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
 }
+var monDos=[];
 
 function pathOEBPS() {
+    let folders = vscode.workspace.workspaceFolders;
     let e = Window.activeTextEditor;
     let d = e.document;
-    if (d.fileName.indexOf('OEBPS') !== -1) {
-        var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
-    }
+    let chemin;
+    folders.forEach(rep => {
+        if (d.fileName.indexOf(rep.name) !== -1) {
+            chemin = d.fileName.substring(0, d.fileName.indexOf(rep.name));
+        }
+    })
+    console.log(monDos);
+
     return path.join(chemin, 'OEBPS');
 }
+function _chercheRoot(dir) {
+    let cont = getFilesFromDir(dir, 'container.xml');
+    
+    vscode.workspace.openTextDocument(cont).then(doc => {
+        let docText=doc.getText();
+      _monDos(docText)
+    });
+    
+    // return monDos;
+}
+function _monDos(docText){
+    let regex1 = new RegExp('full-path="([^"]+)"', 'g');
+
+    let result = regex1.exec(docText);
+    monDos.push(result[1].split('/')[0]);
+    // console.log(monDos);
+
+}
+
 
 // Return a list of files of the specified fileTypes in the provided dir, 
 // with the file path relative to the given dir
