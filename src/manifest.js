@@ -8,6 +8,7 @@ const util = require('./util');
 
 
 function epubManifest(fichierOPF) {
+    
     var mesFichiers = util.fichierLiens();
 
     var montexte = "";
@@ -45,14 +46,15 @@ function _mediaOverlay(texte) {
 }
 
 function _ecritureLigne(fichier, fichierOPF) {
+
     var relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
         relativeFichier;
+        relativeP=relativeP.replace('\\','/');
     if (relativeP !== '') {
         relativeFichier = relativeP + '/' + path.basename(fichier);
     } else {
         relativeFichier = path.basename(fichier);
     }
-
     var maligne = "",
         mediaType = "",
         properties = "",
@@ -186,12 +188,10 @@ function _renameFichier(files) {
     } else {
         return false;
     }
-
 }
 
 function _rechercheEtRemplaceNom(listeNom) {
     let mesXhtml = util.recupFichiers();
-    console.log(mesXhtml);
     mesXhtml.forEach(file => {
         let data = fs.readFileSync(file, 'utf8');
         listeNom.forEach(noms => {
