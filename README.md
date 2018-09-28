@@ -11,10 +11,11 @@ Outils destinés à faciliter le travail sur les EPUB.
 
 ## Table des matières <!-- omit in toc -->
 - [À savoir](#%C3%A0-savoir)
-- [EpubTools contenu](#epubtools-contenu)
-- [EpubTools Configuration](#epubtools-configuration)
+- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-id%22epubtools-contenu%22a)
+- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
+  - [1.8.4](#184)
 
 ***
 
@@ -123,9 +124,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.8.3
+### 1.8.4
 
-- ajout configuration `a11ylint`
-- `a11ylint`: audio et vidéo
+- correction [issues#14](https://github.com/civodulab/epubtools/issues/14)
 
 Toutes les [release notes](CHANGELOG.md).
