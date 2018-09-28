@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.8.3
+
+- ajout configuration `a11ylint`
+- `a11ylint`: audio et vidéo
+  
 ## 1.8.2
 
 - fix bug `A11yLint` Vérification noteref
