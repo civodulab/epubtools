@@ -18,7 +18,7 @@ function fichierLiens(type) {
 }
 
 function recupFichiers(typeOrfichier) {
-    return getFilesFromDir(pathOEBPS(), typeOrfichier);
+    return getFilesFromDir(pathOEBPS().path, typeOrfichier);
 }
 
 function pathOEBPS_old() {
@@ -50,7 +50,10 @@ function _chercheRoot(dir) {
     let regex1 = new RegExp('full-path="([^"]+)"', 'g');
     let result = regex1.exec(data);
 
-    return path.join(cont.substring(0, cont.indexOf('META-INF')), result[1].split('/')[0]);
+    return {
+        "filename": result[1].split('/')[0],
+        "path": path.join(cont.substring(0, cont.indexOf('META-INF')), result[1].split('/')[0])
+    }
 
 
 }

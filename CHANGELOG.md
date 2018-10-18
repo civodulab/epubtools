@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.8.4
+
+- correction [issues#14](https://github.com/civodulab/epubtools/issues/14)
+
+
 ## 1.8.3
 
 - ajout configuration `a11ylint`
