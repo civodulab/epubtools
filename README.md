@@ -15,7 +15,7 @@ Outils destinés à faciliter le travail sur les EPUB.
 - [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-idepubtools-configurationa)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
-    - [1.8.6](#186)
+    - [1.9.0](#190)
 
 ***
 
@@ -127,7 +127,7 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.8.6
+### 1.9.0
 
 - correction bug si le dossier ne s'appelait pas OEBPS
 - ajout config `epub.navTDM`
