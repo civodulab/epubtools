@@ -16,7 +16,6 @@ const manifest = require('./src/manifest');
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
-
 String.prototype.remplaceEntre2Balises = function (balise, par, epubType) {
     epubType = epubType && ('.+?epub:type="' + epubType + '"') || '';
     var exp = '(<' + balise + epubType + '[^>]*>)((?:.|\n|\r)*?)(<\/' + balise + '>)',
@@ -49,7 +48,7 @@ const dom = require('./mes_modules/dom-js');
 
 String.prototype.metaProperties = function () {
     var prop = [];
-    (this.indexOf('</nav>') !== -1) && prop.push('nav');
+    // (this.indexOf('</nav>') !== -1) && prop.push('nav');
     (this.indexOf('</math>') !== -1) && prop.push('mathml');
     (this.indexOf('</script>') !== -1) && prop.push('scripted');
     return prop;
@@ -89,7 +88,7 @@ function activate(context) {
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -106,7 +105,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -148,7 +147,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().fileName;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -182,7 +181,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.ecritureSpine', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -203,7 +202,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -229,7 +228,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -242,7 +241,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor
@@ -284,7 +283,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
         try {
-            util.pathOEBPS();
+            util.pathOEBPS().filename;
         } catch (error) {
             Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
             return; // No open text editor

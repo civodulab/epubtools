@@ -10,12 +10,12 @@ Outils destinés à faciliter le travail sur les EPUB.
 ***
 
 ## Table des matières <!-- omit in toc -->
-- [À savoir](#%C3%A0-savoir)
-- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-id%22epubtools-contenu%22a)
-- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
+- [À savoir](#À-savoir)
+- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-idepubtools-contenua)
+- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-idepubtools-configurationa)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
-  - [1.8.4](#184)
+    - [1.8.6](#186)
 
 ***
 
@@ -95,6 +95,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `epub.coverImage`
   > Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  _properties="**cover-image**"_ à l'image dans le `<manifest>` - défaut : **cover**)
 
+- `epub.navTDM`
+  > Nom du fichier pour la table des mamtières (Permet d'ajouter  _properties="**nav**"_ au fichier dans le `<manifest>` - défaut : **toc**)
+
 - `epub.activerA11ylint` ([A11yLint](#a11ylint))
   > Active _a11ylint_ (défaut **true**)
 
@@ -124,8 +127,9 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.8.4
+### 1.8.6
 
-- correction [issues#14](https://github.com/civodulab/epubtools/issues/14)
+- correction bug si le dossier ne s'appelait pas OEBPS
+- ajout config `epub.navTDM`
 
 Toutes les [release notes](CHANGELOG.md).
