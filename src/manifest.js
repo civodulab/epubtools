@@ -8,7 +8,7 @@ const util = require('./util');
 
 
 function epubManifest(fichierOPF) {
-    
+
     var mesFichiers = util.fichierLiens();
 
     var montexte = "";
@@ -49,7 +49,7 @@ function _ecritureLigne(fichier, fichierOPF) {
 
     var relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
         relativeFichier;
-        relativeP=relativeP.replace('\\','/');
+    relativeP = relativeP.replace('\\', '/');
     if (relativeP !== '') {
         relativeFichier = relativeP + '/' + path.basename(fichier);
     } else {
@@ -63,12 +63,16 @@ function _ecritureLigne(fichier, fichierOPF) {
     nom = isNumeric(nom.substring(0, 1)) && ("x" + nom) || nom;
     ext = ext.toLowerCase();
     var boolCover = nom.split('.')[0] === config.get('coverImage');
+    var boolTDM = nom.split('.')[0] === config.get('navTDM');
+    console.log(config.get('navTDM'));
+
     switch (ext) {
         case '.xhtml':
             mediaType = "application/xhtml+xml";
             nom = path.basename(nom, '.xhtml');
             var data = fs.readFileSync(fichier, 'utf8');
             var proper = data.metaProperties();
+            boolTDM && proper.push('nav');
             if (proper.length !== 0) {
                 properties = ' properties="' + proper.join(' ') + '"';
             }

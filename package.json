@@ -16,8 +16,7 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.ecritureSpine",
                 "title": "Récriture Spine",
                 "description": "Récrit le spine",
@@ -68,7 +67,7 @@
         ],
         "configuration": {
             "type": "object",
-            "title": "Epub configuration",
+            "title": "Epub Tools",
             "properties": {
                 "epub.activerA11ylint": {
                     "type": "boolean",
@@ -134,6 +133,11 @@
                     "type": "string",
                     "default": "cover",
                     "description": "Nom de la couverture de l'ouvrage"
+                },
+                "epub.navTDM": {
+                    "type": "string",
+                    "default": "toc",
+                    "description": "Nom de la table des matières"
                 }
             }
         }

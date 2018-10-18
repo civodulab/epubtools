@@ -49,7 +49,7 @@ const dom = require('./mes_modules/dom-js');
 
 String.prototype.metaProperties = function () {
     var prop = [];
-    (this.indexOf('</nav>') !== -1) && prop.push('nav');
+    // (this.indexOf('</nav>') !== -1) && prop.push('nav');
     (this.indexOf('</math>') !== -1) && prop.push('mathml');
     (this.indexOf('</script>') !== -1) && prop.push('scripted');
     return prop;

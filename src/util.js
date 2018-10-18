@@ -20,7 +20,15 @@ function fichierLiens(type) {
 function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS(), typeOrfichier);
 }
-var monDos=[];
+
+function pathOEBPS_old() {
+    let e = Window.activeTextEditor;
+    let d = e.document;
+    if (d.fileName.indexOf('OEBPS') !== -1) {
+        var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
+    }
+    return path.join(chemin, 'OEBPS');
+}
 
 function pathOEBPS() {
     let folders = vscode.workspace.workspaceFolders;
@@ -29,31 +37,25 @@ function pathOEBPS() {
     let chemin;
     folders.forEach(rep => {
         if (d.fileName.indexOf(rep.name) !== -1) {
-            chemin = d.fileName.substring(0, d.fileName.indexOf(rep.name));
+            chemin = d.fileName.substring(0, d.fileName.indexOf(rep.name) + rep.name.length);
         }
-    })
-    console.log(monDos);
-
-    return path.join(chemin, 'OEBPS');
+    });
+    let fullPath = _chercheRoot(chemin);
+    return fullPath;
 }
+
 function _chercheRoot(dir) {
     let cont = getFilesFromDir(dir, 'container.xml');
-    
-    vscode.workspace.openTextDocument(cont).then(doc => {
-        let docText=doc.getText();
-      _monDos(docText)
-    });
-    
-    // return monDos;
-}
-function _monDos(docText){
+    let data = fs.readFileSync(cont);
     let regex1 = new RegExp('full-path="([^"]+)"', 'g');
+    let result = regex1.exec(data);
 
-    let result = regex1.exec(docText);
-    monDos.push(result[1].split('/')[0]);
-    // console.log(monDos);
+    return path.join(cont.substring(0, cont.indexOf('META-INF')), result[1].split('/')[0]);
+
 
 }
+
+
 
 
 // Return a list of files of the specified fileTypes in the provided dir, 
