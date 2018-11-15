@@ -10,12 +10,12 @@ Outils destinés à faciliter le travail sur les EPUB.
 ***
 
 ## Table des matières <!-- omit in toc -->
-- [À savoir](#À-savoir)
-- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-idepubtools-contenua)
-- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-idepubtools-configurationa)
+- [À savoir](#%C3%A0-savoir)
+- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-id%22epubtools-contenu%22a)
+- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
-    - [1.9.0](#190)
+    - [1.9.1](#191)
 
 ***
 
@@ -127,9 +127,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.9.0
+### 1.9.1
 
-- correction bug si le dossier ne s'appelait pas OEBPS
-- ajout config `epub.navTDM`
+- correction bug loop
 
 Toutes les [release notes](CHANGELOG.md).
