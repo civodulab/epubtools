@@ -31,16 +31,14 @@ String.prototype.getAttr = function (attr) {
 }
 
 String.prototype.setAttr = function (attr, val) {
-    if (this.indexOf(attr) !== -1) {
+    if (this.indexOf(attr + '=') !== -1) {
         var exp = attr + '="([^"]*)"',
             re = new RegExp(exp, 'gi'),
             result = re.exec(this);
         return this.replace(result[1], val);
     } else {
-        exp = /<[^\/>]*>/i;
         result = this.match(exp);
-        var newTxt = result[0].replace(/ /i, ' ' + attr + '="' + val + '" ');
-        return this.replace(exp, newTxt);
+        return this.replace(/ /i, ' ' + attr + '="' + val + '" ')
     }
 
 }
@@ -111,7 +109,6 @@ function activate(context) {
             return; // No open text editor
         }
         const a11y = require('./src/a11y');
-        let Liens = util.fichierLiens('.xhtml');
 
         var opts = {
             matchOnDescription: true,
@@ -127,12 +124,9 @@ function activate(context) {
             if (!selection) {
                 return;
             }
-            let e = Window.activeTextEditor;
-            let d = e.document;
-            let sel = e.selections;
-
             switch (selection.label) {
                 case "DPub-Aria roles|epub:type":
+                    let Liens = util.fichierLiens('.xhtml');
                     a11y.roleDoc(Liens);
                     break;
                 default:
@@ -298,7 +292,7 @@ function activate(context) {
             pBreak = epubPageBreak(Liens, d.fileName);
         if (pBreak.length !== 0) {
 
-            fs.readFile(d.fileName, 'utf8', (err, txt, ) => {
+            fs.readFile(d.fileName, 'utf8', (err, txt) => {
                 if (txt.indexOf('epub:type="page-list"') !== -1) {
                     util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
                 } else {
@@ -328,41 +322,6 @@ function deactivate() {}
 exports.deactivate = deactivate;
 
 
-function testLiensPages(liens) {
-    var sansTitre = [],
-        pbHierarchie = [];
-    var text = "";
-    Object.values(liens).forEach(function (el) {
-        var fd = vscode.Uri.file(el);
-        var data = fs.readFileSync(el, 'utf8'),
-            rtitre = util.rechercheTitre(data);
-        if (!rtitre) {
-            sansTitre.push(fd);
-        } else {
-            if (!util.hierarchieTitre(data)) {
-                pbHierarchie.push(fd);
-            }
-        }
-    });
-
-
-    if (sansTitre.length !== 0) {
-        text = '- Fichiers sans Titres\n';
-        sansTitre.forEach(function (el, i) {
-            text += '\t' + (i + 1) + ' -\t' + el.toString() + '\n';
-
-        });
-
-    }
-    if (pbHierarchie.length !== 0) {
-        text += '- Problème de hiérarchie dans les titres sur les fichiers suivants :\n';
-        pbHierarchie.forEach(function (el, i) {
-            text += '\t' + (i + 1) + ' -\t' + el.toString() + '\n';
-        });
-    }
-    outputChannel.appendLine(text);
-}
-
 function insertEditorSelection(text) {
     const editor = vscode.window.activeTextEditor;
     const selections = editor.selections;
@@ -373,8 +332,6 @@ function insertEditorSelection(text) {
     });
 }
 
-
-
 function recherchePageBreak(texte) {
     var monDom = new dom(texte),
         mesTitres = [];
@@ -382,7 +339,6 @@ function recherchePageBreak(texte) {
     mesTitres = tt && mesTitres.concat(tt) || mesTitres;
     return mesTitres;
 }
-
 
 function epubPageBreak(fichiers, fichierTOC) {
     var pageBreaks = [];
@@ -485,11 +441,9 @@ function ajoutAncre(liens) {
     var nomId = config.get("ancreTDM").nomAncre;
     var allID = recupAllID(liens);
     Object.values(liens).forEach(function (fichier) {
-        // for (var fichier in liens) {
         var data = fs.readFileSync(fichier, 'utf8');
         var mesTitres = util.rechercheTitre(data);
         if (mesTitres) {
-            // var newdata = data;
             mesTitres.forEach(function (titre) {
                 ++k;
                 var newID = 'id="' + nomId + '-' + k + '"';
@@ -610,7 +564,6 @@ function tableMatieres(titres, fichierTOC) {
         });
         if (k === ltitres - 1) {
             maTableXhtml += '</li>\n</ol>\n'.repeat(titreAvant);
-
             maTableNCX += '</navPoint>\n'.repeat(titreAvant);
         }
     }
@@ -640,11 +593,3 @@ function rechercheHrefParIdRef(texte, idref) {
 function rechercheIdref(texte) {
     return texte.match(/idref=(\'|").*?(\'|")/gi);
 }
-
-// function rechercheTitre(texte, nivT) {
-//     nivT = nivT || config.get('niveauTitre');
-//     var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
-//         re = new RegExp(exp, 'gi'),
-//         result = texte.match(re);
-//     return result;
-// }

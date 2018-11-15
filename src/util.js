@@ -21,31 +21,26 @@ function recupFichiers(typeOrfichier) {
     return getFilesFromDir(pathOEBPS().path, typeOrfichier);
 }
 
-function pathOEBPS_old() {
+function pathOEBPS() {
     let e = Window.activeTextEditor;
     let d = e.document;
-    if (d.fileName.indexOf('OEBPS') !== -1) {
-        var chemin = d.fileName.substring(0, d.fileName.indexOf('OEBPS'));
+    let dparse = path.dirname(d.fileName).split(path.sep);
+    let chemin;
+    let fullPath = false;
+    while (!fullPath) {
+        let mapop = path.sep + dparse.pop() + path.sep;
+        chemin = d.fileName.substring(0, d.fileName.indexOf(mapop));
+        fullPath = _chercheRoot(chemin);
     }
-    return path.join(chemin, 'OEBPS');
+
+    return fullPath;
+    // return path.join(chemin, 'OEBPS');
 }
 
-function pathOEBPS() {
-    let folders = vscode.workspace.workspaceFolders;
-    let e = Window.activeTextEditor;
-    let d = e.document;
-    let chemin;
-    folders.forEach(rep => {
-        if (d.fileName.indexOf(rep.name) !== -1) {
-            chemin = d.fileName.substring(0, d.fileName.indexOf(rep.name) + rep.name.length);
-        }
-    });
-    let fullPath = _chercheRoot(chemin);
-    return fullPath;
-}
 
 function _chercheRoot(dir) {
     let cont = getFilesFromDir(dir, 'container.xml');
+    if (!cont) return false;
     let data = fs.readFileSync(cont);
     let regex1 = new RegExp('full-path="([^"]+)"', 'g');
     let result = regex1.exec(data);
@@ -55,10 +50,7 @@ function _chercheRoot(dir) {
         "path": path.join(cont.substring(0, cont.indexOf('META-INF')), result[1].split('/')[0])
     }
 
-
 }
-
-
 
 
 // Return a list of files of the specified fileTypes in the provided dir, 

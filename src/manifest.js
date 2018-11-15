@@ -28,7 +28,6 @@ function _mediaOverlay(texte) {
         let mesSmil = util.recupFichiers('.smil');
         mesSmil.forEach(lien => {
             let data = fs.readFileSync(lien, 'utf8');
-            // let regEx1=new RegExp('src=(?:\'|").*?(?:\'|")','g');
             let mesSrc = data.match(/src=(?:\'|").*?(?:\'|")/g);
             mesSrc = mesSrc.filter(elt => elt.indexOf('.xhtml') !== -1);
             mesSrc = mesSrc
@@ -49,7 +48,7 @@ function _ecritureLigne(fichier, fichierOPF) {
 
     var relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
         relativeFichier;
-    relativeP = relativeP.replace('\\', '/');
+    relativeP = relativeP.replace(path.sep, '/');
     if (relativeP !== '') {
         relativeFichier = relativeP + '/' + path.basename(fichier);
     } else {
@@ -64,7 +63,6 @@ function _ecritureLigne(fichier, fichierOPF) {
     ext = ext.toLowerCase();
     var boolCover = nom.split('.')[0] === config.get('coverImage');
     var boolTDM = nom.split('.')[0] === config.get('navTDM');
-    console.log(config.get('navTDM'));
 
     switch (ext) {
         case '.xhtml':
