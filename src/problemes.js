@@ -1,12 +1,7 @@
 'use strict';
 const fs = require('fs');
 const vscode = require('vscode');
-const path = require('path');
 const util = require('./util');
-const txtTable = {
-    'scopeHeader': '- Tableaux sans scope et/ou headers',
-    'th': '- Tableaux sans th',
-};
 
 function problemesTitres(liens) {
 

@@ -2,7 +2,40 @@
 // Import the module and reference it with the alias vscode in your code below
 'use strict';
 const vscode = require('vscode');
+// const nls = require('vscode-nls');
+const maLangue = vscode.env.language;
 
+const localTexte = {
+    "fr": {
+        "erreurPathOEBPS": "Vous devez être dans un dossier OEBPS.",
+        "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
+        "a11y.aria.description": "Ajoute role=\"doc-...\" si epub:type",
+        "erreurFichierOPF": "Vous devez être dans un fichier opf",
+        "outputChannelPbSpine": "Problème de spine :",
+        "erreurFichierTOC": "Vous devez être dans un fichier toc",
+        "outputChannelTableauTh": "Tableaux sans th",
+        "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
+        "outputChannelPbSpine2": "Problème de spine [opf]",
+        "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
+        "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
+
+    },
+    "en": {
+        "erreurPathOEBPS": "You must be in an OEBPS folder.",
+        "a11y.placeHolder": "Choose from the list below.",
+        "a11y.aria.description": "Add role=\"doc-...\" if epub:type",
+        "erreurFichierOPF": "You must be in an opf file",
+        "outputChannelPbSpine": "Spine problem:",
+        "erreurFichierTOC": "You must be in a toc file",
+        "outputChannelTableauTh": "Tables without th",
+        "outputChannelTableauScope": "Tables without scope and/or headers",
+        "outputChannelPbSpine2": "Spine problem [opf]",
+        "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
+        "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
+    }
+}
+
+const txtLangue = localTexte[maLangue] && localTexte[maLangue] || localTexte["en"];
 const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
@@ -88,7 +121,7 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
 
@@ -105,20 +138,20 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
         const a11y = require('./src/a11y');
 
         var opts = {
             matchOnDescription: true,
-            placeHolder: "Choisissez dans la liste ci-dessous."
+            placeHolder: txtLangue["a11y.placeHolder"]
         };
         var items = [];
 
         items.push({
             label: "DPub-Aria roles|epub:type",
-            description: "Ajoute role=\"doc-...\" si epub:type et inversement"
+            description: txtLangue["a11y.aria.description"]
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -143,13 +176,14 @@ function activate(context) {
         try {
             util.pathOEBPS().fileName;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            Window.showInformationMessage('Vous devez être dans un fichier opf');
+            Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
             return;
         }
         outputChannel.clear();
@@ -158,7 +192,7 @@ function activate(context) {
 
         let test = manifest.testSpine(d.fileName);
         if (test) {
-            outputChannel.appendLine('Problème de spine :');
+            outputChannel.appendLine(txtLangue["outputChannelPbSpine"]);
 
             test.forEach(el => {
                 outputChannel.appendLine('\t' + el);
@@ -177,13 +211,14 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            Window.showInformationMessage('Vous devez être dans un fichier opf');
+            Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
             return;
         }
         outputChannel.clear();
@@ -198,14 +233,14 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         var tdm = isTDM(d.fileName);
         if (!tdm) {
-            Window.showInformationMessage('Vous devez être dans un fichier toc');
+            Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
             return; // No open text editor
         }
         outputChannel.clear();
@@ -224,7 +259,7 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
         var Liens = util.recupFichiers('.xhtml');
@@ -237,7 +272,7 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
 
@@ -250,11 +285,11 @@ function activate(context) {
         let Liens = util.recupFichiers('.xhtml');
 
         let mesErreurs = problemes.problemesTable(Liens);
-        (mesErreurs[1].length > 0) && outputChannel.appendLine('- Tableaux sans th');
+        (mesErreurs[1].length > 0) && outputChannel.appendLine('- ' + txtLangue["outputChannelTableauTh"]);
         mesErreurs[1].forEach(erreur => {
             outputChannel.appendLine('\t' + erreur + '\n');
         });
-        (mesErreurs[0].length > 0) && outputChannel.appendLine('- Tableaux sans scope et/ou headers');
+        (mesErreurs[0].length > 0) && outputChannel.appendLine('- ' + txtLangue["outputChannelTableauScope"]);
         mesErreurs[0].forEach(erreur => {
             outputChannel.appendLine('\t' + erreur + '\n');
         });
@@ -264,7 +299,7 @@ function activate(context) {
         let monOpf = util.recupFichiers('.opf')[0];
         let outSpine = manifest.testSpine(monOpf);
         if (outSpine) {
-            outputChannel.appendLine('- Problème de spine [opf](' + monOpf.toString() + ')');
+            outputChannel.appendLine('- ' + txtLangue["outputChannelPbSpine2"] + '(' + monOpf.toString() + ')');
             outSpine.forEach(el => {
                 outputChannel.appendLine('\t' + el);
             })
@@ -279,13 +314,13 @@ function activate(context) {
         try {
             util.pathOEBPS().filename;
         } catch (error) {
-            Window.showInformationMessage('Vous devez être dans un dossier OEBPS.');
+            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
         let d = Window.activeTextEditor.document,
             tdm = isTDM(d.fileName);
         if (!tdm) {
-            Window.showInformationMessage('Vous devez être dans un fichier toc');
+            Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
             return; // No open text editor
         }
         let Liens = util.recupFichiers('.xhtml'),
@@ -308,7 +343,7 @@ function activate(context) {
             });
 
         } else {
-            Window.showInformationMessage("Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.");
+            Window.showInformationMessage(txtLangue["erreurPageBreak"]);
             util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
         }
 
@@ -432,7 +467,7 @@ function epubTOC(liens, fichierTOC) {
         tableMatieres(mesTitres, fichierTOC);
     } catch (error) {
 
-        Window.showErrorMessage('Vous avez une erreur avec votre spine dans le fichier "opf".');
+        Window.showErrorMessage(txtLangue["erreurMessageSpine"]);
     }
 }
 

@@ -1,7 +1,7 @@
 {
     "name": "epubtools",
     "displayName": "Epub Tools",
-    "description": "Utilitaire Epub3",
+    "description": "%package.description%",
     "version": "1.9.1",
     "publisher": "civodulab",
     "engines": {
@@ -16,53 +16,52 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [
-            {
+        "commands": [{
                 "command": "extension.ecritureSpine",
-                "title": "Récriture Spine",
-                "description": "Récrit le spine",
+                "title": "%extension.ecritureSpine.title%",
+                "description": "%extension.ecritureSpine.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubA11Y",
-                "title": "A11Y",
-                "description": "Outils d'accessibilité",
+                "title": "%extension.epubA11Y.title%",
+                "description": "%extension.epubA11Y.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubSpanPageNoir",
-                "title": "<span...>{numPage}</span> => <span {epub:type} />",
-                "description": "Transforme les span epubTools-numPage-style en pagebreak",
+                "title": "%extension.epubSpanPageNoir.title%",
+                "description": "%extension.epubSpanPageNoir.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubManifest",
-                "title": "Manifest",
-                "description": "Modifie le manifest dans l'opf",
+                "title": "%extension.epubManifest.title%",
+                "description": "%extension.epubManifest.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubTOC",
-                "title": "Table des matières",
-                "description": "Modifie les tables des matières xhtml et ncx",
+                "title": "%extension.epubTOC.title%",
+                "description": "%extension.epubTOC.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubTitle",
-                "title": "premier <h.> => <title>",
-                "description": "Copie le premier titre des pages xhtml dans la balise title de chaque page",
+                "title": "%extension.epubTitle.title%",
+                "description": "%extension.epubTitle.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubPageList",
-                "title": "Création Page Liste",
-                "description": "Création de la 'page-list' dans le fichier de la table des matières",
+                "title": "%extension.epubPageList.title%",
+                "description": "%extension.epubPageList.description%",
                 "category": "EpubTools"
             },
             {
                 "command": "extension.epubError",
-                "title": "Problèmes ?",
-                "description": "Affiche les problèmes dans SORTIE",
+                "title": "%extension.epubError.title%",
+                "description": "%extension.epubError.description%",
                 "category": "EpubTools"
             }
         ],
@@ -73,7 +72,7 @@
                 "epub.activerA11ylint": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Active a11ylint."
+                    "description": "%configuration.activerA11ylint.description%"
                 },
                 "epub.emphaseStyleAChercher": {
                     "type": "object",
@@ -92,7 +91,7 @@
                             "emphasis"
                         ]
                     },
-                    "description": "A11Ylint - Permet de trouver les classes à changer pour l'emphase"
+                    "description": "%configuration.emphaseStyleAChercher.description%"
                 },
                 "epub.emphaseStyleAEviter": {
                     "type": "array",
@@ -101,17 +100,17 @@
                         "no-italique",
                         "no-emphase"
                     ],
-                    "description": "Styles non pris en compte dans l'emphase"
+                    "description": "%configuration.emphaseStyleAEviter.description%"
                 },
                 "epub.niveauTitre": {
                     "type": "integer",
                     "default": 3,
-                    "description": "Niveau de titre pour la table des matières."
+                    "description": "%configuration.niveauTitre.description%"
                 },
                 "epub.classeTDM": {
                     "type": "string",
                     "default": "ol-toc",
-                    "description": "Classe appliquée au <ol>"
+                    "description": "%configuration.classeTDM.description%"
                 },
                 "epub.titreTDM": {
                     "type": "object",
@@ -120,7 +119,7 @@
                         "balise": "h1",
                         "classe": "titre1"
                     },
-                    "description": "Titre de la table des matières"
+                    "description": "%configuration.titreTDM.description%"
                 },
                 "epub.ancreTDM": {
                     "type": "object",
@@ -128,17 +127,17 @@
                         "ajouterAncre": true,
                         "nomAncre": "toc-epubtools"
                     },
-                    "description": "Ancre sur les titres"
+                    "description": "%configuration.ancreTDM.description%"
                 },
                 "epub.coverImage": {
                     "type": "string",
                     "default": "cover",
-                    "description": "Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  properties=\"cover-image\" à l'image dans le fichier .opf)"
+                    "description": "%configuration.coverImage.description%"
                 },
                 "epub.navTDM": {
                     "type": "string",
                     "default": "toc",
-                    "description": "Nom du fichier pour la table des matières (Permet d'ajouter  properties=\"nav\" au fichier dans le fichier .opf)"
+                    "description": "%configuration.navTDM.description%"
                 }
             }
         }
@@ -157,5 +156,8 @@
     "repository": {
         "type": "git",
         "url": "https://github.com/civodulab/epubtools.git"
+    },
+    "dependencies": {
+        "vscode-nls": "^4.0.0"
     }
 }

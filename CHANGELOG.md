@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.9.1
+
+- correction bug loop
+
 ## 1.9.0
 
 - correction bug si le dossier ne s'appelait pas OEBPS
@@ -8,7 +12,6 @@
 ## 1.8.4
 
 - correction [issues#14](https://github.com/civodulab/epubtools/issues/14)
-
 
 ## 1.8.3
 

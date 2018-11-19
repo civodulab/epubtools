@@ -1,23 +1,48 @@
 'use strict';
-const fs = require('fs');
 const vscode = require('vscode');
-const path = require('path');
 const config = vscode.workspace.getConfiguration('epub');
 let styleEmphase = config.get('emphaseStyleAChercher');
 let styleAEviter = config.get('emphaseStyleAEviter');
+const maLangue = vscode.env.language;
+
+const localTexte = {
+    "fr": {
+        "a11yLintTxtImgSansAlt.description": "image / sans \"alt\"",
+        "a11yLintTxtImgAltVide.description": "image / \"alt\" vide",
+        "a11yLintTxtEmphase.italique": "remplacer par i ou em ?",
+        "a11yLintTxtEmphase.gras": "remplacer par b, strong ou em ?",
+        "a11yLintTxtEmphase.emphase": "remplacer par em ?",
+        "a11yLintNoteRef": "pas de <sup> avec noteref",
+        "a11yLintAudioVideoTxt": "manque",
+        "a11yLintAudioVideoEt": "et",
+    },
+    "en": {
+        "a11yLintTxtImgSansAlt.description": "image / without \"alt\"",
+        "a11yLintTxtImgAltVide.description": "image / \"alt\" empty",
+        "a11yLintTxtEmphase.italique": "replace with i or em?",
+        "a11yLintTxtEmphase.gras": "replace with b, strong or em?",
+        "a11yLintTxtEmphase.emphase": "replace with em?",
+        "a11yLintNoteRef": "no <sup> with noteref",
+        "a11yLintAudioVideoTxt": "missing",
+        "a11yLintAudioVideoEt": "and",
+    }
+}
+
+const txtLangue = localTexte[maLangue] && localTexte[maLangue] || localTexte["en"];
+
 let styleEmphaseTous = Object.values(styleEmphase).map(val => val.join('|')).join('|');
 const txtImg = {
-    'sansAlt': 'image / sans "alt"',
-    'altVide': 'image / "alt" vide',
+    'sansAlt': txtLangue["a11yLintTxtImgSansAlt.description"],
+    'altVide': txtLangue["a11yLintTxtImgAltVide.description"],
 };
 const txtEmphase = {
-    italique: 'remplacer par i ou em ?',
-    gras: 'remplacer par b, strong ou em ?',
-    emphase: 'remplacer par em ?'
+    italique: txtLangue["a11yLintTxtEmphase.italique"],
+    gras: txtLangue["a11yLintTxtEmphase.gras"],
+    emphase: txtLangue["a11yLintTxtEmphase.emphase"]
 };
-const txtNoteref = 'pas de <sup> avec noteref';
+const txtNoteref = txtLangue["a11yLintNoteRef"];
 const txtAudioVideo = {
-    txt: 'manque ',
+    txt: txtLangue["a11yLintAudioVideoTxt"] + ' ',
     aria: 'aria-label',
     controls: 'controls',
 };
@@ -179,7 +204,7 @@ function _audioVideo(docTxt) {
             mesRanges.push({
                 pstart: result.index,
                 pend: re_audiovideo.lastIndex,
-                message: txtAudioVideo.txt + txtAudioVideo.aria + ' et ' + txtAudioVideo.controls,
+                message: txtAudioVideo.txt + txtAudioVideo.aria + ' ' + txtLangue["a11yLintAudioVideoEt"] + ' ' + txtAudioVideo.controls,
                 erreur: vscode.DiagnosticSeverity.Warning,
             });
         } else if (!aria) {

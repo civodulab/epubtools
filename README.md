@@ -15,7 +15,6 @@ Outils destinés à faciliter le travail sur les EPUB.
 - [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
-    - [1.9.1](#191)
 
 ***
 
@@ -127,8 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.9.1
+### 1.9.2 <!-- omit in toc -->
 
-- correction bug loop
+- traduction anglaise
 
 Toutes les [release notes](CHANGELOG.md).
