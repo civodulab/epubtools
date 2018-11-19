@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.9.2
+
+- traduction anglaise
+  
 ## 1.9.1
 
 - correction bug loop
