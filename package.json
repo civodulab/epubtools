@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "%package.description%",
-    "version": "1.9.1",
+    "version": "1.9.2",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.ecritureSpine",
                 "title": "%extension.ecritureSpine.title%",
                 "description": "%extension.ecritureSpine.description%",
