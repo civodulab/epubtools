@@ -118,9 +118,7 @@ function activate(context) {
     }
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
@@ -135,9 +133,7 @@ function activate(context) {
 
 
     disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
@@ -173,11 +169,8 @@ function activate(context) {
 
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
-        try {
-            util.pathOEBPS().fileName;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
-
             return; // No open text editor
         }
 
@@ -208,14 +201,10 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.ecritureSpine', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
-
             return; // No open text editor
         }
-
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
             Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
@@ -230,9 +219,7 @@ function activate(context) {
     });
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
@@ -256,9 +243,7 @@ function activate(context) {
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
@@ -269,9 +254,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }
@@ -311,9 +294,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
 
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
-        try {
-            util.pathOEBPS().filename;
-        } catch (error) {
+        if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
             return; // No open text editor
         }

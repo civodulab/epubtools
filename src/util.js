@@ -18,10 +18,10 @@ function fichierLiens(type) {
 }
 
 function recupFichiers(typeOrfichier) {
-    return getFilesFromDir(pathOEBPS().path, typeOrfichier);
+    return getFilesFromDir(_pathOEBPS().path, typeOrfichier);
 }
 
-function pathOEBPS() {
+function _pathOEBPS() {
     let e = Window.activeTextEditor;
     let d = e.document;
     let dparse = path.dirname(d.fileName).split(path.sep);
@@ -34,9 +34,17 @@ function pathOEBPS() {
     }
 
     return fullPath;
-    // return path.join(chemin, 'OEBPS');
 }
 
+function testOEBPS() {
+    let e = Window.activeTextEditor;
+    let d = e.document;
+    let chemin = _pathOEBPS().path
+    if (d.fileName.indexOf(chemin) !== -1) {
+        return true
+    }
+    return false
+}
 
 function _chercheRoot(dir) {
     let cont = getFilesFromDir(dir, 'container.xml');
@@ -114,8 +122,8 @@ function rechercheTitre(texte, nivT) {
 module.exports = {
     recupFichiers,
     fichierLiens,
-    pathOEBPS,
     transformePageNoire,
     remplaceDansFichier,
     rechercheTitre,
+    testOEBPS
 };
