@@ -21,7 +21,8 @@
     "configuration.niveauTitre.description": "Niveau de titre pour la table des matières.",
     "configuration.classeTDM.description": "Classe appliquée au <ol>",
     "configuration.titreTDM.description": "Titre de la table des matières",
-    "configuration.ancreTDM.description": "Ancre sur les titres",
+    "configuration.ancreTDM.description": "Ajoute une ancre sur tous les titres de l'EPUB si celle-ci n'existe pas.",
     "configuration.coverImage.description": "Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  properties=\"cover-image\" à l'image dans le fichier .opf)",
-    "configuration.navTDM.description": "Nom du fichier pour la table des matières (Permet d'ajouter  properties=\"nav\" au fichier dans le fichier .opf)"
+    "configuration.navTDM.description": "Nom du fichier pour la table des matières (Permet d'ajouter  properties=\"nav\" au fichier dans le fichier .opf)",
+    "configuration.activerA11ylint.description": "Activer a11ylint."
 }
