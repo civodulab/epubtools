@@ -1,9 +1,5 @@
 # Release Notes
 
-## 1.9.3
-
-- correction bug chemin OEPBS
-
 ## 1.9.2
 
 - traduction anglaise

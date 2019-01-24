@@ -126,8 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.9.4 <!-- omit in toc -->
+### 1.9.3 <!-- omit in toc -->
 
-- correction typo package
+- correction bug chemin OEPBS
 
 Toutes les [release notes](CHANGELOG.md).
