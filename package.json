@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "%package.description%",
-    "version": "1.9.5",
+    "version": "1.9.6",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
