@@ -407,21 +407,29 @@ function epubTitle(fichiers) {
 }
 
 function epureBalise(texte) {
-    var txtTOC = texte,
-        txt = texte;
-    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>?|<[^>]*>?', 'gi');
-    var re;
-    while ((re = h.exec(texte)) !== null) {
-        txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
-        txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
-    }
+    // Supprime notes
+    var note = new RegExp('<span[^>]+id=(?:"|\')footnote-[0-9]*-backlink(?:"|\')[^>]*>((.|\s|\n|\r)*?)<\/span>', 'gi');
+    texte = texte.replace(note, '');
 
-    txtTOC = txtTOC.replace(/[\n\r]/g, '');
-    txt = txt.replace(/[\n\r]/g, '');
-    txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
-    txt = txt.replace(/\s{2,}/g, ' ');
-    txtTOC = txtTOC.trim();
-    txt = txt.trim();
+    var txtTOC = texte,
+        txt = texte,
+        baliseAsupp = ['a', 'span', 'sup'];
+
+    baliseAsupp.forEach(bal => {
+        var h = new RegExp('<' + bal + '[^>]+>((?:.|\n|\r)*?)<\/' + bal + '>', 'gi');
+        var re;
+        while ((re = h.exec(texte)) !== null) {
+            txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
+            txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
+        }
+        txtTOC = txtTOC.replace(/[\n\r]/g, '');
+        txt = txt.replace(/[\n\r]/g, '');
+        txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
+        txt = txt.replace(/\s{2,}/g, ' ');
+        txtTOC = txtTOC.trim();
+        txt = txt.trim();
+    });
+
     return {
         'toc': txtTOC,
         'txt': txt,
@@ -583,7 +591,6 @@ function tableMatieres(titres, fichierTOC) {
             maTableNCX += '</navPoint>\n'.repeat(titreAvant);
         }
     }
-
 
     if (path.basename(fichierTOC) === 'toc.ncx') {
         util.remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');

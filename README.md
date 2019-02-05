@@ -1,7 +1,7 @@
 # EpubTools LISEZMOI <!-- omit in toc -->
 
 [![Licence](https://img.shields.io/github/license/civodulab/epubtools.svg)](https://github.com/civodulab/epubtools)
-[![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/civodulab.epubtools.svg) ![Rating](https://vsmarketplacebadge.apphb.com/rating-short/civodulab.epubtools.svg) ![Installs](https://vsmarketplacebadge.apphb.com/installs/civodulab.epubtools.svg) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads-short/civodulab.epubtools.svg)](https://marketplace.visualstudio.com/items?itemName=civodulab.epubtools)
+[![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/civodulab.epubtools.svg) ![Rating](https://vsmarketplacebadge.apphb.com/rating-short/civodulab.epubtools.svg) ![Installs](https://vsmarketplacebadge.apphb.com/installs/civodulab.epubtools.svg) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/civodulab.epubtools.svg)](https://marketplace.visualstudio.com/items?itemName=civodulab.epubtools)
 
 Outils destinés à faciliter le travail sur les EPUB.
 
@@ -126,8 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.9.4 <!-- omit in toc -->
+### 1.9.9 <!-- omit in toc -->
 
-- correction typo package
+- correction bug [issues17](https://github.com/civodulab/epubtools/issues/17)
 
 Toutes les [release notes](CHANGELOG.md).

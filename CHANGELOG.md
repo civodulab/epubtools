@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.9.4
+
+- correction typo package
+  
 ## 1.9.3
 
 - correction bug chemin OEPBS
