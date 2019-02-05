@@ -30,6 +30,8 @@ function pathOEBPS() {
     return path.join(chemin, 'OEBPS');
 }
 
+
+
 function epureCSS(fichiersCSS, fichiersXHTML) {
     let mesStyles = [],
         mesClass = [],
@@ -88,6 +90,9 @@ function suppStyle(style, fichiersCSS) {
             exp = '[^,;}{]*' + style + '(?![-_\w])[^,{]*',
             re = new RegExp(exp, 'gi');
 
+        // nettoyage comm
+        data = data.replace(/\/\*[^\*]+\*\//gi, '');
+
         data = data.replace(re, '');
         fs.writeFileSync(el, data);
 
@@ -95,9 +100,12 @@ function suppStyle(style, fichiersCSS) {
 
 }
 
+
+
 function nettoyageStyle(fichiersCSS) {
     Object.values(fichiersCSS).forEach(el => {
         let data = fs.readFileSync(el, 'utf8');
+
 
         data = data.replace(/,{2,}/g, ',');
         fs.writeFileSync(el, data);
