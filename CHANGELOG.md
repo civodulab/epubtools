@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.9.9
+
+- correction bug [issues17](https://github.com/civodulab/epubtools/issues/17)
+
 ## 1.9.4
 
 - correction typo package
