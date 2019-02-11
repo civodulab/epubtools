@@ -45,8 +45,10 @@ function roleDoc(mesFichiers) {
     };
     Object.values(mesFichiers).forEach(fichier => {
         var re_epubType = RegExp('<[^<>]* ?epub:type=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
-        var re_role = RegExp('<[^<>]* ?role=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
+        var re_landmarks = new RegExp('<nav [^>]*?epub:type=(\'|")(landmarks)[^>]*>(.|\n|\r)*?<\/nav>', 'g');
+
         var array1;
+        var array2;
         fs.readFile(fichier, 'utf8', (err, data) => {
             if (err) {
                 console.log("ERROR !! " + err);
@@ -62,10 +64,12 @@ function roleDoc(mesFichiers) {
                         data = (roles.length !== 0) && data.replace(balise, balise.setAttr('role', roles.shift())) || data;
                     }
                 }
+                // retire role-doc dans landmark
+                var landmark = data.match(re_landmarks);
+                data = data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, ''));
 
                 fs.writeFile(fichier, data, (err) => {
                     if (err) console.log("ERROR !! " + err);
-                    // console.log(data);
                 });
             }
         });

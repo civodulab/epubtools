@@ -28,7 +28,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
-  > - `DPub-Aria roles|epub:type` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ et inversement (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
+  > - `DPub-Aria roles|epub:type` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
   > Référence : [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
 - `EpubTools : Manifest`
@@ -126,8 +126,9 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.9.10 <!-- omit in toc -->
+### 1.10.0 <!-- omit in toc -->
 
-- correction bug [issues18](https://github.com/civodulab/epubtools/issues/18)
+- correction bug `premier <h.> => <title>` qui était limité avec `epub.niveauTitre`
+- [issues 19](https://github.com/civodulab/epubtools/issues/19)
 
 Toutes les [release notes](CHANGELOG.md).

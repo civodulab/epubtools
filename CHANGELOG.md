@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.9.10
+
+- correction bug [issues18](https://github.com/civodulab/epubtools/issues/18)
+  
 ## 1.9.9
 
 - correction bug [issues17](https://github.com/civodulab/epubtools/issues/17)

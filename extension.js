@@ -115,6 +115,7 @@ function activate(context) {
 
     }
 
+
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         if (!util.testOEBPS()) {
             Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
@@ -394,9 +395,9 @@ function epubPageBreak(fichiers, fichierTOC) {
 function epubTitle(fichiers) {
     fichiers.forEach(function (el) {
         var txt = fs.readFileSync(el, 'utf8');
-        var titres = util.rechercheTitre(txt);
+        var titres = util.rechercheTitre(txt, 6);
         if (titres) {
-            var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
+            var h = new RegExp('<h[1-9][^>]*>((?:.|\n|\r)*?)<\/h([1-9])>', 'ig');
             var result = h.exec(titres[0]);
             var par = epureBalise(result[1]);
             util.remplaceDansFichier(el, par.txt, 'title');

@@ -55,6 +55,8 @@ let diagnosticCollection = null;
 
 diagnosticCollection = vscode.languages.createDiagnosticCollection('epubTools');
 
+
+
 function _removeDoc(doc) {
     diagnosticCollection.delete(vscode.Uri.file(doc.fsPath));
 }
