@@ -1,5 +1,10 @@
 # Release Notes
 
+## 1.10.0
+
+- correction bug `premier <h.> => <title>` qui était limité avec `epub.niveauTitre`
+- [issues 19](https://github.com/civodulab/epubtools/issues/19)
+
 ## 1.9.10
 
 - correction bug [issues18](https://github.com/civodulab/epubtools/issues/18)

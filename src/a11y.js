@@ -48,7 +48,6 @@ function roleDoc(mesFichiers) {
         var re_landmarks = new RegExp('<nav [^>]*?epub:type=(\'|")(landmarks)[^>]*>(.|\n|\r)*?<\/nav>', 'g');
 
         var array1;
-        var array2;
         fs.readFile(fichier, 'utf8', (err, data) => {
             if (err) {
                 console.log("ERROR !! " + err);
@@ -66,7 +65,7 @@ function roleDoc(mesFichiers) {
                 }
                 // retire role-doc dans landmark
                 var landmark = data.match(re_landmarks);
-                data = data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, ''));
+                data = landmark&&data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, ''))||data;
 
                 fs.writeFile(fichier, data, (err) => {
                     if (err) console.log("ERROR !! " + err);

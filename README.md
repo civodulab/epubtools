@@ -95,7 +95,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Nom du fichier pour la couverture de l'ouvrage (Permet d'ajouter  _properties="**cover-image**"_ à l'image dans le `<manifest>` - défaut : **cover**)
 
 - `epub.navTDM`
-  > Nom du fichier pour la table des mamtières (Permet d'ajouter  _properties="**nav**"_ au fichier dans le `<manifest>` - défaut : **toc**)
+  > Nom du fichier pour la table des matières (Permet d'ajouter  _properties="**nav**"_ au fichier dans le `<manifest>` - défaut : **toc**)
 
 - `epub.activerA11ylint` ([A11yLint](#a11ylint))
   > Active _a11ylint_ (défaut **true**)
@@ -126,9 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.10.0 <!-- omit in toc -->
+### 1.10.1 <!-- omit in toc -->
 
-- correction bug `premier <h.> => <title>` qui était limité avec `epub.niveauTitre`
-- [issues 19](https://github.com/civodulab/epubtools/issues/19)
+- correction bug `DPub-Aria roles|epub:type`
 
 Toutes les [release notes](CHANGELOG.md).
