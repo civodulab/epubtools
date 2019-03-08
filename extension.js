@@ -3,49 +3,49 @@
 'use strict';
 const vscode = require('vscode');
 // const nls = require('vscode-nls');
-const maLangue = vscode.env.language;
+// const maLangue = vscode.env.language;
 
-const localTexte = {
-    "fr": {
-        navInsertTdm:{
-            label:"TDM",
-            description:"Insérer la table des matières"
-        },
-        "erreurPathEPUB": "Vous devez être dans un EPUB.",
-        "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
-        "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
-        "a11y.aria.description": "Ajoute role=\"doc-...\" si epub:type",
-        "erreurFichierOPF": "Vous devez être dans un fichier opf",
-        "outputChannelPbSpine": "Problème de spine :",
-        "erreurFichierTOC": "Vous devez être dans un fichier toc",
-        "outputChannelTableauTh": "Tableaux sans th",
-        "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
-        "outputChannelPbSpine2": "Problème de spine [opf]",
-        "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
-        "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
+// const localTexte = {
+//     "fr": {
+//         navInsertTdm:{
+//             label:"TDM",
+//             description:"Insérer la table des matières"
+//         },
+//         "erreurPathEPUB": "Vous devez être dans un EPUB.",
+//         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
+//         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
+//         "a11y.aria.description": "Ajoute role=\"doc-...\" si epub:type",
+//         "erreurFichierOPF": "Vous devez être dans un fichier opf",
+//         "outputChannelPbSpine": "Problème de spine :",
+//         "erreurFichierTOC": "Vous devez être dans un fichier toc",
+//         "outputChannelTableauTh": "Tableaux sans th",
+//         "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
+//         "outputChannelPbSpine2": "Problème de spine [opf]",
+//         "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
+//         "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
 
-    },
-    "en": {
-        navInsertTdm:{
-            label:"TOC",
-            description:"Insert table of content"
-        },
-        "erreurPathEPUB": "You must be in an EPUB.",
-        "erreurPathOEBPS": "You must be in an %OEBPS folder.",
-        "a11y.placeHolder": "Choose from the list below.",
-        "a11y.aria.description": "Add role=\"doc-...\" if epub:type",
-        "erreurFichierOPF": "You must be in an opf file",
-        "outputChannelPbSpine": "Spine problem:",
-        "erreurFichierTOC": "You must be in a toc file",
-        "outputChannelTableauTh": "Tables without th",
-        "outputChannelTableauScope": "Tables without scope and/or headers",
-        "outputChannelPbSpine2": "Spine problem [opf]",
-        "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
-        "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
-    }
-}
+//     },
+//     "en": {
+//         navInsertTdm:{
+//             label:"TOC",
+//             description:"Insert table of content"
+//         },
+//         "erreurPathEPUB": "You must be in an EPUB.",
+//         "erreurPathOEBPS": "You must be in an %OEBPS folder.",
+//         "a11y.placeHolder": "Choose from the list below.",
+//         "a11y.aria.description": "Add role=\"doc-...\" if epub:type",
+//         "erreurFichierOPF": "You must be in an opf file",
+//         "outputChannelPbSpine": "Spine problem:",
+//         "erreurFichierTOC": "You must be in a toc file",
+//         "outputChannelTableauTh": "Tables without th",
+//         "outputChannelTableauScope": "Tables without scope and/or headers",
+//         "outputChannelPbSpine2": "Spine problem [opf]",
+//         "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
+//         "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
+//     }
+// }
 
-const txtLangue = localTexte[maLangue] && localTexte[maLangue] || localTexte["en"];
+// const txtLangue = localTexte[maLangue] && localTexte[maLangue] || localTexte["en"];
 const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
@@ -54,7 +54,7 @@ const problemes = require('./src/problemes');
 
 const util = require('./src/util');
 const manifest = require('./src/manifest');
-
+const mesMessages=require('./src/mesMessages');
 
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
@@ -144,26 +144,25 @@ function activate(context) {
             mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
-        const a11y = require('./src/nav');
+        const nav = require('./src/nav');
 
         var opts = {
             matchOnDescription: true,
-            placeHolder: txtLangue["a11y.placeHolder"]
+            placeHolder: mesMessages.txtLangue["a11y.placeHolder"]
         };
         var items = [];
 
         items.push({
-            label: txtLangue.navInsertTdm.label,
-            description: txtLangue.navInsertTdm.description
+            label: mesMessages.txtLangue.navInsertTdm.label,
+            description: mesMessages.txtLangue.navInsertTdm.description
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
                 return;
             }
             switch (selection.label) {
-                case "DPub-Aria roles|epub:type":
-                    let Liens = util.fichierLiens('.xhtml');
-                    a11y.roleDoc(Liens);
+                case mesMessages.txtLangue.navInsertTdm.label:
+
                     break;
                 default:
                     break;
@@ -177,20 +176,20 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         const a11y = require('./src/a11y');
 
         var opts = {
             matchOnDescription: true,
-            placeHolder: txtLangue["a11y.placeHolder"]
+            placeHolder: mesMessages.txtLangue["a11y.placeHolder"]
         };
         var items = [];
 
         items.push({
             label: "DPub-Aria roles|epub:type",
-            description: txtLangue["a11y.aria.description"]
+            description: mesMessages.txtLangue["a11y.aria.description"]
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -213,13 +212,13 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            mesErreurs.erreurFichierOPF();
+            mesMessages.mesErreurs.erreurFichierOPF();
             return;
         }
         outputChannel.clear();
@@ -228,7 +227,7 @@ function activate(context) {
 
         let test = manifest.testSpine(d.fileName);
         if (test) {
-            outputChannel.appendLine(txtLangue["outputChannelPbSpine"]);
+            outputChannel.appendLine(mesMessages.txtLangue["outputChannelPbSpine"]);
 
             test.forEach(el => {
                 outputChannel.appendLine('\t' + el);
@@ -245,12 +244,12 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.ecritureSpine', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            mesErreurs.erreurFichierOPF();
+            mesMessages.mesErreurs.erreurFichierOPF();
             return;
         }
         outputChannel.clear();
@@ -263,31 +262,33 @@ function activate(context) {
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         var tdm = isTDM(d.fileName);
         if (!tdm) {
-            mesErreurs.erreurFichierTOC();
+            mesMessages.mesErreurs.erreurFichierTOC();
             return; // No open text editor
         }
+        const nav=require('./src/nav');
         outputChannel.clear();
-        var Liens = util.fichierLiens('.xhtml');
-        // console.log(problemes.problemesTitres(Liens));
-        outputChannel.appendLine(problemes.problemesTitres(Liens));
-        if (config.get("ancreTDM").ajouterAncre) {
-            ajoutAncre(Liens);
-        }
-        epubTOC(Liens, d.fileName);
+        nav.tdm(d.fileName);
+        // var Liens = util.fichierLiens('.xhtml');
+        // // console.log(problemes.problemesTitres(Liens));
+        // outputChannel.appendLine(problemes.problemesTitres(Liens));
+        // if (config.get("ancreTDM").ajouterAncre) {
+        //     ajoutAncre(Liens);
+        // }
+        // epubTOC(Liens, d.fileName);
         outputChannel.show(true);
     });
 
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         var Liens = util.recupFichiers('.xhtml');
@@ -298,7 +299,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
@@ -311,11 +312,11 @@ function activate(context) {
         let Liens = util.recupFichiers('.xhtml');
 
         let mesErreurs = problemes.problemesTable(Liens);
-        (mesErreurs[1].length > 0) && outputChannel.appendLine('- ' + txtLangue["outputChannelTableauTh"]);
+        (mesErreurs[1].length > 0) && outputChannel.appendLine('- ' + mesMessages.txtLangue["outputChannelTableauTh"]);
         mesErreurs[1].forEach(erreur => {
             outputChannel.appendLine('\t' + erreur + '\n');
         });
-        (mesErreurs[0].length > 0) && outputChannel.appendLine('- ' + txtLangue["outputChannelTableauScope"]);
+        (mesErreurs[0].length > 0) && outputChannel.appendLine('- ' + mesMessages.txtLangue["outputChannelTableauScope"]);
         mesErreurs[0].forEach(erreur => {
             outputChannel.appendLine('\t' + erreur + '\n');
         });
@@ -325,7 +326,7 @@ function activate(context) {
         let monOpf = util.recupFichiers('.opf')[0];
         let outSpine = manifest.testSpine(monOpf);
         if (outSpine) {
-            outputChannel.appendLine('- ' + txtLangue["outputChannelPbSpine2"] + '(' + monOpf.toString() + ')');
+            outputChannel.appendLine('- ' + mesMessages.txtLangue["outputChannelPbSpine2"] + '(' + monOpf.toString() + ')');
             outSpine.forEach(el => {
                 outputChannel.appendLine('\t' + el);
             })
@@ -338,13 +339,13 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         let d = Window.activeTextEditor.document,
             tdm = isTDM(d.fileName);
         if (!tdm) {
-            mesErreurs.erreurFichierTOC();
+            mesMessages.mesErreurs.erreurFichierTOC();
             return; // No open text editor
         }
         let Liens = util.recupFichiers('.xhtml'),
@@ -367,7 +368,7 @@ function activate(context) {
             });
 
         } else {
-            mesErreurs.erreurPageBreak();
+            mesMessages.mesErreurs.erreurPageBreak();
             util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
         }
 
@@ -657,29 +658,4 @@ function rechercheHrefParIdRef(texte, idref) {
 
 function rechercheIdref(texte) {
     return texte.match(/idref=(\'|").*?(\'|")/gi);
-}
-let mesErreurs = {
-    erreurPathOEBPS: function () {
-        let nomOEBPS = util.pathOEBPS();
-        let txt = '';
-        if (!nomOEBPS.filename) {
-            txt = txtLangue["erreurPathEPUB"];
-        } else {
-            txt = txtLangue["erreurPathOEBPS"].replace('%OEBPS', nomOEBPS.filename);
-        }
-        Window.showInformationMessage(txt);
-    },
-    erreurFichierOPF: function () {
-        Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
-
-    },
-    erreurPageBreak: function () {
-        Window.showInformationMessage(txtLangue["erreurPageBreak"]);
-    },
-    erreurMessageSpine: function () {
-        Window.showErrorMessage(txtLangue["erreurMessageSpine"]);
-    },
-    erreurFichierTOC:function(){
-        Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
-    }
 }
