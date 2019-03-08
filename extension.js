@@ -7,6 +7,10 @@ const maLangue = vscode.env.language;
 
 const localTexte = {
     "fr": {
+        navInsertTdm:{
+            label:"TDM",
+            description:"Insérer la table des matières"
+        },
         "erreurPathEPUB": "Vous devez être dans un EPUB.",
         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
@@ -22,6 +26,10 @@ const localTexte = {
 
     },
     "en": {
+        navInsertTdm:{
+            label:"TOC",
+            description:"Insert table of content"
+        },
         "erreurPathEPUB": "You must be in an EPUB.",
         "erreurPathOEBPS": "You must be in an %OEBPS folder.",
         "a11y.placeHolder": "Choose from the list below.",
@@ -131,6 +139,40 @@ function activate(context) {
     });
     context.subscriptions.push(disposable);
 
+    disposable = vscode.commands.registerCommand('extension.navInsertion', function () {
+        if (!util.testOEBPS()) {
+            mesErreurs.erreurPathOEBPS();
+            return; // No open text editor
+        }
+        const a11y = require('./src/nav');
+
+        var opts = {
+            matchOnDescription: true,
+            placeHolder: txtLangue["a11y.placeHolder"]
+        };
+        var items = [];
+
+        items.push({
+            label: txtLangue.navInsertTdm.label,
+            description: txtLangue.navInsertTdm.description
+        });
+        Window.showQuickPick(items, opts).then((selection) => {
+            if (!selection) {
+                return;
+            }
+            switch (selection.label) {
+                case "DPub-Aria roles|epub:type":
+                    let Liens = util.fichierLiens('.xhtml');
+                    a11y.roleDoc(Liens);
+                    break;
+                default:
+                    break;
+            }
+        });
+
+
+    });
+    context.subscriptions.push(disposable);
 
 
     disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
