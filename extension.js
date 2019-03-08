@@ -7,7 +7,8 @@ const maLangue = vscode.env.language;
 
 const localTexte = {
     "fr": {
-        "erreurPathOEBPS": "Vous devez être dans un dossier OEBPS.",
+        "erreurPathEPUB": "Vous devez être dans un EPUB.",
+        "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
         "a11y.aria.description": "Ajoute role=\"doc-...\" si epub:type",
         "erreurFichierOPF": "Vous devez être dans un fichier opf",
@@ -21,7 +22,8 @@ const localTexte = {
 
     },
     "en": {
-        "erreurPathOEBPS": "You must be in an OEBPS folder.",
+        "erreurPathEPUB": "You must be in an EPUB.",
+        "erreurPathOEBPS": "You must be in an %OEBPS folder.",
         "a11y.placeHolder": "Choose from the list below.",
         "a11y.aria.description": "Add role=\"doc-...\" if epub:type",
         "erreurFichierOPF": "You must be in an opf file",
@@ -97,8 +99,6 @@ function activate(context) {
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
 
-    vscode.commands.executeCommand('workbench.view.search');
-
     const a11ylint = require('./src/a11ylint');
     let wkFolderAvant;
     if (config.get('activerA11ylint')) {
@@ -117,9 +117,10 @@ function activate(context) {
 
     }
 
+
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
@@ -134,7 +135,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubA11Y', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         const a11y = require('./src/a11y');
@@ -170,13 +171,13 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubManifest', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
+            mesErreurs.erreurFichierOPF();
             return;
         }
         outputChannel.clear();
@@ -202,12 +203,12 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.ecritureSpine', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         let d = Window.activeTextEditor.document;
         if (path.extname(d.fileName) !== '.opf') {
-            Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
+            mesErreurs.erreurFichierOPF();
             return;
         }
         outputChannel.clear();
@@ -220,14 +221,14 @@ function activate(context) {
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTOC', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
         let d = Window.activeTextEditor.document;
         var tdm = isTDM(d.fileName);
         if (!tdm) {
-            Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
+            mesErreurs.erreurFichierTOC();
             return; // No open text editor
         }
         outputChannel.clear();
@@ -244,7 +245,7 @@ function activate(context) {
     context.subscriptions.push(disposable);
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         var Liens = util.recupFichiers('.xhtml');
@@ -255,7 +256,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubError', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
@@ -295,13 +296,13 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.epubPageList', function () {
         if (!util.testOEBPS()) {
-            Window.showInformationMessage(txtLangue["erreurPathOEBPS"]);
+            mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         let d = Window.activeTextEditor.document,
             tdm = isTDM(d.fileName);
         if (!tdm) {
-            Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
+            mesErreurs.erreurFichierTOC();
             return; // No open text editor
         }
         let Liens = util.recupFichiers('.xhtml'),
@@ -324,7 +325,7 @@ function activate(context) {
             });
 
         } else {
-            Window.showInformationMessage(txtLangue["erreurPageBreak"]);
+            mesErreurs.erreurPageBreak();
             util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
         }
 
@@ -396,9 +397,9 @@ function epubPageBreak(fichiers, fichierTOC) {
 function epubTitle(fichiers) {
     fichiers.forEach(function (el) {
         var txt = fs.readFileSync(el, 'utf8');
-        var titres = util.rechercheTitre(txt);
+        var titres = util.rechercheTitre(txt, 6);
         if (titres) {
-            var h = new RegExp('<h[0-9][^>]*>((?:.|\n|\r)*?)<\/h([0-9])>', 'ig');
+            var h = new RegExp('<h[1-9][^>]*>((?:.|\n|\r)*?)<\/h([1-9])>', 'ig');
             var result = h.exec(titres[0]);
             var par = epureBalise(result[1]);
             util.remplaceDansFichier(el, par.txt, 'title');
@@ -407,21 +408,29 @@ function epubTitle(fichiers) {
 }
 
 function epureBalise(texte) {
-    var txtTOC = texte,
-        txt = texte;
-    var h = new RegExp('<[^\/>]*>((?:.|\n|\r)*?)<\/[^>]*>?|<[^>]*>?', 'gi');
-    var re;
-    while ((re = h.exec(texte)) !== null) {
-        txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
-        txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
-    }
+    // Supprime notes
+    var note = new RegExp('<span[^>]+id=(?:"|\')footnote-[0-9]*-backlink(?:"|\')[^>]*>((.|\s|\n|\r)*?)<\/span>', 'gi');
+    texte = texte.replace(note, '');
 
-    txtTOC = txtTOC.replace(/[\n\r]/g, '');
-    txt = txt.replace(/[\n\r]/g, '');
-    txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
-    txt = txt.replace(/\s{2,}/g, ' ');
-    txtTOC = txtTOC.trim();
-    txt = txt.trim();
+    var txtTOC = texte,
+        txt = texte,
+        baliseAsupp = ['a', 'span', 'sup'];
+
+    baliseAsupp.forEach(bal => {
+        var h = new RegExp('<' + bal + '[^>]+>((?:.|\n|\r)*?)<\/' + bal + '>', 'gi');
+        var re;
+        while ((re = h.exec(texte)) !== null) {
+            txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
+            txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
+        }
+        txtTOC = txtTOC.replace(/[\n\r]/g, '');
+        txt = txt.replace(/[\n\r]/g, '');
+        txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
+        txt = txt.replace(/\s{2,}/g, ' ');
+        txtTOC = txtTOC.trim();
+        txt = txt.trim();
+    });
+
     return {
         'toc': txtTOC,
         'txt': txt,
@@ -447,8 +456,7 @@ function epubTOC(liens, fichierTOC) {
         });
         tableMatieres(mesTitres, fichierTOC);
     } catch (error) {
-
-        Window.showErrorMessage(txtLangue["erreurMessageSpine"]);
+        mesErreurs.erreurMessageSpine();
     }
 }
 
@@ -584,7 +592,6 @@ function tableMatieres(titres, fichierTOC) {
         }
     }
 
-
     if (path.basename(fichierTOC) === 'toc.ncx') {
         util.remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
     } else {
@@ -608,4 +615,29 @@ function rechercheHrefParIdRef(texte, idref) {
 
 function rechercheIdref(texte) {
     return texte.match(/idref=(\'|").*?(\'|")/gi);
+}
+let mesErreurs = {
+    erreurPathOEBPS: function () {
+        let nomOEBPS = util.pathOEBPS();
+        let txt = '';
+        if (!nomOEBPS.filename) {
+            txt = txtLangue["erreurPathEPUB"];
+        } else {
+            txt = txtLangue["erreurPathOEBPS"].replace('%OEBPS', nomOEBPS.filename);
+        }
+        Window.showInformationMessage(txt);
+    },
+    erreurFichierOPF: function () {
+        Window.showInformationMessage(txtLangue["erreurFichierOPF"]);
+
+    },
+    erreurPageBreak: function () {
+        Window.showInformationMessage(txtLangue["erreurPageBreak"]);
+    },
+    erreurMessageSpine: function () {
+        Window.showErrorMessage(txtLangue["erreurMessageSpine"]);
+    },
+    erreurFichierTOC:function(){
+        Window.showInformationMessage(txtLangue["erreurFichierTOC"]);
+    }
 }

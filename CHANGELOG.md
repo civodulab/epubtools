@@ -1,5 +1,30 @@
 # Release Notes
 
+## 1.10.1
+
+- correction bug `DPub-Aria roles|epub:type`
+  
+## 1.10.0
+
+- correction bug `premier <h.> => <title>` qui était limité avec `epub.niveauTitre`
+- [issues 19](https://github.com/civodulab/epubtools/issues/19)
+
+## 1.9.10
+
+- correction bug [issues18](https://github.com/civodulab/epubtools/issues/18)
+  
+## 1.9.9
+
+- correction bug [issues17](https://github.com/civodulab/epubtools/issues/17)
+
+## 1.9.4
+
+- correction typo package
+  
+## 1.9.3
+
+- correction bug chemin OEPBS
+  
 ## 1.9.2
 
 - traduction anglaise

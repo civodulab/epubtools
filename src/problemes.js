@@ -74,8 +74,6 @@ function problemesTable(liens) {
     return [erreursScope, erreursTH];
 }
 
-
-
 function _tableA11y(docTxt, doc) {
     let mesScopes = [];
     let mesTH = [];

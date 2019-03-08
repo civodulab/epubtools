@@ -55,6 +55,8 @@ let diagnosticCollection = null;
 
 diagnosticCollection = vscode.languages.createDiagnosticCollection('epubTools');
 
+
+
 function _removeDoc(doc) {
     diagnosticCollection.delete(vscode.Uri.file(doc.fsPath));
 }
@@ -137,8 +139,6 @@ function _imageA11y(docTxt) {
             }
         }
     }
-
-
     return mesRanges;
 }
 
@@ -146,17 +146,16 @@ function _grasItalicEtc(docTxt) {
     let mesRanges = [];
     let re_itabold = new RegExp('<span [^>]*class=(?:"|\')([^>]*(?:' + styleEmphaseTous + ')[^>]*)(?:"|\')[^>]*>(?:.|\n|\r)*?<\/span>', 'g');
     let result;
+    boucle1:
     while ((result = re_itabold.exec(docTxt)) !== null) {
         let textePB = "";
-        let monBreak = false;
-        styleAEviter.forEach(st => {
-            if (result[1].indexOf(st) !== -1) {
-                monBreak = true;
+        let i=styleAEviter.length;
+        while(i--){
+            if (result[1].indexOf(styleAEviter[i]) !== -1) {
+                break boucle1;
             }
-        });
-        if (monBreak) {
-            break;
         }
+       
         Object.keys(styleEmphase).forEach(k => {
             styleEmphase[k].forEach(elt => {
                 if (result[1].indexOf(elt) !== -1) {
