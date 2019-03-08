@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.10.1
+
+- correction bug `DPub-Aria roles|epub:type`
+  
 ## 1.10.0
 
 - correction bug `premier <h.> => <title>` qui était limité avec `epub.niveauTitre`

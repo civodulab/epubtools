@@ -126,8 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.10.1 <!-- omit in toc -->
+### 1.10.2 <!-- omit in toc -->
 
-- correction bug `DPub-Aria roles|epub:type`
+- correction bug recherche chemin dans **container.xml**
 
 Toutes les [release notes](CHANGELOG.md).

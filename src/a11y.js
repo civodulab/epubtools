@@ -74,9 +74,7 @@ function roleDoc(mesFichiers) {
         });
 
     });
-
 }
-
 module.exports = {
     roleDoc,
 }

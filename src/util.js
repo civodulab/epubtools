@@ -18,28 +18,30 @@ function fichierLiens(type) {
 }
 
 function recupFichiers(typeOrfichier) {
-    return getFilesFromDir(_pathOEBPS().path, typeOrfichier);
+    return getFilesFromDir(pathOEBPS().path, typeOrfichier);
 }
 
-function _pathOEBPS() {
-    let e = Window.activeTextEditor;
-    let d = e.document;
-    let dparse = path.dirname(d.fileName).split(path.sep);
-    let chemin;
+function pathOEBPS() {
+    let fName = Window.activeTextEditor.document.fileName;
+    let dossier = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(fName));
+    let dparse = path.dirname(fName).split(path.sep);
     let fullPath = false;
     while (!fullPath) {
-        let mapop = path.sep + dparse.pop() + path.sep;
-        chemin = d.fileName.substring(0, d.fileName.indexOf(mapop));
+        let pop = dparse.pop();
+        if (pop === dossier.name) {
+            break;
+        }
+        let mapop = path.sep + pop + path.sep;
+        let chemin = fName.substring(0, fName.indexOf(mapop));
         fullPath = _chercheRoot(chemin);
     }
-
     return fullPath;
 }
 
 function testOEBPS() {
     let e = Window.activeTextEditor;
     let d = e.document;
-    let chemin = _pathOEBPS().path
+    let chemin = pathOEBPS().path;
     if (d.fileName.indexOf(chemin) !== -1) {
         return true
     }
@@ -48,16 +50,16 @@ function testOEBPS() {
 
 function _chercheRoot(dir) {
     let cont = getFilesFromDir(dir, 'container.xml');
-    if (!cont) return false;
+    if (!cont) {
+        return false;
+    }
     let data = fs.readFileSync(cont);
     let regex1 = new RegExp('full-path="([^"]+)"', 'g');
     let result = regex1.exec(data);
-
     return {
         "filename": result[1].split('/')[0],
         "path": path.join(cont.substring(0, cont.indexOf('META-INF')), result[1].split('/')[0])
     }
-
 }
 
 
@@ -125,5 +127,6 @@ module.exports = {
     transformePageNoire,
     remplaceDansFichier,
     rechercheTitre,
-    testOEBPS
+    testOEBPS,
+    pathOEBPS
 };
