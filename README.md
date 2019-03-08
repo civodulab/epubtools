@@ -98,6 +98,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `epub.emphaseStyleAEviter` ([A11yLint](#a11ylint))
   > Chaînes de caractères non pris en compte par `epub.emphaseStyleAChercher` (default **["no-bold", "no-italique","no-emphase"]**)
+  >
+  > Exemple : `<span class="no-italique-sympa">` ne déclenchera pas d'alerte dans a11yLint.
+
 
 - `epub.navTDM`
   > Nom du fichier pour la table des matières (Permet d'ajouter  _properties="**nav**"_ à l'`<item>` référençant la TDM dans le `<manifest>` - défaut : **toc**)
@@ -109,16 +112,6 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   - `titre` : titre de la table des matières (défaut : **Table des matières**)
   - `balise` : balise pour le titre (défaut : **h1**)
   - `classe` : classe pour le titre (défaut : **titre1**)
-
-
-
-
-
-
-
-
-  >
-  > Exemple : `<span class="no-italique-sympa">` ne déclenchera pas d'alerte dans a11yLint.
 
 ***
 
