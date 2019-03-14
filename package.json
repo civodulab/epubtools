@@ -48,21 +48,9 @@
                 "category": "EpubTools"
             },
             {
-                "command": "extension.epubTOC",
-                "title": "%extension.epubTOC.title%",
-                "description": "%extension.epubTOC.description%",
-                "category": "EpubTools"
-            },
-            {
                 "command": "extension.epubTitle",
                 "title": "%extension.epubTitle.title%",
                 "description": "%extension.epubTitle.description%",
-                "category": "EpubTools"
-            },
-            {
-                "command": "extension.epubPageList",
-                "title": "%extension.epubPageList.title%",
-                "description": "%extension.epubPageList.description%",
                 "category": "EpubTools"
             },
             {

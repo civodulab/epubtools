@@ -13,17 +13,28 @@ let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 
 function tdm() {
-    let d = Window.activeTextEditor.document.fileName;
+    let d = Window.activeTextEditor.document;
+    if(!functionTDM._isTDM(d.fileName)){
+        mesErreurs.erreurFichierTOC();
+        return;
+    }
     var Liens = util.fichierLiens('.xhtml');
     // console.log(problemes.problemesTitres(Liens));
     outputChannel.appendLine(problemes.problemesTitres(Liens));
     if (config.get("ancreTDM").ajouterAncre) {
         functionTDM._ajoutAncre(Liens);
     }
-    functionTDM._epubTOC(Liens, d);
+    functionTDM._epubTOC(Liens, d.fileName);
 }
 
 let functionTDM = {
+    _isTDM: function (fichier) {
+        var txt = fs.readFileSync(fichier, 'utf8');
+        if (txt.indexOf('</nav>') !== -1 || txt.indexOf('</navMap') !== -1) {
+            return true;
+        }
+        return false;
+    },
     _ajoutAncre: function (liens) {
         var k = 0;
         var nomId = config.get("ancreTDM").nomAncre;
@@ -166,7 +177,7 @@ let functionTDM = {
                 if (path.basename(relativeP) === path.basename(fichierTOC)) {
                     id = "";
                 }
-                var monTexte = functionTDM._epureBalise(result[1]);
+                var monTexte = util.epureBalise(result[1]);
                 maTableXhtml += '<a href="' + relativeP + id + '">';
                 maTableXhtml += monTexte.toc + '</a>';
 
@@ -186,42 +197,12 @@ let functionTDM = {
             }
         }
 
-        if (path.basename(fichierTOC) === 'toc.ncx') {
+        if (path.extname(fichierTOC) === '.ncx') {
             util.remplaceDansFichier(fichierTOC, maTableNCX, 'navMap');
         } else {
             util.remplaceDansFichier(fichierTOC, maTableXhtml, 'nav', 'toc');
         }
 
-    },
-
-    _epureBalise: function (texte) {
-        // Supprime notes
-        var note = new RegExp('<span[^>]+id=(?:"|\')footnote-[0-9]*-backlink(?:"|\')[^>]*>((.|\s|\n|\r)*?)<\/span>', 'gi');
-        texte = texte.replace(note, '');
-
-        var txtTOC = texte,
-            txt = texte,
-            baliseAsupp = ['a', 'span', 'sup'];
-
-        baliseAsupp.forEach(bal => {
-            var h = new RegExp('<' + bal + '[^>]+>((?:.|\n|\r)*?)<\/' + bal + '>', 'gi');
-            var re;
-            while ((re = h.exec(texte)) !== null) {
-                txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
-                txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
-            }
-            txtTOC = txtTOC.replace(/[\n\r]/g, '');
-            txt = txt.replace(/[\n\r]/g, '');
-            txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
-            txt = txt.replace(/\s{2,}/g, ' ');
-            txtTOC = txtTOC.trim();
-            txt = txt.trim();
-        });
-
-        return {
-            'toc': txtTOC,
-            'txt': txt,
-        };
     }
 }
 
@@ -263,7 +244,7 @@ let functionPageList = {
                 relativeP = path.basename(el);
             }
             var txt = fs.readFileSync(el, 'utf8');
-            var pb =functionPageList._recherchePageBreak(txt);
+            var pb = functionPageList._recherchePageBreak(txt);
             if (pb.length !== 0) {
                 pb.forEach(function (sp) {
                     pageBreaks.push({
@@ -297,7 +278,7 @@ let functionPageList = {
             });
         });
     },
-     _recherchePageBreak:function(texte) {
+    _recherchePageBreak: function (texte) {
         var monDom = new dom(texte),
             mesTitres = [];
         var tt = monDom.getElementByAttr('epub:type', 'pagebreak');
