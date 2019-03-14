@@ -11,37 +11,32 @@ const mesMessages = require('./mesMessages');
 let mesErreurs = mesMessages.mesErreurs;
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
-
-function tdm() {
-    let d = Window.activeTextEditor.document;
-    if(!functionTDM._isTDM(d.fileName)){
-        mesErreurs.erreurFichierTOC();
-        return;
-    }
-    var Liens = util.fichierLiens('.xhtml');
-    // console.log(problemes.problemesTitres(Liens));
-    outputChannel.appendLine(problemes.problemesTitres(Liens));
-    if (config.get("ancreTDM").ajouterAncre) {
-        functionTDM._ajoutAncre(Liens);
-    }
-    functionTDM._epubTOC(Liens, d.fileName);
-}
-
-let functionTDM = {
-    _isTDM: function (fichier) {
-        var txt = fs.readFileSync(fichier, 'utf8');
-        if (txt.indexOf('</nav>') !== -1 || txt.indexOf('</navMap') !== -1) {
-            return true;
-        }
-        return false;
-    },
-    _ajoutAncre: function (liens) {
+const functionCommune = {
+    _ajoutAncre: function (liens, qui) {
         var k = 0;
         var nomId = config.get("ancreTDM").nomAncre;
-        var allID = functionTDM._recupAllID(liens);
+        var allID = functionCommune._recupAllID(liens);
         Object.values(liens).forEach(function (fichier) {
             var data = fs.readFileSync(fichier, 'utf8');
-            var mesTitres = util.rechercheTitre(data);
+
+            switch (qui) {
+                case 'titre':
+                    var mesTitres = util.rechercheTitre(data);
+                    var regtxt = '<h([0-9])([^>]*)>';
+                    break;
+                case 'figure':
+                    mesTitres = functionIllustrationList._getFigure(data);
+                    regtxt = '<(figure)([^>]*)>'
+                    break;
+                case 'table':
+                    mesTitres = functionTableList._getTable(data);
+                    regtxt = '<(table)([^>]*)>'
+                    break;
+                default:
+                    break;
+            }
+
+
             if (mesTitres) {
                 mesTitres.forEach(function (titre) {
                     ++k;
@@ -50,8 +45,9 @@ let functionTDM = {
                         ++k;
                         newID = 'id="' + nomId + '-' + k + '"';
                     }
-                    var h = new RegExp('<h([0-9])([^>]*)>', 'ig');
-                    var result = h.exec(titre);
+                   
+                    var mareg = new RegExp(regtxt, 'gi');
+                    var result = mareg.exec(titre);
                     if (result[2].indexOf('id') === -1) {
                         if (result[2] === "") {
                             var newtitre = titre.replace(result[1], result[1] + ' ' + newID);
@@ -69,7 +65,6 @@ let functionTDM = {
         });
 
     },
-
     _recupAllID: function (liens) {
         var allID = [];
         Object.values(liens).forEach(function (el) {
@@ -79,6 +74,33 @@ let functionTDM = {
         });
         return allID;
     },
+}
+
+function tdm() {
+    let d = Window.activeTextEditor.document;
+    if (!functionTDM._isTDM(d.fileName)) {
+        mesErreurs.erreurFichierTOC();
+        return;
+    }
+    var Liens = util.fichierLiens('.xhtml');
+    // console.log(problemes.problemesTitres(Liens));
+    outputChannel.appendLine(problemes.problemesTitres(Liens));
+    if (config.get("ancreTDM").ajouterAncre) {
+        functionCommune._ajoutAncre(Liens, 'titre');
+    }
+    functionTDM._epubTOC(Liens, d.fileName);
+}
+
+let functionTDM = {
+    _isTDM: function (fichier) {
+        var txt = fs.readFileSync(fichier, 'utf8');
+        if (txt.indexOf('</nav>') !== -1 || txt.indexOf('</navMap') !== -1) {
+            return true;
+        }
+        return false;
+    },
+
+
 
     _epubTOC: function (liens, fichierTOC) {
         try {
@@ -211,7 +233,6 @@ function pagelist() {
     let Liens = util.recupFichiers('.xhtml'),
         pBreak = functionPageList._epubPageBreak(Liens, d.fileName);
     if (pBreak.length !== 0) {
-
         fs.readFile(d.fileName, 'utf8', (err, txt) => {
             if (txt.indexOf('epub:type="page-list"') !== -1) {
                 util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
@@ -222,7 +243,7 @@ function pagelist() {
                     var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
                     fs.writeFileSync(d.fileName, data);
                 } else {
-                    functionPageList._insertEditorSelection(pBreak);
+                    util.insertEditorSelection(pBreak);
                 }
             }
         });
@@ -269,15 +290,7 @@ let functionPageList = {
         }
         return pageBreaks;
     },
-    _insertEditorSelection: function (text) {
-        const editor = vscode.window.activeTextEditor;
-        const selections = editor.selections;
-        editor.edit((editBuilder) => {
-            selections.forEach((selection) => {
-                editBuilder.insert(selection.active, text);
-            });
-        });
-    },
+
     _recherchePageBreak: function (texte) {
         var monDom = new dom(texte),
             mesTitres = [];
@@ -288,7 +301,179 @@ let functionPageList = {
 
 }
 
+
+function tablelist() {
+    let d = Window.activeTextEditor.document;
+    let Liens = util.recupFichiers('.xhtml'),
+        pBreak = functionTableList._epubPageTable(Liens, d.fileName);
+    if (pBreak.length !== 0) {
+        fs.readFile(d.fileName, 'utf8', (err, txt) => {
+            if (txt.indexOf('epub:type="lot"') !== -1) {
+                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'lot');
+            } else {
+                pBreak = '<nav epub:type="lot">\n<h1>Table list</h1>\n' + pBreak + '\n</nav>';
+                // find </nav>
+                if (txt.indexOf('</nav>') !== -1) {
+                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
+                    fs.writeFileSync(d.fileName, data);
+                } else {
+                    util.insertEditorSelection(pBreak);
+                }
+            }
+        });
+
+    } else {
+        mesMessages.mesErreurs.erreurTable();
+        util.remplaceDansFichier(d.fileName, "", 'nav', 'lot');
+    }
+}
+
+let functionTableList = {
+    _epubPageTable: function (fichiers, fichierTOC) {
+        var mesTables = [];
+        Object.values(fichiers).forEach(function (el) {
+            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
+            if (relativeP !== '') {
+                relativeP = relativeP + '/' + path.basename(el);
+            } else {
+                relativeP = path.basename(el);
+            }
+            var txt = fs.readFileSync(el, 'utf8');
+            var pb = functionTableList._getTable(txt);
+
+            if (pb.length !== 0) {
+                pb.forEach(function (sp) {
+                    mesTables.push({
+                        page: relativeP,
+                        caption: functionTableList._getCaption(sp),
+                        id: sp.getAttr('id')
+                    });
+                });
+
+            }
+        });
+        // mesTables.sort(function (a, b) {
+        //     return a.value - b.value;
+        // });
+        if (mesTables.length !== 0) {
+            let pageList = '<ol>\n';
+            mesTables.forEach(function (el) {
+                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + (el.caption && el.caption || el.id) + '</a></li>\n';
+            });
+            pageList += '</ol>\n';
+            return pageList;
+        }
+        return mesTables;
+    },
+    _getTable: function (texte) {
+        var monDom = new dom(texte),
+            mesTables = [];
+        var tt = monDom.getElementByTagName('table');
+        mesTables = tt && mesTables.concat(tt) || mesTables;
+        return mesTables;
+    },
+    _getCaption: function (txtTable) {
+        let mareg = /(?<=<caption[^>]*>)((?:.|\s|\r)+?)(?=<\/caption>)/i;
+        let found = txtTable.match(mareg);
+
+        return found && util.epureBalise(found[0]).txt || "";
+
+    }
+}
+
+
+function illustrationlist() {
+    let d = Window.activeTextEditor.document;
+    let Liens = util.recupFichiers('.xhtml');
+    functionCommune._ajoutAncre(Liens, 'figure');
+
+    let pBreak = functionIllustrationList._epubPageIllustration(Liens, d.fileName);
+
+    if (pBreak.length !== 0) {
+        fs.readFile(d.fileName, 'utf8', (err, txt) => {
+            if (txt.indexOf('epub:type="loi"') !== -1) {
+                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'loi');
+            } else {
+                pBreak = '<nav epub:type="loi">\n<h1>Illustration list</h1>\n' + pBreak + '\n</nav>';
+                // find </nav>
+                if (txt.indexOf('</nav>') !== -1) {
+                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
+                    fs.writeFileSync(d.fileName, data);
+                } else {
+                    util.insertEditorSelection(pBreak);
+                }
+            }
+        });
+
+    } else {
+        mesMessages.mesErreurs.erreurIllustration();
+        util.remplaceDansFichier(d.fileName, "", 'nav', 'loi');
+    }
+}
+
+let functionIllustrationList = {
+    _epubPageIllustration: function (fichiers, fichierTOC) {
+        var mesTables = [];
+        Object.values(fichiers).forEach(function (el) {
+            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
+            if (relativeP !== '') {
+                relativeP = relativeP + '/' + path.basename(el);
+            } else {
+                relativeP = path.basename(el);
+            }
+            var txt = fs.readFileSync(el, 'utf8');
+            var pb = functionIllustrationList._getFigure(txt);
+
+            if (pb.length !== 0) {
+                pb.forEach(function (sp) {
+                    mesTables.push({
+                        page: relativeP,
+                        value: functionIllustrationList._getFigCaption(sp),
+                        id: sp.getAttr('id')
+                    });
+                });
+
+            }
+        });
+        // mesTables.sort(function (a, b) {
+        //     return a.value - b.value;
+        // });
+        if (mesTables.length !== 0) {
+            let pageList = '<ol>\n';
+            mesTables.forEach(function (el) {
+                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + (el.value && el.value || el.id) + '</a></li>\n';
+            });
+            pageList += '</ol>\n';
+            return pageList;
+        }
+        return mesTables;
+    },
+    _rechercheIllustration: function (texte) {
+        var monDom = new dom(texte),
+            mesTables = [];
+        var tt = monDom.getElementByTagName('figure');
+        mesTables = tt && mesTables.concat(tt) || mesTables;
+        return mesTables;
+    },
+    _getFigure: function (texte) {
+        var monDom = new dom(texte),
+            mesTables = [];
+        var tt = monDom.getElementByTagName('figure');
+        mesTables = tt && mesTables.concat(tt) || mesTables;
+        return mesTables;
+    },
+    _getFigCaption: function (texte) {
+
+        let mareg = /(?<=<figcaption[^>]*>)((?:.|\s|\r)+?)(?=<\/figcaption>)/i;
+        let found = texte.match(mareg);
+
+        return found && util.epureBalise(found[0]).txt || "";
+    }
+}
+
 module.exports = {
     tdm,
-    pagelist
+    pagelist,
+    tablelist,
+    illustrationlist
 }

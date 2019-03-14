@@ -14,6 +14,14 @@ const localTexte = {
             label:"Page liste",
             description:"Insérer la liste des numéros de page"
         },
+        navInsertTableList:{
+            label:"Table List",
+            description:"Insérer la liste des tableaux"
+        },
+        navInsertIllustrationList:{
+            label:"Illustration List",
+            description:"Insérer la liste des illustrations"
+        },
         "erreurPathEPUB": "Vous devez être dans un EPUB.",
         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
@@ -24,6 +32,8 @@ const localTexte = {
         "outputChannelTableauTh": "Tableaux sans th",
         "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
         "outputChannelPbSpine2": "Problème de spine [opf]",
+        "erreurTable":"Vous n'avez aucun tableau dans votre EPUB.",
+        "erreurIllustration":"Vous n'avez aucune illustration dans votre EPUB.",
         "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
         "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
 
@@ -37,6 +47,14 @@ const localTexte = {
             label:"Page list",
             description:"Insert page list"
         },
+        navInsertTableList:{
+            label:"Table list",
+            description:"Insert table list"
+        },
+        navInsertIllustrationList:{
+            label:"Illustration List",
+            description:"Insérer la liste des tableaux"
+        },
         "erreurPathEPUB": "You must be in an EPUB.",
         "erreurPathOEBPS": "You must be in an %OEBPS folder.",
         "a11y.placeHolder": "Choose from the list below.",
@@ -47,6 +65,8 @@ const localTexte = {
         "outputChannelTableauTh": "Tables without th",
         "outputChannelTableauScope": "Tables without scope and/or headers",
         "outputChannelPbSpine2": "Spine problem [opf]",
+        "erreurTable":"You don't have any table in your EPUB.",
+        "erreurIllustration":"You don't have any illustration in your EPUB.",
         "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
         "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
     }

@@ -106,6 +106,16 @@ function transformePageNoire(fichiersXhtml) {
     });
 }
 
+function insertEditorSelection(text) {
+    const editor = vscode.window.activeTextEditor;
+    const selections = editor.selections;
+    editor.edit((editBuilder) => {
+        selections.forEach((selection) => {
+            editBuilder.insert(selection.active, text);
+        });
+    });
+}
+
 function remplaceDansFichier(fichier, texte, balise, epubType) {
     let data = fs.readFileSync(fichier, 'utf8');
     let rpl = data.remplaceEntre2Balises(balise, texte, epubType);
@@ -159,5 +169,6 @@ module.exports = {
     rechercheTitre,
     testOEBPS,
     pathOEBPS,
-    epureBalise
+    epureBalise,
+    insertEditorSelection
 };

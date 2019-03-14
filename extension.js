@@ -115,6 +115,13 @@ function activate(context) {
         }, {
             label: mesMessages.txtLangue.navInsertPageList.label,
             description: mesMessages.txtLangue.navInsertPageList.description
+        }, {
+            label: mesMessages.txtLangue.navInsertTableList.label,
+            description: mesMessages.txtLangue.navInsertTableList.description
+        },
+        {
+            label: mesMessages.txtLangue.navInsertIllustrationList.label,
+            description: mesMessages.txtLangue.navInsertIllustrationList.description
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -126,6 +133,12 @@ function activate(context) {
                     break;
                 case mesMessages.txtLangue.navInsertPageList.label:
                     nav.pagelist();
+                    break;
+                case mesMessages.txtLangue.navInsertTableList.label:
+                    nav.tablelist();
+                    break;
+                    case mesMessages.txtLangue.navInsertIllustrationList.label:
+                    nav.illustrationlist();
                     break;
                 default:
 
@@ -224,7 +237,7 @@ function activate(context) {
 
     });
     context.subscriptions.push(disposable);
-   
+
     disposable = vscode.commands.registerCommand('extension.epubTitle', function () {
         if (!util.testOEBPS()) {
             mesMessages.mesErreurs.erreurPathOEBPS();
@@ -299,10 +312,3 @@ function epubTitle(fichiers) {
         }
     });
 }
-
-
-
-
-
-
-
