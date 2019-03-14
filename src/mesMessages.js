@@ -10,6 +10,10 @@ const localTexte = {
             label:"TDM",
             description:"Insérer la table des matières"
         },
+        navInsertPageList:{
+            label:"Page liste",
+            description:"Insérer la liste des numéros de page"
+        },
         "erreurPathEPUB": "Vous devez être dans un EPUB.",
         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
@@ -28,6 +32,10 @@ const localTexte = {
         navInsertTdm:{
             label:"TOC",
             description:"Insert table of content"
+        },
+        navInsertPageList:{
+            label:"Page list",
+            description:"Insert page list"
         },
         "erreurPathEPUB": "You must be in an EPUB.",
         "erreurPathOEBPS": "You must be in an %OEBPS folder.",

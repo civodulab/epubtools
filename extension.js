@@ -2,50 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 'use strict';
 const vscode = require('vscode');
-// const nls = require('vscode-nls');
-// const maLangue = vscode.env.language;
 
-// const localTexte = {
-//     "fr": {
-//         navInsertTdm:{
-//             label:"TDM",
-//             description:"Insérer la table des matières"
-//         },
-//         "erreurPathEPUB": "Vous devez être dans un EPUB.",
-//         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
-//         "a11y.placeHolder": "Choisissez dans la liste ci-dessous.",
-//         "a11y.aria.description": "Ajoute role=\"doc-...\" si epub:type",
-//         "erreurFichierOPF": "Vous devez être dans un fichier opf",
-//         "outputChannelPbSpine": "Problème de spine :",
-//         "erreurFichierTOC": "Vous devez être dans un fichier toc",
-//         "outputChannelTableauTh": "Tableaux sans th",
-//         "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
-//         "outputChannelPbSpine2": "Problème de spine [opf]",
-//         "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
-//         "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
-
-//     },
-//     "en": {
-//         navInsertTdm:{
-//             label:"TOC",
-//             description:"Insert table of content"
-//         },
-//         "erreurPathEPUB": "You must be in an EPUB.",
-//         "erreurPathOEBPS": "You must be in an %OEBPS folder.",
-//         "a11y.placeHolder": "Choose from the list below.",
-//         "a11y.aria.description": "Add role=\"doc-...\" if epub:type",
-//         "erreurFichierOPF": "You must be in an opf file",
-//         "outputChannelPbSpine": "Spine problem:",
-//         "erreurFichierTOC": "You must be in a toc file",
-//         "outputChannelTableauTh": "Tables without th",
-//         "outputChannelTableauScope": "Tables without scope and/or headers",
-//         "outputChannelPbSpine2": "Spine problem [opf]",
-//         "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
-//         "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
-//     }
-// }
-
-// const txtLangue = localTexte[maLangue] && localTexte[maLangue] || localTexte["en"];
 const config = vscode.workspace.getConfiguration('epub');
 const Window = vscode.window;
 const fs = require('fs');
@@ -54,7 +11,7 @@ const problemes = require('./src/problemes');
 
 const util = require('./src/util');
 const manifest = require('./src/manifest');
-const mesMessages=require('./src/mesMessages');
+const mesMessages = require('./src/mesMessages');
 
 //Sortie
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
@@ -155,6 +112,9 @@ function activate(context) {
         items.push({
             label: mesMessages.txtLangue.navInsertTdm.label,
             description: mesMessages.txtLangue.navInsertTdm.description
+        }, {
+            label: mesMessages.txtLangue.navInsertPageList.label,
+            description: mesMessages.txtLangue.navInsertPageList.description
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -162,9 +122,13 @@ function activate(context) {
             }
             switch (selection.label) {
                 case mesMessages.txtLangue.navInsertTdm.label:
-
+                    nav.tdm();
+                    break;
+                case mesMessages.txtLangue.navInsertPageList.label:
+                    nav.pagelist();
                     break;
                 default:
+
                     break;
             }
         });
@@ -272,7 +236,7 @@ function activate(context) {
             mesMessages.mesErreurs.erreurFichierTOC();
             return; // No open text editor
         }
-        const nav=require('./src/nav');
+        const nav = require('./src/nav');
         outputChannel.clear();
         nav.tdm(d.fileName);
         // var Liens = util.fichierLiens('.xhtml');
