@@ -12,6 +12,42 @@ let mesErreurs = mesMessages.mesErreurs;
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 const functionCommune = {
+    _writeList: function (mesFonctions,fichiers, fichierTOC) {
+        var mesTables = [];
+        Object.values(fichiers).forEach(function (el) {
+            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
+            if (relativeP !== '') {
+                relativeP = relativeP + '/' + path.basename(el);
+            } else {
+                relativeP = path.basename(el);
+            }
+            var txt = fs.readFileSync(el, 'utf8');
+            var pb = mesFonctions._getElement(txt);
+
+            if (pb.length !== 0) {
+                pb.forEach(function (sp) {
+                    mesTables.push({
+                        page: relativeP,
+                        value: mesFonctions._getCaption(sp),
+                        id: sp.getAttr('id')
+                    });
+                });
+
+            }
+        });
+        mesTables.sort(function (a, b) {
+            return a.value - b.value;
+        });
+        if (mesTables.length !== 0) {
+            let pageList = '<ol>\n';
+            mesTables.forEach(function (el) {
+                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + (el.value && el.value || el.id) + '</a></li>\n';
+            });
+            pageList += '</ol>\n';
+            return pageList;
+        }
+        return mesTables;
+    },
     _ajoutAncre: function (liens, qui) {
         var k = 0;
         var nomId = config.get("ancreTDM").nomAncre;
@@ -25,11 +61,11 @@ const functionCommune = {
                     var regtxt = '<h([0-9])([^>]*)>';
                     break;
                 case 'figure':
-                    mesTitres = functionIllustrationList._getFigure(data);
+                    mesTitres = functionIllustrationList._getElement(data);
                     regtxt = '<(figure)([^>]*)>'
                     break;
                 case 'table':
-                    mesTitres = functionTableList._getTable(data);
+                    mesTitres = functionTableList._getElement(data);
                     regtxt = '<(table)([^>]*)>'
                     break;
                 default:
@@ -45,7 +81,7 @@ const functionCommune = {
                         ++k;
                         newID = 'id="' + nomId + '-' + k + '"';
                     }
-                   
+
                     var mareg = new RegExp(regtxt, 'gi');
                     var result = mareg.exec(titre);
                     if (result[2].indexOf('id') === -1) {
@@ -76,6 +112,53 @@ const functionCommune = {
     },
 }
 
+
+function navlist(epubType) {
+    let d = Window.activeTextEditor.document;
+    let Liens = util.recupFichiers('.xhtml');
+    let pBreak, role = "";
+    switch (epubType) {
+        case "page-list":
+            // pBreak = functionPageList._epubPageBreak(Liens, d.fileName);
+            pBreak=functionCommune._writeList(functionPageList,Liens, d.fileName)
+            role = 'role="doc-pagelist"';
+            break;
+        case "lot":
+            // pBreak = functionTableList._epubPageTable(Liens, d.fileName);
+            pBreak=functionCommune._writeList(functionTableList,Liens, d.fileName)
+
+            break;
+        case "loi":
+            // pBreak = functionIllustrationList._epubPageIllustration(Liens, d.fileName);
+            pBreak=functionCommune._writeList(functionIllustrationList,Liens, d.fileName)
+            break;
+        default:
+            break;
+    }
+
+    if (pBreak.length !== 0) {
+        fs.readFile(d.fileName, 'utf8', (err, txt) => {
+            if (txt.indexOf('epub:type="' + epubType + '"') !== -1) {
+                util.remplaceDansFichier(d.fileName, pBreak, 'nav', epubType);
+            } else {
+                pBreak = '<nav epub:type="' + epubType + '"' + role + '>\n' + pBreak + '\n</nav>';
+                // find </nav>
+                if (txt.indexOf('</nav>') !== -1) {
+                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
+                    fs.writeFileSync(d.fileName, data);
+                } else {
+                    util.insertEditorSelection(pBreak);
+                }
+            }
+        });
+
+    } else {
+        mesMessages.mesErreurs.erreurPageBreak();
+        util.remplaceDansFichier(d.fileName, "", 'nav', epubType);
+    }
+}
+
+
 function tdm() {
     let d = Window.activeTextEditor.document;
     if (!functionTDM._isTDM(d.fileName)) {
@@ -99,8 +182,6 @@ let functionTDM = {
         }
         return false;
     },
-
-
 
     _epubTOC: function (liens, fichierTOC) {
         try {
@@ -228,144 +309,26 @@ let functionTDM = {
     }
 }
 
-function pagelist() {
-    let d = Window.activeTextEditor.document;
-    let Liens = util.recupFichiers('.xhtml'),
-        pBreak = functionPageList._epubPageBreak(Liens, d.fileName);
-    if (pBreak.length !== 0) {
-        fs.readFile(d.fileName, 'utf8', (err, txt) => {
-            if (txt.indexOf('epub:type="page-list"') !== -1) {
-                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'page-list');
-            } else {
-                pBreak = '<nav epub:type="page-list" role="doc-pagelist">\n' + pBreak + '\n</nav>';
-                // find </nav>
-                if (txt.indexOf('</nav>') !== -1) {
-                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
-                    fs.writeFileSync(d.fileName, data);
-                } else {
-                    util.insertEditorSelection(pBreak);
-                }
-            }
-        });
-
-    } else {
-        mesMessages.mesErreurs.erreurPageBreak();
-        util.remplaceDansFichier(d.fileName, "", 'nav', 'page-list');
-    }
-}
 
 let functionPageList = {
-    _epubPageBreak: function (fichiers, fichierTOC) {
-        var pageBreaks = [];
-        Object.values(fichiers).forEach(function (el) {
-            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
-            if (relativeP !== '') {
-                relativeP = relativeP + '/' + path.basename(el);
-            } else {
-                relativeP = path.basename(el);
-            }
-            var txt = fs.readFileSync(el, 'utf8');
-            var pb = functionPageList._recherchePageBreak(txt);
-            if (pb.length !== 0) {
-                pb.forEach(function (sp) {
-                    pageBreaks.push({
-                        page: relativeP,
-                        value: sp.getAttr('title'),
-                        id: sp.getAttr('id')
-                    });
-                });
-
-            }
-        });
-        pageBreaks.sort(function (a, b) {
-            return a.value - b.value;
-        });
-        if (pageBreaks.length !== 0) {
-            var pageList = '<ol>\n';
-            pageBreaks.forEach(function (el) {
-                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + el.value + '</a></li>\n';
-            });
-            pageList += '</ol>\n';
-            return pageList;
-        }
-        return pageBreaks;
-    },
-
-    _recherchePageBreak: function (texte) {
+      _getElement: function (texte) {
         var monDom = new dom(texte),
             mesTitres = [];
         var tt = monDom.getElementByAttr('epub:type', 'pagebreak');
         mesTitres = tt && mesTitres.concat(tt) || mesTitres;
         return mesTitres;
+    },
+    _getCaption:function(texte){
+        return texte.getAttr('title');
     }
 
 }
 
 
-function tablelist() {
-    let d = Window.activeTextEditor.document;
-    let Liens = util.recupFichiers('.xhtml'),
-        pBreak = functionTableList._epubPageTable(Liens, d.fileName);
-    if (pBreak.length !== 0) {
-        fs.readFile(d.fileName, 'utf8', (err, txt) => {
-            if (txt.indexOf('epub:type="lot"') !== -1) {
-                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'lot');
-            } else {
-                pBreak = '<nav epub:type="lot">\n<h1>Table list</h1>\n' + pBreak + '\n</nav>';
-                // find </nav>
-                if (txt.indexOf('</nav>') !== -1) {
-                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
-                    fs.writeFileSync(d.fileName, data);
-                } else {
-                    util.insertEditorSelection(pBreak);
-                }
-            }
-        });
-
-    } else {
-        mesMessages.mesErreurs.erreurTable();
-        util.remplaceDansFichier(d.fileName, "", 'nav', 'lot');
-    }
-}
 
 let functionTableList = {
-    _epubPageTable: function (fichiers, fichierTOC) {
-        var mesTables = [];
-        Object.values(fichiers).forEach(function (el) {
-            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
-            if (relativeP !== '') {
-                relativeP = relativeP + '/' + path.basename(el);
-            } else {
-                relativeP = path.basename(el);
-            }
-            var txt = fs.readFileSync(el, 'utf8');
-            var pb = functionTableList._getTable(txt);
-
-            if (pb.length !== 0) {
-                pb.forEach(function (sp) {
-                    mesTables.push({
-                        page: relativeP,
-                        caption: functionTableList._getCaption(sp),
-                        id: sp.getAttr('id')
-                    });
-                });
-
-            }
-        });
-        // mesTables.sort(function (a, b) {
-        //     return a.value - b.value;
-        // });
-        if (mesTables.length !== 0) {
-            let pageList = '<ol>\n';
-            mesTables.forEach(function (el) {
-                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + (el.caption && el.caption || el.id) + '</a></li>\n';
-            });
-            pageList += '</ol>\n';
-            return pageList;
-        }
-        return mesTables;
-    },
-    _getTable: function (texte) {
+ 
+    _getElement: function (texte) {
         var monDom = new dom(texte),
             mesTables = [];
         var tt = monDom.getElementByTagName('table');
@@ -382,87 +345,17 @@ let functionTableList = {
 }
 
 
-function illustrationlist() {
-    let d = Window.activeTextEditor.document;
-    let Liens = util.recupFichiers('.xhtml');
-    functionCommune._ajoutAncre(Liens, 'figure');
-
-    let pBreak = functionIllustrationList._epubPageIllustration(Liens, d.fileName);
-
-    if (pBreak.length !== 0) {
-        fs.readFile(d.fileName, 'utf8', (err, txt) => {
-            if (txt.indexOf('epub:type="loi"') !== -1) {
-                util.remplaceDansFichier(d.fileName, pBreak, 'nav', 'loi');
-            } else {
-                pBreak = '<nav epub:type="loi">\n<h1>Illustration list</h1>\n' + pBreak + '\n</nav>';
-                // find </nav>
-                if (txt.indexOf('</nav>') !== -1) {
-                    var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
-                    fs.writeFileSync(d.fileName, data);
-                } else {
-                    util.insertEditorSelection(pBreak);
-                }
-            }
-        });
-
-    } else {
-        mesMessages.mesErreurs.erreurIllustration();
-        util.remplaceDansFichier(d.fileName, "", 'nav', 'loi');
-    }
-}
 
 let functionIllustrationList = {
-    _epubPageIllustration: function (fichiers, fichierTOC) {
-        var mesTables = [];
-        Object.values(fichiers).forEach(function (el) {
-            var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
-            if (relativeP !== '') {
-                relativeP = relativeP + '/' + path.basename(el);
-            } else {
-                relativeP = path.basename(el);
-            }
-            var txt = fs.readFileSync(el, 'utf8');
-            var pb = functionIllustrationList._getFigure(txt);
-
-            if (pb.length !== 0) {
-                pb.forEach(function (sp) {
-                    mesTables.push({
-                        page: relativeP,
-                        value: functionIllustrationList._getFigCaption(sp),
-                        id: sp.getAttr('id')
-                    });
-                });
-
-            }
-        });
-        // mesTables.sort(function (a, b) {
-        //     return a.value - b.value;
-        // });
-        if (mesTables.length !== 0) {
-            let pageList = '<ol>\n';
-            mesTables.forEach(function (el) {
-                pageList += '<li><a href="' + el.page + '#' + el.id + '">' + (el.value && el.value || el.id) + '</a></li>\n';
-            });
-            pageList += '</ol>\n';
-            return pageList;
-        }
-        return mesTables;
-    },
-    _rechercheIllustration: function (texte) {
+ 
+    _getElement: function (texte) {
         var monDom = new dom(texte),
             mesTables = [];
         var tt = monDom.getElementByTagName('figure');
         mesTables = tt && mesTables.concat(tt) || mesTables;
         return mesTables;
     },
-    _getFigure: function (texte) {
-        var monDom = new dom(texte),
-            mesTables = [];
-        var tt = monDom.getElementByTagName('figure');
-        mesTables = tt && mesTables.concat(tt) || mesTables;
-        return mesTables;
-    },
-    _getFigCaption: function (texte) {
+    _getCaption: function (texte) {
 
         let mareg = /(?<=<figcaption[^>]*>)((?:.|\s|\r)+?)(?=<\/figcaption>)/i;
         let found = texte.match(mareg);
@@ -473,7 +366,5 @@ let functionIllustrationList = {
 
 module.exports = {
     tdm,
-    pagelist,
-    tablelist,
-    illustrationlist
+    navlist
 }

@@ -132,13 +132,18 @@ function activate(context) {
                     nav.tdm();
                     break;
                 case mesMessages.txtLangue.navInsertPageList.label:
-                    nav.pagelist();
+                    // nav.pagelist();
+                    nav.navlist('page-list');
                     break;
                 case mesMessages.txtLangue.navInsertTableList.label:
-                    nav.tablelist();
+                    // nav.tablelist();
+                    nav.navlist('lot');
+
                     break;
                     case mesMessages.txtLangue.navInsertIllustrationList.label:
-                    nav.illustrationlist();
+                    // nav.illustrationlist();
+                    nav.navlist('loi');
+
                     break;
                 default:
 
