@@ -12,7 +12,7 @@ let mesErreurs = mesMessages.mesErreurs;
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 const functionCommune = {
-    _writeList: function (mesFonctions,fichiers, fichierTOC) {
+    _writeList: function (mesFonctions, fichiers, fichierTOC) {
         var mesTables = [];
         Object.values(fichiers).forEach(function (el) {
             var relativeP = path.relative(path.dirname(fichierTOC), path.dirname(el));
@@ -119,18 +119,15 @@ function navlist(epubType) {
     let pBreak, role = "";
     switch (epubType) {
         case "page-list":
-            // pBreak = functionPageList._epubPageBreak(Liens, d.fileName);
-            pBreak=functionCommune._writeList(functionPageList,Liens, d.fileName)
+            pBreak = functionCommune._writeList(functionPageList, Liens, d.fileName)
             role = 'role="doc-pagelist"';
             break;
         case "lot":
-            // pBreak = functionTableList._epubPageTable(Liens, d.fileName);
-            pBreak=functionCommune._writeList(functionTableList,Liens, d.fileName)
+            pBreak = functionCommune._writeList(functionTableList, Liens, d.fileName)
 
             break;
         case "loi":
-            // pBreak = functionIllustrationList._epubPageIllustration(Liens, d.fileName);
-            pBreak=functionCommune._writeList(functionIllustrationList,Liens, d.fileName)
+            pBreak = functionCommune._writeList(functionIllustrationList, Liens, d.fileName)
             break;
         default:
             break;
@@ -207,11 +204,11 @@ let functionTDM = {
     },
 
     _recupSpine: function () {
-        var monOPF = util.recupFichiers('.opf')[0];
-        var data = fs.readFileSync(monOPF, 'utf8');
-        var monDom = new dom(data);
-        var monSpine = monDom.getElementByTagName('spine');
-        var idref = functionTDM._rechercheIdref(monSpine[0]);
+        var monOPF = util.recupFichiers('.opf')[0],
+            data = fs.readFileSync(monOPF, 'utf8'),
+            monDom = new dom(data),
+            monSpine = monDom.getElementByTagName('spine'),
+            idref = functionTDM._rechercheIdref(monSpine[0]);
         return functionTDM._rechercheHrefParIdRef(data, idref);
 
     },
@@ -232,13 +229,13 @@ let functionTDM = {
     },
 
     _tableMatieres: function (titres, fichierTOC) {
-        var titreTDM = config.get('titreTDM');
-        var maTableXhtml = '<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n',
+        var titreTDM = config.get('titreTDM'),
+            maTableXhtml = '<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n',
             titreAvant = 0,
-            classeOL = config.get('classeTDM');
-        var maTableNCX = '';
-        var i = 0;
-        var ltitres = titres.length,
+            classeOL = config.get('classeTDM'),
+            maTableNCX = '',
+            i = 0,
+            ltitres = titres.length,
             k = 0;
         for (; k !== ltitres; k++) {
             var el = titres[k];
@@ -311,14 +308,14 @@ let functionTDM = {
 
 
 let functionPageList = {
-      _getElement: function (texte) {
+    _getElement: function (texte) {
         var monDom = new dom(texte),
-            mesTitres = [];
-        var tt = monDom.getElementByAttr('epub:type', 'pagebreak');
+            mesTitres = [],
+            tt = monDom.getElementByAttr('epub:type', 'pagebreak');
         mesTitres = tt && mesTitres.concat(tt) || mesTitres;
         return mesTitres;
     },
-    _getCaption:function(texte){
+    _getCaption: function (texte) {
         return texte.getAttr('title');
     }
 
@@ -327,7 +324,7 @@ let functionPageList = {
 
 
 let functionTableList = {
- 
+
     _getElement: function (texte) {
         var monDom = new dom(texte),
             mesTables = [];
@@ -347,7 +344,7 @@ let functionTableList = {
 
 
 let functionIllustrationList = {
- 
+
     _getElement: function (texte) {
         var monDom = new dom(texte),
             mesTables = [];
