@@ -11,7 +11,7 @@ const localTexte = {
             description:"Insérer la table des matières"
         },
         navInsertPageList:{
-            label:"Page liste",
+            label:"Page list",
             description:"Insérer la liste des numéros de page"
         },
         navInsertTableList:{
@@ -53,7 +53,7 @@ const localTexte = {
         },
         navInsertIllustrationList:{
             label:"Illustration List",
-            description:"Insérer la liste des tableaux"
+            description:"Insert illustration list"
         },
         "erreurPathEPUB": "You must be in an EPUB.",
         "erreurPathOEBPS": "You must be in an %OEBPS folder.",

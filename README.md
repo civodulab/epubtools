@@ -26,6 +26,15 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
+- `EpubTools : Insertion nav`
+  > Liste déroulante avec :
+  > - `TDM` : Insère la table des matières;  
+  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
+  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
+  > - `Page List` : Insère la liste des pages;
+  > - `Table List` : Insère la liste des tableaux;
+  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>`
+
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
   > - `DPub-Aria roles|epub:type` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
@@ -38,18 +47,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `EpubTools : Récriture Spine`
   > Récrit le spine dans le fichier `.opf`. La commande doit être lancée dans le fichier `.opf`.  
 
-- `EpubTools : Table des matières`
-
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
-  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
-
 - `EpubTools : premier <h.> => <title>`
 
   > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
-
-- `EpubTools : Création Page Liste`
-
-  >  Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml`.
 
 - `EpubTools : Problèmes ?`
 
@@ -126,8 +126,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.10.2 <!-- omit in toc -->
+### 2.00 <!-- omit in toc -->
 
-- correction bug recherche chemin dans **container.xml**
+- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustratuion List` et `Table List`
 
 Toutes les [release notes](CHANGELOG.md).
