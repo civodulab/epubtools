@@ -33,7 +33,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
   > - `Page List` : Insère la liste des pages;
   > - `Table List` : Insère la liste des tableaux;
-  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>`
+  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>`.
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
