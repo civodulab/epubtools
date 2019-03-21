@@ -118,10 +118,15 @@ function activate(context) {
         }, {
             label: mesMessages.txtLangue.navInsertTableList.label,
             description: mesMessages.txtLangue.navInsertTableList.description
-        },
-        {
+        }, {
             label: mesMessages.txtLangue.navInsertIllustrationList.label,
             description: mesMessages.txtLangue.navInsertIllustrationList.description
+        }, {
+            label: mesMessages.txtLangue.navInsertAudioList.label,
+            description: mesMessages.txtLangue.navInsertAudioList.description
+        }, {
+            label: mesMessages.txtLangue.navInsertVideoList.label,
+            description: mesMessages.txtLangue.navInsertVideoList.description
         });
         Window.showQuickPick(items, opts).then((selection) => {
             if (!selection) {
@@ -132,18 +137,19 @@ function activate(context) {
                     nav.tdm();
                     break;
                 case mesMessages.txtLangue.navInsertPageList.label:
-                    // nav.pagelist();
                     nav.navlist('page-list');
                     break;
                 case mesMessages.txtLangue.navInsertTableList.label:
-                    // nav.tablelist();
                     nav.navlist('lot');
-
                     break;
-                    case mesMessages.txtLangue.navInsertIllustrationList.label:
-                    // nav.illustrationlist();
+                case mesMessages.txtLangue.navInsertIllustrationList.label:
                     nav.navlist('loi');
-
+                    break;
+                case mesMessages.txtLangue.navInsertAudioList.label:
+                    nav.navlist('loa');
+                    break;
+                case mesMessages.txtLangue.navInsertVideoList.label:
+                    nav.navlist('lov');
                     break;
                 default:
 

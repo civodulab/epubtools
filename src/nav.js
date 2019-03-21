@@ -68,6 +68,14 @@ const functionCommune = {
                     mesTitres = functionTableList._getElement(data);
                     regtxt = '<(table)([^>]*)>'
                     break;
+                case 'audio':
+                    mesTitres = functionAudioList._getElement(data);
+                    regtxt = '<(audio)([^>]*)>'
+                    break;
+                case 'video':
+                    mesTitres = functionVideoList._getElement(data);
+                    regtxt = '<(video)([^>]*)>'
+                    break;
                 default:
                     break;
             }
@@ -116,18 +124,33 @@ const functionCommune = {
 function navlist(epubType) {
     let d = Window.activeTextEditor.document;
     let Liens = util.recupFichiers('.xhtml');
-    let pBreak, role = "";
+    let pBreak, role = "",
+        monErreur = "";
     switch (epubType) {
         case "page-list":
-            pBreak = functionCommune._writeList(functionPageList, Liens, d.fileName)
+            pBreak = functionCommune._writeList(functionPageList, Liens, d.fileName);
             role = 'role="doc-pagelist"';
+            monErreur = "erreurPageBreak";
             break;
         case "lot":
-            pBreak = functionCommune._writeList(functionTableList, Liens, d.fileName)
-
+            functionCommune._ajoutAncre(Liens, 'table');
+            pBreak = functionCommune._writeList(functionTableList, Liens, d.fileName);
+            monErreur = "erreurTable";
             break;
         case "loi":
-            pBreak = functionCommune._writeList(functionIllustrationList, Liens, d.fileName)
+            functionCommune._ajoutAncre(Liens, 'figure');
+            pBreak = functionCommune._writeList(functionIllustrationList, Liens, d.fileName);
+            monErreur = "erreurIllustration";
+            break;
+        case "loa":
+            functionCommune._ajoutAncre(Liens, 'audio');
+            pBreak = functionCommune._writeList(functionAudioList, Liens, d.fileName);
+            monErreur = "erreurAudio";
+            break;
+        case "lov":
+            functionCommune._ajoutAncre(Liens, 'video');
+            pBreak = functionCommune._writeList(functionVideoList, Liens, d.fileName);
+            monErreur = "erreurVideo";
             break;
         default:
             break;
@@ -150,9 +173,14 @@ function navlist(epubType) {
         });
 
     } else {
-        mesMessages.mesErreurs.erreurPageBreak();
+
+        erreurCallBack(mesErreurs[monErreur]);
         util.remplaceDansFichier(d.fileName, "", 'nav', epubType);
     }
+}
+
+function erreurCallBack(ft) {
+    ft();
 }
 
 
@@ -309,11 +337,19 @@ let functionTDM = {
 
 let functionPageList = {
     _getElement: function (texte) {
-        var monDom = new dom(texte),
-            mesTitres = [],
-            tt = monDom.getElementByAttr('epub:type', 'pagebreak');
-        mesTitres = tt && mesTitres.concat(tt) || mesTitres;
-        return mesTitres;
+        var monDom = new dom(texte);
+        return monDom.getElementByAttr('epub:type', 'pagebreak') || [];
+    },
+    _getCaption: function (texte) {
+        return texte.getAttr('title');
+    }
+
+}
+
+let functionAudioList = {
+    _getElement: function (texte) {
+        var monDom = new dom(texte);
+        return monDom.getElementByTagName('audio') || [];
     },
     _getCaption: function (texte) {
         return texte.getAttr('title');
@@ -322,15 +358,22 @@ let functionPageList = {
 }
 
 
+let functionVideoList = {
+    _getElement: function (texte) {
+        var monDom = new dom(texte);
+        return monDom.getElementByTagName('video') || [];
+    },
+    _getCaption: function (texte) {
+        return texte.getAttr('title');
+    }
+
+}
 
 let functionTableList = {
 
     _getElement: function (texte) {
-        var monDom = new dom(texte),
-            mesTables = [];
-        var tt = monDom.getElementByTagName('table');
-        mesTables = tt && mesTables.concat(tt) || mesTables;
-        return mesTables;
+        var monDom = new dom(texte);
+        return monDom.getElementByTagName('table') || [];
     },
     _getCaption: function (txtTable) {
         let mareg = /(?<=<caption[^>]*>)((?:.|\s|\r)+?)(?=<\/caption>)/i;
@@ -342,15 +385,11 @@ let functionTableList = {
 }
 
 
-
 let functionIllustrationList = {
 
     _getElement: function (texte) {
-        var monDom = new dom(texte),
-            mesTables = [];
-        var tt = monDom.getElementByTagName('figure');
-        mesTables = tt && mesTables.concat(tt) || mesTables;
-        return mesTables;
+        var monDom = new dom(texte);
+        return monDom.getElementByTagName('figure') || [];
     },
     _getCaption: function (texte) {
 

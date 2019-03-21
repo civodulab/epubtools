@@ -34,6 +34,8 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > - `Page List` : Insère la liste des pages;
   > - `Table List` : Insère la liste des tableaux;
   > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>`.
+  > - `Audio List` : Insère la liste des fichiers audios.
+  > - `Video List` : Insère la liste des vidéos.
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
@@ -128,6 +130,6 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ### 2.00 <!-- omit in toc -->
 
-- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustratuion List` et `Table List`
+- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustratuion List`, `Table List`, `Audio List` et `Video List`
 
 Toutes les [release notes](CHANGELOG.md).

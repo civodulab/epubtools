@@ -6,21 +6,29 @@ const maLangue = vscode.env.language;
 const util = require('./util');
 const localTexte = {
     "fr": {
-        navInsertTdm:{
-            label:"TDM",
-            description:"Insérer la table des matières"
+        navInsertTdm: {
+            label: "TDM",
+            description: "Insérer la table des matières"
         },
-        navInsertPageList:{
-            label:"Page list",
-            description:"Insérer la liste des numéros de page"
+        navInsertPageList: {
+            label: "Page list",
+            description: "Insérer la liste des numéros de page"
         },
-        navInsertTableList:{
-            label:"Table List",
-            description:"Insérer la liste des tableaux"
+        navInsertTableList: {
+            label: "Table List",
+            description: "Insérer la liste des tableaux"
         },
-        navInsertIllustrationList:{
-            label:"Illustration List",
-            description:"Insérer la liste des illustrations"
+        navInsertIllustrationList: {
+            label: "Illustration List",
+            description: "Insérer la liste des illustrations"
+        },
+        navInsertAudioList: {
+            label: "Audio List",
+            description: "Insérer la liste des fichiers audios"
+        },
+        navInsertVideoList: {
+            label: "Video List",
+            description: "Insérer la liste des vidéos"
         },
         "erreurPathEPUB": "Vous devez être dans un EPUB.",
         "erreurPathOEBPS": "Vous devez être dans un dossier %OEBPS.",
@@ -32,28 +40,38 @@ const localTexte = {
         "outputChannelTableauTh": "Tableaux sans th",
         "outputChannelTableauScope": "Tableaux sans scope et/ou headers",
         "outputChannelPbSpine2": "Problème de spine [opf]",
-        "erreurTable":"Vous n'avez aucun tableau dans votre EPUB.",
-        "erreurIllustration":"Vous n'avez aucune illustration dans votre EPUB.",
+        "erreurTable": "Vous n'avez aucun tableau dans votre EPUB.",
+        "erreurIllustration": "Vous n'avez aucune illustration dans votre EPUB.",
+        "erreurAudio": "Vous n'avez aucun fichier audio dans votre EPUB.",
+        "erreurVideo": "Vous n'avez aucune vidéo dans votre EPUB.",
         "erreurPageBreak": "Vous n'avez aucun \"epub:type=pagebreak\" dans votre EPUB.",
         "erreurMessageSpine": "Vous avez une erreur avec votre spine dans le fichier \"opf\".",
 
     },
     "en": {
-        navInsertTdm:{
-            label:"TOC",
-            description:"Insert table of content"
+        navInsertTdm: {
+            label: "TOC",
+            description: "Insert table of content"
         },
-        navInsertPageList:{
-            label:"Page list",
-            description:"Insert page list"
+        navInsertPageList: {
+            label: "Page list",
+            description: "Insert page list"
         },
-        navInsertTableList:{
-            label:"Table list",
-            description:"Insert table list"
+        navInsertTableList: {
+            label: "Table list",
+            description: "Insert table list"
         },
-        navInsertIllustrationList:{
-            label:"Illustration List",
-            description:"Insert illustration list"
+        navInsertIllustrationList: {
+            label: "Illustration List",
+            description: "Insert illustration list"
+        },
+        navInsertAudioList: {
+            label: "Audio List",
+            description: "Insert Audio list"
+        },
+        navInsertVideoList: {
+            label: "Video List",
+            description: "Insert Video list"
         },
         "erreurPathEPUB": "You must be in an EPUB.",
         "erreurPathOEBPS": "You must be in an %OEBPS folder.",
@@ -65,8 +83,10 @@ const localTexte = {
         "outputChannelTableauTh": "Tables without th",
         "outputChannelTableauScope": "Tables without scope and/or headers",
         "outputChannelPbSpine2": "Spine problem [opf]",
-        "erreurTable":"You don't have any table in your EPUB.",
-        "erreurIllustration":"You don't have any illustration in your EPUB.",
+        "erreurTable": "You don't have any table in your EPUB.",
+        "erreurIllustration": "You don't have any illustration in your EPUB.",
+        "erreurAudio": "Vous n'avez aucun fichier audio dans votre EPUB.",
+        "erreurVideo": "Vous n'avez aucune vidéo dans votre EPUB.",
         "erreurPageBreak": "You don't have any \"epub:type=pagebreak\" in your EPUB.",
         "erreurMessageSpine": "You have an error with your spine in the \"opf\" file."
     }
@@ -94,8 +114,20 @@ let mesErreurs = {
     erreurMessageSpine: function () {
         vscode.window.showErrorMessage(txtLangue["erreurMessageSpine"]);
     },
-    erreurFichierTOC:function(){
+    erreurFichierTOC: function () {
         vscode.window.showInformationMessage(txtLangue["erreurFichierTOC"]);
+    },
+    erreurTable: function () {
+        vscode.window.showInformationMessage(txtLangue["erreurTable"]);
+    },
+    erreurIllustration: function () {
+        vscode.window.showInformationMessage(txtLangue["erreurIllustration"]);
+    },
+    erreurAudio: function () {
+        vscode.window.showInformationMessage(txtLangue["erreurAudio"]);
+    },
+    erreurVideo: function () {
+        vscode.window.showInformationMessage(txtLangue["erreurVideo"]);
     }
 }
 
