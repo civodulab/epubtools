@@ -201,10 +201,14 @@ function tdm() {
 
 let functionTDM = {
     _isTDM: function (fichier) {
-        var txt = fs.readFileSync(fichier, 'utf8');
-        if (txt.indexOf('</nav>') !== -1 || txt.indexOf('</navMap') !== -1) {
-            return true;
-        }
+        if (path.extname(fichier) === '.ncx') return true;
+        let opf = util.recupFichiers('.opf');
+        let data = fs.readFileSync(opf[0], 'utf8');
+        let regexp = /<[^<>]* ?properties=("[^"]*\snav|"nav\s[^"]*|"nav|"[^"]*nav\s[^"]*)"[^>]*?>/;
+        let found = data.match(regexp);
+        let href = found[0].getAttr('href').split('/').pop();
+
+        if (path.basename(fichier) === href) return true;
         return false;
     },
 
@@ -334,7 +338,6 @@ let functionTDM = {
     }
 }
 
-
 let functionPageList = {
     _getElement: function (texte) {
         var monDom = new dom(texte);
@@ -343,7 +346,6 @@ let functionPageList = {
     _getCaption: function (texte) {
         return texte.getAttr('title');
     }
-
 }
 
 let functionAudioList = {
@@ -352,7 +354,7 @@ let functionAudioList = {
         return monDom.getElementByTagName('audio') || [];
     },
     _getCaption: function (texte) {
-        return texte.getAttr('title');
+        return texte.getAttr('aria-label');
     }
 
 }
@@ -364,7 +366,7 @@ let functionVideoList = {
         return monDom.getElementByTagName('video') || [];
     },
     _getCaption: function (texte) {
-        return texte.getAttr('title');
+        return texte.getAttr('aria-label');
     }
 
 }
@@ -389,10 +391,10 @@ let functionIllustrationList = {
 
     _getElement: function (texte) {
         var monDom = new dom(texte);
-        return monDom.getElementByTagName('figure') || [];
+        let mesFig = monDom.getElementByTagName('figure');
+        return mesFig && mesFig.filter(fig => fig.indexOf('<img') !== -1) || [];
     },
     _getCaption: function (texte) {
-
         let mareg = /(?<=<figcaption[^>]*>)((?:.|\s|\r)+?)(?=<\/figcaption>)/i;
         let found = texte.match(mareg);
 

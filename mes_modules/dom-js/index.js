@@ -17,6 +17,7 @@ dom.prototype.getElementByTagName = function (tagname) {
 };
 
 dom.prototype.getElementByAttr = function (attr, val) {
+  
     var exp = '<[^<>]* ?' + attr + '="' + val + '"[^>]*>((?:.|\n|\r)*?)<\/[^>]*>',
         re = new RegExp(exp, 'gi'),
         result = this.txt.match(re);

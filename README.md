@@ -28,14 +28,14 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : Insertion nav`
   > Liste déroulante avec :
-  > - `TDM` : Insère la table des matières;  
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
+  > - `TDM` : Insère la table des matières. Il faut être dans le fichier `(toc).xhtml` ou `(toc).ncx`;  
+  > Utilise le `<spine>` de l'`opf`.  
   > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
   > - `Page List` : Insère la liste des pages;
   > - `Table List` : Insère la liste des tableaux;
-  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>`.
-  > - `Audio List` : Insère la liste des fichiers audios.
-  > - `Video List` : Insère la liste des vidéos.
+  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>` contenant `<img>`.
+  > - `Audio List` : Insère la liste des fichiers audios. Récupère le `aria-label` de la balise sinon affiche l'`id`.
+  > - `Video List` : Insère la liste des vidéos. Récupère le `aria-label` de la balise sinon affiche l'`id`.
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
