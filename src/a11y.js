@@ -65,7 +65,7 @@ function roleDoc(mesFichiers) {
                 }
                 // retire role-doc dans landmark
                 var landmark = data.match(re_landmarks);
-                data = landmark&&data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, ''))||data;
+                data = landmark && data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, '')) || data;
 
                 fs.writeFile(fichier, data, (err) => {
                     if (err) console.log("ERROR !! " + err);

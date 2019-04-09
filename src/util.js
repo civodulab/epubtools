@@ -106,6 +106,16 @@ function transformePageNoire(fichiersXhtml) {
     });
 }
 
+function insertEditorSelection(text) {
+    const editor = vscode.window.activeTextEditor;
+    const selections = editor.selections;
+    editor.edit((editBuilder) => {
+        selections.forEach((selection) => {
+            editBuilder.insert(selection.active, text);
+        });
+    });
+}
+
 function remplaceDansFichier(fichier, texte, balise, epubType) {
     let data = fs.readFileSync(fichier, 'utf8');
     let rpl = data.remplaceEntre2Balises(balise, texte, epubType);
@@ -121,6 +131,36 @@ function rechercheTitre(texte, nivT) {
 }
 
 
+function epureBalise(texte) {
+    // Supprime notes
+    var note = new RegExp('<span[^>]+id=(?:"|\')footnote-[0-9]*-backlink(?:"|\')[^>]*>((.|\s|\n|\r)*?)<\/span>', 'gi');
+    texte = texte.replace(note, '');
+
+    var txtTOC = texte,
+        txt = texte,
+        baliseAsupp = ['a', 'span', 'sup'];
+
+    baliseAsupp.forEach(bal => {
+        var h = new RegExp('<' + bal + '[^>]+>((?:.|\n|\r)*?)<\/' + bal + '>', 'gi');
+        var re;
+        while ((re = h.exec(texte)) !== null) {
+            txtTOC = (re[1] === "" || !re[1]) && txtTOC.replace(re[0], '') || txtTOC;
+            txt = (re[1] === "" || !re[1]) && txt.replace(re[0], '') || txt.replace(re[0], re[1]);
+        }
+        txtTOC = txtTOC.replace(/[\n\r]/g, '');
+        txt = txt.replace(/[\n\r]/g, '');
+        txtTOC = txtTOC.replace(/\s{2,}/g, ' ');
+        txt = txt.replace(/\s{2,}/g, ' ');
+        txtTOC = txtTOC.trim();
+        txt = txt.trim();
+    });
+
+    return {
+        'toc': txtTOC,
+        'txt': txt,
+    };
+}
+
 module.exports = {
     recupFichiers,
     fichierLiens,
@@ -128,5 +168,7 @@ module.exports = {
     remplaceDansFichier,
     rechercheTitre,
     testOEBPS,
-    pathOEBPS
+    pathOEBPS,
+    epureBalise,
+    insertEditorSelection
 };

@@ -1,5 +1,7 @@
 {
     "package.description": "Utilitaire Epub3",
+    "extension.navInsertion.title": "Insertion nav",
+    "extension.navInsertion.description": "Insertion toc, page-list, etc.",
     "extension.ecritureSpine.title": "Réécriture Spine",
     "extension.ecritureSpine.description": "Réécrit le spine",
     "extension.epubA11Y.title": "A11Y",

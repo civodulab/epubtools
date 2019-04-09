@@ -1,5 +1,9 @@
 # Release Notes
 
+## 1.10.2
+
+- correction bug recherche chemin dans **container.xml**
+  
 ## 1.10.1
 
 - correction bug `DPub-Aria roles|epub:type`

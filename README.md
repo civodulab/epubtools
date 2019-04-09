@@ -26,6 +26,17 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 ## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
+- `EpubTools : Insertion nav`
+  > Liste déroulante avec :
+  > - `TDM` : Insère la table des matières. Il faut être dans le fichier `(toc).xhtml` ou `(toc).ncx`;  
+  > Utilise le `<spine>` de l'`opf`.  
+  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
+  > - `Page List` : Insère la liste des pages;
+  > - `Table List` : Insère la liste des tableaux;
+  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>` contenant `<img>`.
+  > - `Audio List` : Insère la liste des fichiers audios. Récupère le `aria-label` de la balise sinon affiche l'`id`.
+  > - `Video List` : Insère la liste des vidéos. Récupère le `aria-label` de la balise sinon affiche l'`id`.
+
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
   > - `DPub-Aria roles|epub:type` : ajoute _role="doc-`X`"_ dans les balises comportant _epub:type="`X`"_ (je me suis aidé des scripts de [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
@@ -39,22 +50,14 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   > Reconstruit le manifest dans l'OPF suivant les fichiers présents dans l'EPUB. La commande doit être lancée dans le fichier `.opf`.  
   > Renomme les fichiers contenant des caractères accentués ou des espaces
 
-- `EpubTools : Problèmes ?`
-
-  >  Affiche les problèmes dans l'onglet `SORTIE` :
-  > - Pages sans titre
-  > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
-  > - Problèmes dans le `<spine>` de l'opf si un `idref` dans un `<itemref>` manque dans le `<manifest>`
-  > - Problèmes des tableaux sans `<th>`, `scope` ou `headers`.
+- `EpubTools : Récriture Spine`
+  > Récrit le spine dans le fichier `.opf`. La commande doit être lancée dans le fichier `.opf`.  
 
 - `EpubTools : premier <h.> => <title>`
 
   > Copie le premier titre (s'il y en a) de chaque page `xhtml` dans la balise `<title>` de celle-ci.
 
-- `EpubTools : Récriture Spine`
-  > Récrit le spine dans le fichier `.opf`. La commande doit être lancée dans le fichier `.opf`.  
-
-- `EpubTools : Table des matières`
+- `EpubTools : Problèmes ?`
 
   > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
   > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
@@ -130,8 +133,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 1.10.2 <!-- omit in toc -->
+### 2.00 <!-- omit in toc -->
 
-- correction bug recherche chemin dans **container.xml**
+- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustration List`, `Table List`, `Audio List` et `Video List`
 
 Toutes les [release notes](CHANGELOG.md).
