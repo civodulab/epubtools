@@ -130,6 +130,6 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ### 2.00 <!-- omit in toc -->
 
-- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustratuion List`, `Table List`, `Audio List` et `Video List`
+- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustration List`, `Table List`, `Audio List` et `Video List`
 
 Toutes les [release notes](CHANGELOG.md).

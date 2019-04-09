@@ -42,7 +42,6 @@ String.prototype.setAttr = function (attr, val) {
     }
 
 }
-const dom = require('./mes_modules/dom-js');
 
 String.prototype.metaProperties = function () {
     var prop = [];
@@ -85,7 +84,7 @@ function activate(context) {
 
     let disposable = vscode.commands.registerCommand('extension.epubSpanPageNoir', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
 
@@ -98,7 +97,7 @@ function activate(context) {
 
     disposable = vscode.commands.registerCommand('extension.navInsertion', function () {
         if (!util.testOEBPS()) {
-            mesErreurs.erreurPathOEBPS();
+            mesMessages.mesErreurs.erreurPathOEBPS();
             return; // No open text editor
         }
         const nav = require('./src/nav');
@@ -266,10 +265,10 @@ function activate(context) {
             return; // No open text editor
         }
 
-        let doc = Window.activeTextEditor.document;
-        let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
+        // let doc = Window.activeTextEditor.document;
+        // let wkFolder = vscode.workspace.getWorkspaceFolder(vscode.Uri.file(doc.fileName));
 
-        let textOutput;
+        // let textOutput;
 
         outputChannel.clear();
         let Liens = util.recupFichiers('.xhtml');
