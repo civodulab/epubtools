@@ -4,7 +4,8 @@ const Window = vscode.window;
 const fs = require('fs');
 const path = require('path');
 const config = vscode.workspace.getConfiguration('epub');
-
+const styleNumPage=config.get('styleNumPage');
+const niveauTitre=config.get('niveauTitre');
 
 
 function fichierLiens(type) {
@@ -99,7 +100,7 @@ function getFilesFromDir(dir, typeO) {
 function transformePageNoire(fichiersXhtml) {
     Object.values(fichiersXhtml).forEach(el => {
         var data = fs.readFileSync(el, 'utf8');
-        var exp = '<span class="epubTools-numPage-style">(.[^<]*)</span>';
+        var exp = '<span class="'+styleNumPage+'">(.[^<]*)</span>';
         var re = new RegExp(exp, 'gi');
         data = data.replace(re, '<span id="page$1" title="$1" epub:type="pagebreak" role="doc-pagebreak"></span>');
         fs.writeFileSync(el, data);
@@ -123,7 +124,7 @@ function remplaceDansFichier(fichier, texte, balise, epubType) {
 }
 
 function rechercheTitre(texte, nivT) {
-    nivT = nivT || config.get('niveauTitre');
+    nivT = nivT || niveauTitre;
     var exp = '<h[1-' + nivT + '][^>]*>(?:.|\n|\r)*?<\/h[1-' + nivT + ']>?',
         re = new RegExp(exp, 'gi'),
         result = texte.match(re);

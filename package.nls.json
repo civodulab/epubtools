@@ -27,6 +27,7 @@
     "configuration.ancreTDM.description": "Adds an ID on all EPUB titles if it does not exist.",
     "configuration.coverImage.description": "File name for the book cover (Allows to add properties=\"cover-image\" to the image in the .opf file).",
     "configuration.navTDM.description": "File name for the table of contents (Allows to add properties=\"nav\" to the file in the .opf file).",
-    "configuration.activerA11ylint.description": "Activate a11ylint."
+    "configuration.activerA11ylint.description": "Activate a11ylint.",
+    "configuration.styleNumPage.description": "Style du numéro de page noire pour le remplacement."
 
 }

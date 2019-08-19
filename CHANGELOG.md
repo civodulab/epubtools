@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.0.0
+
+- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustration List`, `Table List`, `Audio List` et `Video List`
+
 ## 1.10.2
 
 - correction bug recherche chemin dans **container.xml**

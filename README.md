@@ -10,7 +10,7 @@ Outils destinés à faciliter le travail sur les EPUB.
 ***
 
 ## Table des matières <!-- omit in toc -->
-- [À savoir](#%C3%A0-savoir)
+- [À savoir](#%c3%80-savoir)
 - [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-id%22epubtools-contenu%22a)
 - [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
 - [A11yLint](#a11ylint)
@@ -66,7 +66,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
   >  Transforme les ...
   > ```xhtml
-  > <span class="epubTools-numPage-style">{numéro}</span>
+  > <span class="epubTools-numPage">{numéro}</span>
   > ```
   > ... en
   > ```xhtml
@@ -116,6 +116,9 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   - `balise` : balise pour le titre (défaut : **h1**)
   - `classe` : classe pour le titre (défaut : **titre1**)
 
+- `epub.styleNumPage`
+  > Style recherché pour `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
+
 ***
 
 ## A11yLint
@@ -133,8 +136,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.00 <!-- omit in toc -->
+### 2.1.0 <!-- omit in toc -->
 
-- Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustration List`, `Table List`, `Audio List` et `Video List`
+- Ajout configuration `epub.styleNumPage`
 
 Toutes les [release notes](CHANGELOG.md).
