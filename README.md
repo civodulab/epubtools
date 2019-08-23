@@ -137,9 +137,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.1.0 <!-- omit in toc -->
+### 2.1.1 <!-- omit in toc -->
 
-- Ajout configuration `epub.styleNumPage`
-- Conservation du titre dans les nav
+- correction bug nav
 
 Toutes les [release notes](CHANGELOG.md).

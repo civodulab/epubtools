@@ -177,7 +177,7 @@ function navlist(epubType) {
 
                 util.remplaceDansFichier(d.fileName, pBreak, 'nav', epubType);
             } else {
-                pBreak = '<nav epub:type="' + epubType + '"' + role + '>\n' + pBreak + '\n</nav>\n<h2>' + titreNav + '</h2>';
+                pBreak = '<nav epub:type="' + epubType + '"' + role + '>\n<h2>' + titreNav + '</h2>\n' + pBreak + '\n</nav>';
                 // find </nav>
                 if (txt.indexOf('</nav>') !== -1) {
                     var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);

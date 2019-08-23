@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.1.0
+
+- Ajout configuration `epub.styleNumPage`
+- Conservation du titre dans les nav
+
 ## 2.0.0
 
 - Création `EpubTools : Insertion nav` avec : insertion `TDM`, `Page List`, `Illustration List`, `Table List`, `Audio List` et `Video List`
