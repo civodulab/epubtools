@@ -2,7 +2,7 @@
     "name": "epubtools",
     "displayName": "Epub Tools",
     "description": "%package.description%",
-    "version": "2.0.0",
+    "version": "2.1.0",
     "publisher": "civodulab",
     "engines": {
         "vscode": "^1.18.0"
@@ -16,7 +16,8 @@
     "icon": "icon.png",
     "main": "./extension",
     "contributes": {
-        "commands": [{
+        "commands": [
+            {
                 "command": "extension.navInsertion",
                 "title": "%extension.navInsertion.title%",
                 "description": "%extension.navInsertion.description%",
@@ -72,7 +73,6 @@
                     "type": "string",
                     "default": "epubTools-numPage",
                     "description": "%configuration.styleNumPage.description%"
-
                 },
                 "epub.emphaseStyleAChercher": {
                     "type": "object",
