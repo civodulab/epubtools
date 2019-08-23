@@ -27,6 +27,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 ## EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>
 
 - `EpubTools : Insertion nav`
+  > _(Si titre dans le `<nav>` celui-ci est conservé)_  
   > Liste déroulante avec :
   > - `TDM` : Insère la table des matières. Il faut être dans le fichier `(toc).xhtml` ou `(toc).ncx`;  
   > Utilise le `<spine>` de l'`opf`.  
@@ -139,5 +140,6 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 ### 2.1.0 <!-- omit in toc -->
 
 - Ajout configuration `epub.styleNumPage`
+- Conservation du titre dans les nav
 
 Toutes les [release notes](CHANGELOG.md).

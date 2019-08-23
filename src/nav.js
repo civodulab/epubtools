@@ -12,6 +12,9 @@ let mesErreurs = mesMessages.mesErreurs;
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
 const functionCommune = {
+    _recupTitreNav: function (texte) {
+        return texte.match(/<h.*?<\/h[0-6]>/);
+    },
     _writeList: function (mesFonctions, fichiers, fichierTOC) {
         var mesTables = [];
         Object.values(fichiers).forEach(function (el) {
@@ -125,32 +128,39 @@ function navlist(epubType) {
     let d = Window.activeTextEditor.document;
     let Liens = util.recupFichiers('.xhtml');
     let pBreak, role = "",
+        titreNav = "",
         monErreur = "";
     switch (epubType) {
         case "page-list":
             pBreak = functionCommune._writeList(functionPageList, Liens, d.fileName);
             role = 'role="doc-pagelist"';
             monErreur = "erreurPageBreak";
+            titreNav = "pagelist";
             break;
         case "lot":
             functionCommune._ajoutAncre(Liens, 'table');
             pBreak = functionCommune._writeList(functionTableList, Liens, d.fileName);
             monErreur = "erreurTable";
+            titreNav = "tablelist";
+
             break;
         case "loi":
             functionCommune._ajoutAncre(Liens, 'figure');
             pBreak = functionCommune._writeList(functionIllustrationList, Liens, d.fileName);
             monErreur = "erreurIllustration";
+            titreNav = "illustrationlist";
             break;
         case "loa":
             functionCommune._ajoutAncre(Liens, 'audio');
             pBreak = functionCommune._writeList(functionAudioList, Liens, d.fileName);
             monErreur = "erreurAudio";
+            titreNav = "audiolist";
             break;
         case "lov":
             functionCommune._ajoutAncre(Liens, 'video');
             pBreak = functionCommune._writeList(functionVideoList, Liens, d.fileName);
             monErreur = "erreurVideo";
+            titreNav = "videolist";
             break;
         default:
             break;
@@ -158,10 +168,16 @@ function navlist(epubType) {
 
     if (pBreak.length !== 0) {
         fs.readFile(d.fileName, 'utf8', (err, txt) => {
+
             if (txt.indexOf('epub:type="' + epubType + '"') !== -1) {
+                let exp = '<nav [^>]*epub:type="' + epubType + '"[^>]*>(\\n|\\s|.)+?</nav>';
+                let maRegEx = new RegExp(exp);
+                let maRecup = functionCommune._recupTitreNav(txt.match(maRegEx)[0]);
+                pBreak = maRecup && ('\n' + maRecup + '\n' + pBreak) || '\n<h2>' + titreNav + '</h2>\n' + pBreak
+
                 util.remplaceDansFichier(d.fileName, pBreak, 'nav', epubType);
             } else {
-                pBreak = '<nav epub:type="' + epubType + '"' + role + '>\n' + pBreak + '\n</nav>';
+                pBreak = '<nav epub:type="' + epubType + '"' + role + '>\n' + pBreak + '\n</nav>\n<h2>' + titreNav + '</h2>';
                 // find </nav>
                 if (txt.indexOf('</nav>') !== -1) {
                     var data = txt.replace(/<\/nav>/, '</nav>\n' + pBreak);
@@ -244,6 +260,7 @@ let functionTDM = {
         return functionTDM._rechercheHrefParIdRef(data, idref);
 
     },
+
     _rechercheIdref: function (texte) {
         return texte.match(/idref=(\'|").*?(\'|")/gi);
     },
@@ -261,8 +278,12 @@ let functionTDM = {
     },
 
     _tableMatieres: function (titres, fichierTOC) {
-        var titreTDM = config.get('titreTDM'),
-            maTableXhtml = '<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n',
+        let exp = '<nav [^>]*epub:type="toc"[^>]*>(\\n|\\s|.)+?</nav>';
+        let maRegEx = new RegExp(exp);
+        let data = fs.readFileSync(fichierTOC, 'utf8');
+        let maRecup = functionCommune._recupTitreNav(data.match(maRegEx)[0]);
+        let titreTDM = config.get('titreTDM'),
+            maTableXhtml = maRecup && ('\n' + maRecup + '\n') || ('<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n'),
             titreAvant = 0,
             classeOL = config.get('classeTDM'),
             maTableNCX = '',
@@ -306,9 +327,9 @@ let functionTDM = {
                     maTableNCX += ('<navPoint id="navPoint' + i + '" playOrder="' + i + '">\n').repeat(result[2] - titreAvant);
                 }
 
-                if (path.basename(relativeP) === path.basename(fichierTOC)) {
-                    id = "";
-                }
+                // if (path.basename(relativeP) === path.basename(fichierTOC)) {
+                //     id = "";
+                // }
                 var monTexte = util.epureBalise(result[1]);
                 maTableXhtml += '<a href="' + relativeP + id + '">';
                 maTableXhtml += monTexte.toc + '</a>';
