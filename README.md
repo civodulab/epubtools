@@ -140,7 +140,7 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.1.1 <!-- omit in toc -->
+### 2.1.2 <!-- omit in toc -->
 
 - correction bug nav
 

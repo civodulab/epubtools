@@ -278,10 +278,15 @@ let functionTDM = {
     },
 
     _tableMatieres: function (titres, fichierTOC) {
-        let exp = '<nav [^>]*epub:type="toc"[^>]*>(\\n|\\s|.)+?</nav>';
-        let maRegEx = new RegExp(exp);
-        let data = fs.readFileSync(fichierTOC, 'utf8');
-        let maRecup = functionCommune._recupTitreNav(data.match(maRegEx)[0]);
+        let maRecup="";
+        if(path.basename(fichierTOC)!=='toc.ncx'){
+            let exp = '<nav [^>]*epub:type="toc"[^>]*>(\\n|\\s|.)+?</nav>';
+            let maRegEx = new RegExp(exp);
+            let data = fs.readFileSync(fichierTOC, 'utf8');
+            let monNav=data.match(maRegEx)[0];
+            maRecup = functionCommune._recupTitreNav(monNav);
+        }
+       
         let titreTDM = config.get('titreTDM'),
             maTableXhtml = maRecup && ('\n' + maRecup + '\n') || ('<' + titreTDM.balise + ' class="' + titreTDM.classe + '">' + titreTDM.titre + '</' + titreTDM.balise + '>\n'),
             titreAvant = 0,
