@@ -29,14 +29,14 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 - `EpubTools : Insertion nav`
   > _(Si titre dans le `<nav>` celui-ci est conservé)_  
   > Liste déroulante avec :
-  > - `TDM` : Insère la table des matières. Il faut être dans le fichier `(toc).xhtml` ou `(toc).ncx`;  
-  > Utilise le `<spine>` de l'`opf`.  
-  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
-  > - `Page List` : Insère la liste des pages;
-  > - `Table List` : Insère la liste des tableaux;
-  > - `Illustration List` : Insère la liste des illustrations/images. Ne prends que les balises `<figure>` contenant `<img>`.
-  > - `Audio List` : Insère la liste des fichiers audios. Récupère le `aria-label` de la balise sinon affiche l'`id`.
-  > - `Video List` : Insère la liste des vidéos. Récupère le `aria-label` de la balise sinon affiche l'`id`.
+  > - `TDM` : Insère la table des matières. Il faut être dans le fichier `(toc).xhtml` ou `(toc).ncx`  
+  > Utilise le `<spine>` de l'`opf`  
+  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres ;
+  > - `Page List` : Récupère les balises avec l'attribut `epub:type="pagebreak"`. Crée ou modifie `<nav epub:type="page-list">` dans le fichier de la table des matière `(toc).xhtml` ;
+  > - `Table List` : Crée ou modifie la liste des tableaux (`<tables>`) ;
+  > - `Illustration List` : Crée ou modifie la liste des illustrations/images. Ne prends que les balises `<figure>` contenant `<img>` ;
+  > - `Audio List` : Crée ou modifie la liste des balises `<audio>`. Récupère le `aria-label` de la balise sinon affiche l'`id` ;
+  > - `Video List` : Crée ou modifie la liste des balises `<video>`. Récupère le `aria-label` de la balise sinon affiche l'`id`.
 
 - `EpubTools : A11Y`
   > Ouvre une liste d'outils pour améliorer l'accessibilité :
@@ -60,8 +60,11 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
 
 - `EpubTools : Problèmes ?`
 
-  > Modifie les fichiers contenant une table des matières `(toc).xhtml` ou/et `(toc).ncx` en utilisant le `<spine>` de l'`opf`.  
-  > Ajoute si besoin des `id="toc-epubtools-XX"` dans les titres (`<h.>`) pour créer des ancres.
+  >  Affiche les problèmes ou avertissements dans l'onglet `SORTIE` :
+  > - Pages sans titre `<h>`
+  > - Hiérarchie des titres illogique (`h1` suivi d'un `h3` sans `h2` par exemple)
+  > - Problèmes dans le `<spine>` de l'opf si un `idref` dans un `<itemref>` manque dans le `<manifest>`
+  > - Tableaux sans `<th>`, `scope` ou `<thead>`.
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
@@ -118,7 +121,7 @@ Le fichier EPUB doit être décompressé. Ensuite vous pouvez travailler dans le
   - `classe` : classe pour le titre (défaut : **titre1**)
 
 - `epub.styleNumPage`
-  > Style recherché pour `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
+  > Classe CSS recherchée pour `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
 ***
 

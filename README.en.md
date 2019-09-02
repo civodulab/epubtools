@@ -1,42 +1,54 @@
-# EpubTools README (_not updated_)
+# EpubTools README
 
 [![Licence](https://img.shields.io/github/license/civodulab/epubtools.svg)](https://github.com/civodulab/epubtools)
-[![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/civodulab.epubtools.svg) ![Rating](https://vsmarketplacebadge.apphb.com/rating-short/civodulab.epubtools.svg) ![Installs](https://vsmarketplacebadge.apphb.com/installs/civodulab.epubtools.svg)](https://marketplace.visualstudio.com/items?itemName=civodulab.epubtools)
+[![VS Code Marketplace](https://vsmarketplacebadge.apphb.com/version-short/civodulab.epubtools.svg) ![Rating](https://vsmarketplacebadge.apphb.com/rating-short/civodulab.epubtools.svg) ![Installs](https://vsmarketplacebadge.apphb.com/installs/civodulab.epubtools.svg) ![Downloads](https://vsmarketplacebadge.apphb.com/downloads/civodulab.epubtools.svg)](https://marketplace.visualstudio.com/items?itemName=civodulab.epubtools)
 
 Tools to facilitate work on EPUBs.
 
-
-
+***
+- [EpubTools README](#epubtools-readme)
+  - [Important](#important)
+  - [EpubTools contents (`ctrl+shift+P`)](#epubtools-contents-ctrlshiftp)
+  - [EpubTools Configuration (`ctrl+,`)](#epubtools-configuration-ctrl)
+  - [A11yLint](#a11ylint)
+***
 ## Important
 
 The EPUB file must be uncompressed. Then you can work in his directories.
-
-----------
+***
 
 ## EpubTools contents (`ctrl+shift+P`)
 
-- `EpubTools: Creation Page List`
-  >  Retrieves tags with the `epub:type="pagebreak"` attribute. Creates or modifies `<nav epub:type="page-list">` in the table of contents file `(toc).xhtml`.
+- `EpubTools : Insertion nav`
+  
+  _(If a title (`<h.>`) exists inside the `<nav>`, it will be preserve.)_   
+  > Display a drop list with:
+  > - `TDM` : Inserts or modifies table of content in `(toc).xhtml` or `(toc).ncx` using the `spine` of the `opf`.  
+  > If needed, add `id="toc-epubtools-XX"` in the titles (`<h.>`) to create anchors.
+  > - `Page List`: Retrieves tags with the `epub:type="pagebreak"` attribute. Creates or modifies `<nav epub:type="page-list">` in the table of contents file `(toc).xhtml`.
+  > - `Table List`: Inserts or modifies a list of `<tables>`.
+  > - `Illustration List`: Inserts or modifies a list of `<figure>` containing `<img>`.
+  > - `Audio List`: Inserts or modifies a list of `<audio>`. Retrieves `aria-label` in the tag otherwise the `id`.
+  > - `Video List`: Inserts or modifies a list of `<video>`. Retrieves `aria-label` in the tag otherwise the `id`.
 
 - `EpubTools: A11Y`
   > Open a list of tools to improve accessibility (a11y):
-  > - `DPub-Aria roles` : Add _role="doc-`X`"_ in markup if _epub:type="`X`"_ is in it  (I was helped by the scripts from [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
+  > - `DPub-Aria roles|epub:type` : Add _role="doc-`X`"_ in markup if _epub:type="`X`"_ is in it  (I was helped by the scripts from [JayPanoz](https://gist.github.com/JayPanoz/45896f17a69892de9a121d701c578d1e) et de [rodebert](https://gist.github.com/rodebert/81837a2676cf2c04819a582c3eb49c13))  
   > Reference: [Digital Publishing WAI-ARIA Module 1.0](https://www.w3.org/TR/dpub-aria-1.0/)
 
-- `EpubTools: Table of contents`
-  > Modify files containing a table of contents `(toc).xhtml` or/and `(toc).ncx` using the `spine` of the `opf`.
-
 - `EpubTools: Manifest`
-  > Rebuilds the manifest in the OPF according to the files in the EPUB. The command must be launched in the `.opf` file.
-
-- `EpubTools: Problems?`
-  >  Displays problems in the `OUTPUT` tab:
-  >- Pages without `<h>`
-  >- Bad hierarchy of titles  (e.g., `h1` followed by `h3` without `h2` between them).
-  >- Issues with `<spine>` if `idref` in `<itemref>` are missing in the `<manifest>`
+  > Rebuilds the manifest in the OPF according to the files in the EPUB. The command must be launched in the `.opf` file.  
+  > Rename the files with diacritics (e.g.: accents) or space in their names.
 
 - `EpubTools: first <h.> => <title>`
-  > Copy the first title (if any) of each `xhtml` page into the`<title>`tag of that page.
+  > Copy the first title (if any) of each `xhtml` page into the `<title>` tag of that page.
+
+- `EpubTools: Problems?`
+  >  Displays problems or warnings in the `OUTPUT` tab:
+  >- Pages without `<h>`.
+  >- Bad hierarchy of titles  (e.g., `h1` followed by `h3` without `h2` between them).
+  >- Issues with `<spine>` if `idref` in `<itemref>` are missing in the `<manifest>`.
+  >- `<table>` without `<th>`, `scope` or `<thead>`
 
 - `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 
@@ -56,8 +68,8 @@ The EPUB file must be uncompressed. Then you can work in his directories.
   > Activate _a11ylint_ (default **true**)
 
 - `epub.ancreTDM`
-  - `ajouterAncre` (_add anchor_): boolean  (default: **true**)
-  - `nomAncre`: prefix's name of the anchor (default: **toc-epubtools**)
+  - `ajouterAncre` (_addAnchor_): boolean  (default: **true**)
+  - `nomAncre` (_nameAnchor_): prefix's name of the anchor (default: **toc-epubtools**)
 
 - `epub.classeTDM`
   > CSS class applied to the `<ol>` tag in the TOC (default: **ol-toc**)
@@ -89,6 +101,8 @@ The EPUB file must be uncompressed. Then you can work in his directories.
   - `balise`: HTML Tag for the title (default: **h1**)
   - `classe`: CSS class for the title (default: **titre1**)
 
+- `epub.styleNumPage`
+  > CSS class to search for `EpubTools : <span...>{numPage}</span> => <span {epub:type} />`
 * * *
 
 ## A11yLint
