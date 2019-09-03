@@ -61,23 +61,23 @@ const functionCommune = {
             switch (qui) {
                 case 'titre':
                     var mesTitres = util.rechercheTitre(data);
-                    var regtxt = '<h([0-9])([^>]*)>';
+                    var regtxt = '<h([0-9])([^>]*)?>';
                     break;
                 case 'figure':
                     mesTitres = functionIllustrationList._getElement(data);
-                    regtxt = '<(figure)([^>]*)>'
+                    regtxt = '<(figure)([^>]*)?>'
                     break;
                 case 'table':
                     mesTitres = functionTableList._getElement(data);
-                    regtxt = '<(table)([^>]*)>'
+                    regtxt = '<(table)([^>]*)?>'
                     break;
                 case 'audio':
                     mesTitres = functionAudioList._getElement(data);
-                    regtxt = '<(audio)([^>]*)>'
+                    regtxt = '<(audio)([^>]*)?>'
                     break;
                 case 'video':
                     mesTitres = functionVideoList._getElement(data);
-                    regtxt = '<(video)([^>]*)>'
+                    regtxt = '<(video)([^>]*)?>'
                     break;
                 default:
                     break;
@@ -95,7 +95,7 @@ const functionCommune = {
 
                     var mareg = new RegExp(regtxt, 'gi');
                     var result = mareg.exec(titre);
-                    if (result[2].indexOf('id') === -1) {
+                    if (result[2].indexOf('id=') === -1) {
                         if (result[2] === "") {
                             var newtitre = titre.replace(result[1], result[1] + ' ' + newID);
                         } else {
@@ -116,7 +116,7 @@ const functionCommune = {
         var allID = [];
         Object.values(liens).forEach(function (el) {
             var data = fs.readFileSync(el, 'utf8');
-            var mesId = data.match(/id="[^"]*"/gi);
+            var mesId = data.match(/id="[^"]+"/gi);
             allID = mesId && allID.concat(mesId) || allID
         });
         return allID;
