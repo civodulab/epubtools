@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.1.2
+
+- correction bug nav
+
 ## 2.1.1
 
 - correction bug nav

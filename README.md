@@ -140,8 +140,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.1.2 <!-- omit in toc -->
+### 2.1.3 <!-- omit in toc -->
 
-- correction bug nav
+- readme
 
 Toutes les [release notes](CHANGELOG.md).
