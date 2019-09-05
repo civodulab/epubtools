@@ -140,7 +140,7 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.1.4 <!-- omit in toc -->
+### 2.1.5 <!-- omit in toc -->
 
 - bug ajout ancre (TDM)
 

@@ -11,6 +11,7 @@ const mesMessages = require('./mesMessages');
 let mesErreurs = mesMessages.mesErreurs;
 let outputChannel = vscode.window.createOutputChannel('EPUB Tools');
 
+
 const functionCommune = {
     _recupTitreNav: function (texte) {
         return texte.match(/<h.*?<\/h[0-6]>/);
@@ -95,7 +96,7 @@ const functionCommune = {
 
                     var mareg = new RegExp(regtxt, 'gi');
                     var result = mareg.exec(titre);
-                    if (result[2].indexOf('id=') === -1) {
+                    if (result[2]&&result[2].indexOf('id=') === -1) {
                         if (result[2] === "") {
                             var newtitre = titre.replace(result[1], result[1] + ' ' + newID);
                         } else {
