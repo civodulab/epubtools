@@ -140,8 +140,9 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.1.5 <!-- omit in toc -->
+### 2.2.0 <!-- omit in toc -->
 
-- bug ajout ancre (TDM)
+- modif role `DPub-Aria roles|epub:type`
+- ajout `role=directory` dans landmarks > ul/ol
 
 Toutes les [release notes](CHANGELOG.md).

@@ -27,6 +27,7 @@ function roleDoc(mesFichiers) {
         "glossary": "doc-glossary",
         "glossdef": "definition",
         "glossref": "doc-glossref",
+        "glossterm": "term",
         "index": "doc-index",
         "introduction": "doc-introduction",
         "noteref": "doc-noteref",
@@ -46,6 +47,7 @@ function roleDoc(mesFichiers) {
     Object.values(mesFichiers).forEach(fichier => {
         var re_epubType = RegExp('<[^<>]* ?epub:type=(\'|")(.*?)(?:\'|")[^>]*>', 'g');
         var re_landmarks = new RegExp('<nav [^>]*?epub:type=(\'|")(landmarks)[^>]*>(.|\n|\r)*?<\/nav>', 'g');
+        var re_ulOl = new RegExp('(<(ul|ol))([^>]*)>');
 
         var array1;
         fs.readFile(fichier, 'utf8', (err, data) => {
@@ -66,10 +68,19 @@ function roleDoc(mesFichiers) {
                 // retire role-doc dans landmark
                 var landmark = data.match(re_landmarks);
                 data = landmark && data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, '')) || data;
+                // ajoute role=directory à ul/ol landmark
+                landmark = data.match(re_landmarks);
+                var ulOl = landmark[0].match(re_ulOl);
+                var ulolReplace=landmark[0].replace(ulOl[0],ulOl[0].setAttr('role','directory'))
+                data = ulOl && data.replace(re_landmarks, ulolReplace) || data;
 
+                //   copie data
                 fs.writeFile(fichier, data, (err) => {
                     if (err) console.log("ERROR !! " + err);
                 });
+
+
+
             }
         });
 

@@ -31,14 +31,14 @@ String.prototype.getAttr = function (attr) {
 }
 
 String.prototype.setAttr = function (attr, val) {
+    var exp = attr + '="([^"]*)"';
     if (this.indexOf(attr + '=') !== -1) {
-        var exp = attr + '="([^"]*)"',
-            re = new RegExp(exp, 'gi'),
+        var re = new RegExp(exp, 'gi'),
             result = re.exec(this);
         return this.replace(result[1], val);
     } else {
-        result = this.match(exp);
-        return this.replace(/ /i, ' ' + attr + '="' + val + '" ')
+        // result = this.match(exp);
+        return this.replace('>', ' ' + attr + '="' + val + '">')
     }
 
 }
