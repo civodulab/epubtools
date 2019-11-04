@@ -140,9 +140,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.2.0 <!-- omit in toc -->
+### 2.2.1 <!-- omit in toc -->
 
-- modif role `DPub-Aria roles|epub:type`
-- ajout `role=directory` dans landmarks > ul/ol
+- correctif bug `A11Y` 
 
 Toutes les [release notes](CHANGELOG.md).

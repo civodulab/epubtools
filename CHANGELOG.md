@@ -1,5 +1,10 @@
 # Release Notes
 
+## 2.2.0
+
+- modif role `DPub-Aria roles|epub:type`
+- ajout `role=directory` dans landmarks > ul/ol
+  
 ## 2.1.5
 
 - bug ajout ancre (TDM)

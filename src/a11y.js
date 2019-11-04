@@ -68,10 +68,11 @@ function roleDoc(mesFichiers) {
                 // retire role-doc dans landmark
                 var landmark = data.match(re_landmarks);
                 data = landmark && data.replace(re_landmarks, landmark[0].replace(/\srole=("|')[^"']*("|')/g, '')) || data;
+             
                 // ajoute role=directory à ul/ol landmark
                 landmark = data.match(re_landmarks);
-                var ulOl = landmark[0].match(re_ulOl);
-                var ulolReplace=landmark[0].replace(ulOl[0],ulOl[0].setAttr('role','directory'))
+                var ulOl = landmark&&landmark[0].match(re_ulOl);
+                var ulolReplace=landmark&&landmark[0].replace(ulOl[0],ulOl[0].setAttr('role','directory'))
                 data = ulOl && data.replace(re_landmarks, ulolReplace) || data;
 
                 //   copie data
