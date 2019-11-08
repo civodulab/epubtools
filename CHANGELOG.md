@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.2.1
+
+- correctif bug `A11Y` 
+  
 ## 2.2.0
 
 - modif role `DPub-Aria roles|epub:type`

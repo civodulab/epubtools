@@ -15,6 +15,7 @@ const localTexte = {
         "a11yLintNoteRef": "pas de <sup> avec noteref",
         "a11yLintAudioVideoTxt": "manque",
         "a11yLintAudioVideoEt": "et",
+        "a11yLintAside": "manque aria-label ou aria-labelledby ou title"
     },
     "en": {
         "a11yLintTxtImgSansAlt.description": "image / without \"alt\"",
@@ -25,6 +26,7 @@ const localTexte = {
         "a11yLintNoteRef": "no <sup> with noteref",
         "a11yLintAudioVideoTxt": "missing",
         "a11yLintAudioVideoEt": "and",
+        "a11yLintAside": "missing aria-label or aria-labelledby or title"
     }
 }
 
@@ -98,8 +100,9 @@ function diagnosticDoc(doc) {
     // let mesTableA11Y = _tableA11y(docTxt);
     let mesNotesA11y = _noteRef(docTxt);
     let mesAudioVideo = _audioVideo(docTxt);
+    let mesAside=_aside(docTxt);
     let mesA11y = mesImgA11y;
-    mesA11y = mesA11y.concat(mesEmphaseA11y, mesNotesA11y, mesAudioVideo);
+    mesA11y = mesA11y.concat(mesEmphaseA11y, mesNotesA11y, mesAudioVideo,mesAside);
     mesA11y.forEach(elt => {
         let pos1 = doc.positionAt(elt.pstart),
             pos2 = doc.positionAt(elt.pend),
@@ -225,6 +228,29 @@ function _audioVideo(docTxt) {
     }
     return mesRanges;
 }
+
+function _aside(docTxt) {
+    let mesRanges = [];
+    let re_audiovideo = new RegExp('<aside [^>]*>', 'g');
+    let result;
+    while ((result = re_audiovideo.exec(docTxt)) !== null) {
+        let aria = result[0].getAttr('aria-label');
+        let ariaby = result[0].getAttr('aria-labelledby');
+        let title = result[0].getAttr('title');
+
+        if (!aria&&!ariaby&&!title) {
+            mesRanges.push({
+                pstart: result.index,
+                pend: re_audiovideo.lastIndex,
+                message:  txtLangue["a11yLintAside"],
+                erreur: vscode.DiagnosticSeverity.Warning,
+            });
+        }
+    }
+    return mesRanges;
+}
+
+
 // function _tableA11y(docTxt) {
 //     let mesRanges = [];
 //     // /<table[^>]*>((?:.|\n|\r)*?)<\/table>/

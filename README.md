@@ -140,8 +140,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.2.1 <!-- omit in toc -->
+### 2.3.0 <!-- omit in toc -->
 
-- correctif bug `A11Y` 
+- `A11YLint` : `<aside>` sans _title_ ou _aria-label_ ou _aria-labelledby_
 
 Toutes les [release notes](CHANGELOG.md).
