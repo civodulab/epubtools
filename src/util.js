@@ -100,9 +100,9 @@ function getFilesFromDir(dir, typeO) {
 function transformePageNoire(fichiersXhtml) {
     Object.values(fichiersXhtml).forEach(el => {
         var data = fs.readFileSync(el, 'utf8');
-        var exp = '<span class="'+styleNumPage+'">(.[^<]*)</span>';
+        var exp = '<span class="('+styleNumPage+'|[^"]* '+styleNumPage+'|'+styleNumPage+' [^"]*|[^"]* '+styleNumPage+' [^"]*)">(.[^<]*)</span>';
         var re = new RegExp(exp, 'gi');
-        data = data.replace(re, '<span id="page$1" title="$1" epub:type="pagebreak" role="doc-pagebreak"></span>');
+        data = data.replace(re, '<span id="page$2" title="$2" epub:type="pagebreak" role="doc-pagebreak"></span>');
         fs.writeFileSync(el, data);
     });
 }

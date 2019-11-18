@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.3.0
+
+- `A11YLint` : `<aside>` sans _title_ ou _aria-label_ ou _aria-labelledby_
+  
 ## 2.2.1
 
 - correctif bug `A11Y` 
