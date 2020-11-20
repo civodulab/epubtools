@@ -48,6 +48,7 @@ String.prototype.metaProperties = function () {
     // (this.indexOf('</nav>') !== -1) && prop.push('nav');
     (this.indexOf('</math>') !== -1) && prop.push('mathml');
     (this.indexOf('</script>') !== -1) && prop.push('scripted');
+    this.indexOf("</svg>") !== -1 && prop.push("svg");
     return prop;
 }
 

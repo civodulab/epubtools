@@ -10,9 +10,9 @@ Outils destinés à faciliter le travail sur les EPUB.
 ***
 
 ## Table des matières <!-- omit in toc -->
-- [À savoir](#%c3%80-savoir)
-- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-a-id%22epubtools-contenu%22a)
-- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-a-id%22epubtools-configuration%22a)
+- [À savoir](#à-savoir)
+- [EpubTools contenu (`ctrl+shift+P`) <a id="epubtools-contenu"></a>](#epubtools-contenu-ctrlshiftp-)
+- [EpubTools Configuration (`ctrl+,`) <a id="epubtools-configuration"></a>](#epubtools-configuration-ctrl-)
 - [A11yLint](#a11ylint)
 - [Release Notes](#release-notes)
 
@@ -140,8 +140,8 @@ Référence : [Accessible Publishing Knowledge Base](http://kb.daisy.org/publish
 
 ## Release Notes
 
-### 2.3.1 <!-- omit in toc -->
+### 2.3.2 <!-- omit in toc -->
 
-- fix epubTools-numPage
+- ajout de `svg` dans `properties`
 
 Toutes les [release notes](CHANGELOG.md).

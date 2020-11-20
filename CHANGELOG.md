@@ -1,5 +1,9 @@
 # Release Notes
 
+## 2.3.1
+
+- fix epubTools-numPage
+
 ## 2.3.0
 
 - `A11YLint` : `<aside>` sans _title_ ou _aria-label_ ou _aria-labelledby_
