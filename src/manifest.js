@@ -1,227 +1,316 @@
-'use strict';
-const vscode = require('vscode');
-const fs = require('fs');
-const path = require('path');
-const isNumeric = require('../mes_modules/str-isnum');
-const config = vscode.workspace.getConfiguration('epub');
-const util = require('./util');
+"use strict";
+const vscode = require("vscode");
+const fs = require("fs");
+const path = require("path");
+const config = vscode.workspace.getConfiguration("epub");
+const util = require("./util");
+
+String.prototype.isNumeric=function(){
+     return !isNaN(parseFloat(this)) && isFinite(this);
+}
 
 
 function epubManifest(fichierOPF) {
+  let mesFichiers = util.fichierLiens();
+  let content = ["<!--content-->"];
+  let images = ["<!--images-->"];
+  let javascripts = ["<!--javascript-->"];
+  let av = ["<!--av-->"];
+  let smil = ["<!--smil-->"];
+  let supplementary = ["<!--supplementary-->"];
+  let fonts = ["<!--fonts-->"];
+  let st = ["<!--st-->"];
 
-    var mesFichiers = util.fichierLiens();
+  let montexte = "";
+  let opf = path.basename(fichierOPF);
+  for (let fich in mesFichiers) {
+    if (fich !== opf) {
+      switch (path.extname(fich)) {
+        case ".xhtml":
+          content.push(mesFichiers[fich]);
+          break;
+        case ".css":
+        case ".ncx":
+        case ".pls":
+          supplementary.push(mesFichiers[fich]);
 
-    var montexte = "";
-    var opf = path.basename(fichierOPF);
-    for (var fich in mesFichiers) {
-        if (fich !== opf) {
-            montexte += _ecritureLigne(mesFichiers[fich], fichierOPF);
-        }
+          break;
+        case ".js":
+          javascripts.push(mesFichiers[fich]);
+          break;
+
+        case ".vtt":
+        case ".srt":
+          st.push(mesFichiers[fich]);
+          break;
+
+        //  Font Types
+        case ".ttf":
+        case ".otf":
+        case ".woff":
+          fonts.push(mesFichiers[fich]);
+          break;
+
+        //  Images type
+        case ".gif":
+        case ".jpeg":
+        case ".jpg":
+        case ".png":
+        case ".svg":
+          images.push(mesFichiers[fich]);
+          break;
+        // Audio types
+        case ".mp4":
+        case ".aac":
+        case ".mpg":
+        case ".mp3":
+          av.push(mesFichiers[fich]);
+          break;
+        case ".smil":
+          smil.push(mesFichiers[fich]);
+          break;
+        default:
+          supplementary.push(mesFichiers[fich]);
+          break;
+      }
     }
-    montexte = _mediaOverlay(montexte);
-    util.remplaceDansFichier(fichierOPF, montexte, 'manifest');
-    _renameFichier(mesFichiers);
+  }
+  montexte =
+    "\n" +
+    _filtreTab(supplementary, fichierOPF).join("\n") +
+    _filtreTab(fonts, fichierOPF).join("\n") +
+    _filtreTab(content, fichierOPF).join("\n") +
+    _filtreTab(images, fichierOPF).join("\n") +
+    _filtreTab(smil, fichierOPF).join("\n") +
+    _filtreTab(st, fichierOPF).join("\n") +
+    _filtreTab(av, fichierOPF).join("\n") +
+    _filtreTab(javascripts, fichierOPF).join("\n");
+  montexte = _mediaOverlay(montexte);
+  util.remplaceDansFichier(fichierOPF, montexte, "manifest");
+  _renameFichier(mesFichiers);
+}
+
+function _filtreTab(tab, fichierOPF) {
+  if (tab.length === 1) {
+    tab.shift();
+    return tab;
+  }
+  tab = tab.map((fichier, i) => {
+    if (i === 0) {
+      return fichier;
+    }
+    let relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
+      relativeFichier;
+    relativeP = relativeP.replace(path.sep, "/");
+    if (relativeP !== "") {
+      relativeFichier = relativeP + "/" + path.basename(fichier);
+    } else {
+      relativeFichier = path.basename(fichier);
+    }
+    let mediaType = "",
+      properties = "",
+      ext = path.extname(relativeFichier).toLowerCase(),
+      nom = path.basename(relativeFichier);
+    nom = (nom.substring(0, 1)).isNumeric() && ("x" + nom) || nom;
+    let boolCover = nom.split(".")[0] === config.get("coverImage");
+    let boolTDM = nom.split(".")[0] === config.get("navTDM");
+
+    switch (ext) {
+      case ".xhtml":
+        mediaType = "application/xhtml+xml";
+        nom = path.basename(nom, ".xhtml");
+        var data = fs.readFileSync(fichier, "utf8");
+        var proper = data.metaProperties();
+        boolTDM && proper.push("nav");
+        if (proper.length !== 0) {
+          properties = ' properties="' + proper.join(" ") + '"';
+        }
+        break;
+      case ".pls":
+        mediaType = "application/pls+xml";
+        break;
+      case ".js":
+        mediaType = "application/javascript";
+        break;
+      case ".ncx":
+        mediaType = "application/x-dtbncx+xml";
+        _nomSpine(nom, fichierOPF);
+        break;
+      //  Text Types
+      case ".css":
+        mediaType = "text/css";
+        break;
+      case ".vtt":
+        mediaType = "text/vtt";
+        break;
+      case ".srt":
+        mediaType = "text/srt";
+        break;
+
+      //  Font Types
+      case ".ttf":
+      case ".otf":
+        // mediaType = "application/font-sfnt"; //version 3.1
+        mediaType = "application/vnd.ms-opentype";
+        break;
+      case ".woff":
+        mediaType = "application/font-woff";
+        break;
+
+      //  Images type
+      case ".gif":
+        mediaType = "image/gif";
+        properties = (boolCover && ' properties="cover-image"') || "";
+        break;
+      case ".jpeg":
+      case ".jpg":
+        mediaType = "image/jpeg";
+        properties = (boolCover && ' properties="cover-image"') || "";
+
+        break;
+      case ".png":
+        mediaType = "image/png";
+        properties = (boolCover && ' properties="cover-image"') || "";
+
+        break;
+      case ".svg":
+        mediaType = "image/svg+xml";
+        properties = (boolCover && ' properties="cover-image"') || "";
+
+        break;
+      // Audio types
+      case ".mpg":
+      case ".mp3":
+        mediaType = "audio/mpeg";
+        break;
+      case ".smil":
+        mediaType = "application/smil+xml";
+        break;
+      case ".mp4":
+      case ".aac":
+        mediaType = "audio/mp4";
+      default:
+        break;
+    }
+
+    return (
+      '<item id="' +
+      nom +
+      '" href="' +
+      relativeFichier +
+      '" media-type="' +
+      mediaType +
+      '"' +
+      properties +
+      " />"
+    );
+  });
+  tab.push('\n')
+  return tab;
 }
 
 function _mediaOverlay(texte) {
-    if (texte.indexOf('.smil"') !== -1) {
-        let mesSmil = util.recupFichiers('.smil');
-        mesSmil.forEach(lien => {
-            let data = fs.readFileSync(lien, 'utf8');
-            let mesSrc = data.match(/src=(?:\'|").*?(?:\'|")/g);
-            mesSrc = mesSrc.filter(elt => elt.indexOf('.xhtml') !== -1);
-            mesSrc = mesSrc
-                .map(elt => elt.split('/').pop().split('#')[0])
-                .filter((elt, i, self) => {
-                    return i === self.indexOf(elt);
-                });
-            mesSrc.forEach(src => {
-                let regexp1 = new RegExp('(href=(?:\'|").*?' + src + '(?:\'|"))', 'i');
-                texte = texte.replace(regexp1, '$1 media-overlay="' + lien.split('\\').pop() + '" ');
-            })
+  if (texte.indexOf('.smil"') !== -1) {
+    let mesSmil = util.recupFichiers(".smil");
+    mesSmil.forEach((lien) => {
+      let data = fs.readFileSync(lien, "utf8");
+      let mesSrc = data.match(/src=(?:\'|").*?(?:\'|")/g);
+      mesSrc = mesSrc.filter((elt) => elt.indexOf(".xhtml") !== -1);
+      mesSrc = mesSrc
+        .map((elt) => elt.split("/").pop().split("#")[0])
+        .filter((elt, i, self) => {
+          return i === self.indexOf(elt);
         });
-    }
-    return texte
-}
-
-function _ecritureLigne(fichier, fichierOPF) {
-
-    var relativeP = path.relative(path.dirname(fichierOPF), path.dirname(fichier)),
-        relativeFichier;
-    relativeP = relativeP.replace(path.sep, '/');
-    if (relativeP !== '') {
-        relativeFichier = relativeP + '/' + path.basename(fichier);
-    } else {
-        relativeFichier = path.basename(fichier);
-    }
-    var maligne = "",
-        mediaType = "",
-        properties = "",
-        ext = path.extname(relativeFichier),
-        nom = path.basename(relativeFichier);
-    nom = isNumeric(nom.substring(0, 1)) && ("x" + nom) || nom;
-    ext = ext.toLowerCase();
-    var boolCover = nom.split('.')[0] === config.get('coverImage');
-    var boolTDM = nom.split('.')[0] === config.get('navTDM');
-
-    switch (ext) {
-        case '.xhtml':
-            mediaType = "application/xhtml+xml";
-            nom = path.basename(nom, '.xhtml');
-            var data = fs.readFileSync(fichier, 'utf8');
-            var proper = data.metaProperties();
-            boolTDM && proper.push('nav');
-            if (proper.length !== 0) {
-                properties = ' properties="' + proper.join(' ') + '"';
-            }
-            break;
-        case '.pls':
-            mediaType = "application/pls+xml";
-            break;
-        case '.js':
-            mediaType = "application/javascript";
-            break;
-        case ".ncx":
-            mediaType = "application/x-dtbncx+xml";
-            _nomSpine(nom, fichierOPF);
-            break;
-            //  Text Types
-        case ".css":
-            mediaType = "text/css"
-            break;
-        case ".vtt":
-            mediaType = "text/vtt"
-            break;
-        case ".srt":
-            mediaType = "text/srt"
-            break;
-
-            //  Font Types
-        case ".ttf":
-        case ".otf":
-            // mediaType = "application/font-sfnt"; //version 3.1
-            mediaType = "application/vnd.ms-opentype";
-            break;
-        case ".woff":
-            mediaType = "application/font-woff"
-            break;
-
-            //  Images type
-        case ".gif":
-            mediaType = "image/gif";
-            properties = boolCover && ' properties="cover-image"' || '';
-            break;
-        case ".jpeg":
-        case ".jpg":
-            mediaType = "image/jpeg";
-            properties = boolCover && ' properties="cover-image"' || '';
-
-            break;
-        case ".png":
-            mediaType = "image/png";
-            properties = boolCover && ' properties="cover-image"' || '';
-
-            break;
-        case ".svg":
-            mediaType = "image/svg+xml";
-            properties = boolCover && ' properties="cover-image"' || '';
-
-            break;
-            // Audio types
-        case ".mpg":
-        case ".mp3":
-            mediaType = "audio/mpeg"
-            break;
-        case ".smil":
-            mediaType = "application/smil+xml"
-            break;
-        case ".mp4":
-        case ".aac":
-            mediaType = "audio/mp4"
-        default:
-            break;
-    }
-
-    maligne = '<item id="' + nom + '" href="' + relativeFichier + '" media-type="' + mediaType + '"' + properties + ' />\n';
-    return maligne;
+      mesSrc.forEach((src) => {
+        let regexp1 = new RegExp("(href=(?:'|\").*?" + src + "(?:'|\"))", "i");
+        texte = texte.replace(
+          regexp1,
+          '$1 media-overlay="' + lien.split("\\").pop() + '" '
+        );
+      });
+    });
+  }
+  return texte;
 }
 
 function _nomSpine(ncx, fichierOPF) {
-    var texte = fs.readFileSync(fichierOPF, 'utf8');
-    texte = texte.replace(/<spine[^>]*>/, '<spine toc="' + ncx + '">');
-    fs.writeFileSync(fichierOPF, texte, 'utf8');
+  var texte = fs.readFileSync(fichierOPF, "utf8");
+  texte = texte.replace(/<spine[^>]*>/, '<spine toc="' + ncx + '">');
+  fs.writeFileSync(fichierOPF, texte, "utf8");
 }
 
 function testSpine(fichierOPF) {
-    let data = fs.readFileSync(fichierOPF, 'utf8');
-    // var monDom = new dom(data);
-    let mesIdref = data.match(/idref=((?:\'|").*?(?:\'|"))/gi);
-    mesIdref = mesIdref.map(el => el.replace(/idref=(\'|")(.*?)(?:\'|")/, '$2'));
-    let mesID = data.match(/id=(?:\'|").*?(?:\'|")/gi);
-    mesID = mesID.map(el => el.replace(/id=(\'|")(.*?)(?:\'|")/, '$2'));
-    let mesErreurs = [];
-    mesIdref.forEach(element => {
-        if (mesID.indexOf(element) === -1) {
-            //    erreur
-            mesErreurs.push('itemref -> ' + element)
-        }
-    });
-    if (mesErreurs.length !== 0) {
-        return mesErreurs;
-    } else {
-        return false;
+  let data = fs.readFileSync(fichierOPF, "utf8");
+  // var monDom = new dom(data);
+  let mesIdref = data.match(/idref=((?:\'|").*?(?:\'|"))/gi);
+  mesIdref = mesIdref.map((el) => el.replace(/idref=(\'|")(.*?)(?:\'|")/, "$2"));
+  let mesID = data.match(/id=(?:\'|").*?(?:\'|")/gi);
+  mesID = mesID.map((el) => el.replace(/id=(\'|")(.*?)(?:\'|")/, "$2"));
+  let mesErreurs = [];
+  mesIdref.forEach((element) => {
+    if (mesID.indexOf(element) === -1) {
+      //    erreur
+      mesErreurs.push("itemref -> " + element);
     }
+  });
+  if (mesErreurs.length !== 0) {
+    return mesErreurs;
+  } else {
+    return false;
+  }
 }
 
 function _renameFichier(files) {
-    let arrayName = [];
+  let arrayName = [];
 
-    for (var file in files) {
-        let parse = path.parse(files[file]);
-        let fileName = parse.base;
-        let newFileName = fileName.replace(/[^\w.\-\\)\\(]/g, '_');
-        if (fileName !== newFileName) {
-            fs.renameSync(files[file], parse.dir + '/' + newFileName);
-            arrayName.push(fileName + '|' + newFileName);
-        }
+  for (var file in files) {
+    let parse = path.parse(files[file]);
+    let fileName = parse.base;
+    let newFileName = fileName.replace(/[^\w.\-\\)\\(]/g, "_");
+    if (fileName !== newFileName) {
+      fs.renameSync(files[file], parse.dir + "/" + newFileName);
+      arrayName.push(fileName + "|" + newFileName);
     }
-    if (arrayName.length > 0) {
-        _rechercheEtRemplaceNom(arrayName);
-    } else {
-        return false;
-    }
+  }
+  if (arrayName.length > 0) {
+    _rechercheEtRemplaceNom(arrayName);
+  } else {
+    return false;
+  }
 }
 
 function _rechercheEtRemplaceNom(listeNom) {
-    let mesXhtml = util.recupFichiers();
-    mesXhtml.forEach(file => {
-        let data = fs.readFileSync(file, 'utf8');
-        listeNom.forEach(noms => {
-            let N = noms.split('|');
-            if (data.indexOf(N[0]) !== -1) {
-                let re = new RegExp(N[0], 'g');
-                data = data.replace(re, N[1]);
-                fs.writeFileSync(file, data);
-            }
-        });
+  let mesXhtml = util.recupFichiers();
+  mesXhtml.forEach((file) => {
+    let data = fs.readFileSync(file, "utf8");
+    listeNom.forEach((noms) => {
+      let N = noms.split("|");
+      if (data.indexOf(N[0]) !== -1) {
+        let re = new RegExp(N[0], "g");
+        data = data.replace(re, N[1]);
+        fs.writeFileSync(file, data);
+      }
     });
-
+  });
 }
 
 function ecritureSpine(fichierOPF) {
-    let data = fs.readFileSync(fichierOPF, 'utf8');
-    let re_xhtml = new RegExp('<[^>]* id=([^ ]*)[^>]* ?media-type="application\/xhtml\\+xml"[^>]*>', 'g');
-    let result;
-    let mesItems = '';
-    while ((result = re_xhtml.exec(data)) !== null) {
-        mesItems += '<itemref idref=' + result[1] + ' />\n'
-    }
-    data = data.remplaceEntre2Balises('spine', mesItems);
-    fs.writeFileSync(fichierOPF, data);
+  let data = fs.readFileSync(fichierOPF, "utf8");
+  let re_xhtml = new RegExp(
+    '<[^>]* id=([^ ]*)[^>]* ?media-type="application/xhtml\\+xml"[^>]*>',
+    "g"
+  );
+  let result;
+  let mesItems = "";
+  while ((result = re_xhtml.exec(data)) !== null) {
+    mesItems += "<itemref idref=" + result[1] + " />\n";
+  }
+  data = data.remplaceEntre2Balises("spine", mesItems);
+  fs.writeFileSync(fichierOPF, data);
 }
 
 module.exports = {
-    epubManifest,
-    testSpine,
-    ecritureSpine
+  epubManifest,
+  testSpine,
+  ecritureSpine,
 };
