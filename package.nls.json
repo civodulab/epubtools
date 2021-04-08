@@ -11,6 +11,8 @@
     "extension.epubSpanPageNoir.description": "Transforms epubTools-numPage-style spans into pagebreaks.",
     "extension.epubManifest.title": "Manifest",
     "extension.epubManifest.description": "Modifies the manifest in the opf.",
+    "extension.epubMediaOverlay.title": "Metadata Media Overlays",
+    "extension.epubMediaOverlay.description": "Add metadata Media Overlays",
     "extension.epubTOC.title": "Table of contents",
     "extension.epubTOC.description": "Modifies the tables of contents xhtml and ncx.",
     "extension.epubTitle.title": "first <h.> => <title>",

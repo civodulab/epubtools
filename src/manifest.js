@@ -5,10 +5,9 @@ const path = require("path");
 const config = vscode.workspace.getConfiguration("epub");
 const util = require("./util");
 
-String.prototype.isNumeric=function(){
-     return !isNaN(parseFloat(this)) && isFinite(this);
-}
-
+String.prototype.isNumeric = function () {
+  return !isNaN(parseFloat(this)) && isFinite(this);
+};
 
 function epubManifest(fichierOPF) {
   let mesFichiers = util.fichierLiens();
@@ -111,7 +110,7 @@ function _filtreTab(tab, fichierOPF) {
       properties = "",
       ext = path.extname(relativeFichier).toLowerCase(),
       nom = path.basename(relativeFichier);
-    nom = (nom.substring(0, 1)).isNumeric() && ("x" + nom) || nom;
+    nom = (nom.substring(0, 1).isNumeric() && "x" + nom) || nom;
     let boolCover = nom.split(".")[0] === config.get("coverImage");
     let boolTDM = nom.split(".")[0] === config.get("navTDM");
 
@@ -205,14 +204,18 @@ function _filtreTab(tab, fichierOPF) {
       " />"
     );
   });
-  tab.push('\n')
+  tab.push("\n");
   return tab;
 }
+
+
 
 function _mediaOverlay(texte) {
   if (texte.indexOf('.smil"') !== -1) {
     let mesSmil = util.recupFichiers(".smil");
+
     mesSmil.forEach((lien) => {
+      // attribut media-overlay
       let data = fs.readFileSync(lien, "utf8");
       let mesSrc = data.match(/src=(?:\'|").*?(?:\'|")/g);
       mesSrc = mesSrc.filter((elt) => elt.indexOf(".xhtml") !== -1);

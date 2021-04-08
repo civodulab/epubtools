@@ -47,6 +47,7 @@
                 "description": "%extension.epubManifest.description%",
                 "category": "EpubTools"
             },
+           
             {
                 "command": "extension.epubTitle",
                 "title": "%extension.epubTitle.title%",
